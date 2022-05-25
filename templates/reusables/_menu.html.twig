@@ -1,0 +1,10 @@
+{% set route = app.request.attributes.get('_route') %}
+<nav class="navMenu">
+    <div class="items">
+        <a href="{{ path('stock_list') }}"{% if route starts with 'stock_' or route starts with 'stockoperate_' %} class="selected"{% endif %}>{{ 'stocks'|trans({'stocks': 2}) }}</a>
+        <a href="{{ path('portfolio_index') }}"{% if route starts with 'portfolio_' %} class="selected"{% endif %}>{{ 'portfolio'|trans }}</a>
+        <a href="{{ path('accounting_index') }}"{% if route starts with 'accounting_' %} class="selected"{% endif %}>{{ 'accounting'|trans }}</a>
+        <a href="{{ path('app_logout') }}" class="logout">{{ 'logout'|trans }}</a>
+    </div>
+    <div class="navMenuFooter"></div>
+</nav>

@@ -1,0 +1,81 @@
+name: PHPUnit test & Static code analysis
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'translations/**'
+      - LICENSE
+
+env:
+  XDEBUG_MODE: coverage
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: MiCartera (PHP ${{ matrix.php-versions }})
+
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0.28
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: micartera_test
+          MYSQL_HOST: 127.0.0.1
+        ports:
+          - 3306:3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.1']
+
+    env:
+      APP_ENV: test
+      APP_SECRET: kv95njkb5t90v89jtrbjh3bvdv
+      DATABASE_URL: mysql://root:password@127.0.0.1:3306/micartera?serverVersion=8.0
+      TRUSTED_PROXIES: 
+      SYMFONY_DEPRECATIONS_HELPER: disabled=1
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --optimize-autoloader
+
+    - name: Run Database setup
+      run: |
+        bin/console doctrine:database:create --if-not-exists --env=test || echo "Schema creation failed"
+        bin/console doctrine:schema:update --force --complete --env=test || echo "Schema updated failed"
+        bin/console doctrine:fixtures:load --no-interaction --env=test || echo "Fixtures load failed"
+
+    - name: Install NPM dependencies
+      run: npm install
+
+    - name: NPM Build
+      run: npm run build
+
+    - name: Run all test suites
+      run: vendor/bin/phpunit --testsuite=all --coverage-text
+       
+    - name: Psalm static code analysis
+      run: vendor/bin/psalm

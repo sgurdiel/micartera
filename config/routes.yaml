@@ -1,0 +1,11 @@
+controllers:
+    resource:
+        path: ../src/Ui/Controller/
+        namespace: xVer\MiCartera\Ui\Controller
+    type: attribute
+
+kernel:
+    resource:
+        path: ../src/Ui/Kernel.php
+        namespace: xVer\MiCartera\Ui
+    type: attribute

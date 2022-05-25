@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine" name="xVer\MiCartera\Domain\Account\Account" table="account" change-tracking-policy="DEFERRED_EXPLICIT">
+    <id name="id" type="uuid" column="id"/>
+    <field name="email" type="string" column="email" length="180" unique="true" nullable="false"/>
+    <field name="roles" type="json" column="roles" nullable="false"/>
+    <field name="password" type="string" column="password" nullable="false"/>
+    <many-to-one field="currency" target-entity="xVer\MiCartera\Domain\Currency\Currency" fetch="LAZY">
+      <join-columns>
+        <join-column name="currency_iso3" referenced-column-name="iso3" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+    <field name="timezone" type="string" column="timezone" nullable="false"/>
+  </entity>
+</doctrine-mapping>

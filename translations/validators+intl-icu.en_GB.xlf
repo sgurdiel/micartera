@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-GB" target-language="en-GB" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="minPasswordLength">
+        <source>minPasswordLength</source>
+        <target>{count, plural, other {Your password should be at least {limit} characters}}</target>
+      </trans-unit>
+      <trans-unit id="enterPassword">
+        <source>enterPassword</source>
+        <target>Please enter a password</target>
+      </trans-unit>
+      <trans-unit id="stockHasTransactions">
+        <source>stockHasTransactions</source>
+        <target>There is atleast one transaction related to this stock that need to be removed before preceeding.</target>
+      </trans-unit>
+      <trans-unit id="stockExists">
+        <source>stockExists</source>
+        <target>Stock with supplied code already exists</target>
+      </trans-unit>
+      <trans-unit id="stringLength">
+        <source>stringLength</source>
+        <target>Enter a string between {minimum} and {maximum} characters</target>
+      </trans-unit>
+      <trans-unit id="otherCurrencyExpected">
+        <source>otherCurrencyExpected</source>
+        <target>Currency {received} received but {expected} was expected</target>
+      </trans-unit>
+      <trans-unit id="numberBetween">
+        <source>numberBetween</source>
+        <target>Enter a number between {minimum} and {maximum}</target>
+      </trans-unit>
+      <trans-unit id="numberPrecision">
+        <source>numberPrecision</source>
+        <target>Enter a number with a maximu of {precision} decimal places.</target>
+      </trans-unit>
+      <trans-unit id="stockPriceFormat">
+        <source>stockPriceFormat</source>
+        <target>Enter a number between {minimum} and {maximum}.</target>
+      </trans-unit>
+      <trans-unit id="positiveNumberRequired">
+        <source>positiveNumberRequired</source>
+        <target>Positive number required</target>
+      </trans-unit>
+      <trans-unit id="invalidTransactionType">
+        <source>invalidTransactionType</source>
+        <target>Invalid transaction type. Expecting `adquisition` or `liquidation`.</target>
+      </trans-unit>
+      <trans-unit id="invalidCurrency">
+        <source>invalidCurrency</source>
+        <target>Invalid currency</target>
+      </trans-unit>
+      <trans-unit id="error_invalid_email">
+        <source>error_invalid_email</source>
+        <target>Invalid e-mail address</target>
+      </trans-unit>
+      <trans-unit id="accountEmailExists">
+        <source>accountEmailExists</source>
+        <target>An account with the e-mail address exists</target>
+      </trans-unit>
+      <trans-unit id="transExistsOnDateTime">
+        <source>transExistsOnDateTime</source>
+        <target>A transaction for this account and stock exists at given datetime.</target>
+      </trans-unit>
+      <trans-unit id="transactionAssertType">
+        <source>transactionAssertImType</source>
+        <target>Expected transaction type not fulfilled.</target>
+      </trans-unit>
+      <trans-unit id="transactionAssertStock">
+        <source>transactionAssertImStock</source>
+        <target>Expected transaction stock not fulfilled.</target>
+      </trans-unit>
+      <trans-unit id="InvalidMovementExpensesAmount">
+        <source>InvalidMovementExpensesAmount</source>
+        <target>Movement expenses amount is invalid according to unaccounted expenses.</target>
+      </trans-unit>
+      <trans-unit id="MovementAmountNotWithinAllowedLimits">
+        <source>MovementAmountNotWithinAllowedLimits</source>
+        <target>Movement amount is not within allowd limits.</target>
+      </trans-unit>
+      <trans-unit id="transNotEnoughAmountOutstanding">
+        <source>transNotEnoughAmountOutstanding</source>
+        <target>Not enough amount outstanding to process sell transaction.</target>
+      </trans-unit>
+      <trans-unit id="futureDateNotAllowed">
+        <source>futureDateNotAllowed</source>
+        <target>Dates in the future are not allowed.</target>
+      </trans-unit>
+      <trans-unit id="transBuyCannotBeRemovedWithoutFullAmountOutstanding">
+        <source>transBuyCannotBeRemovedWithoutFullAmountOutstanding</source>
+        <target>Buy transaction can only be removed when full amount is outstanding.</target>
+      </trans-unit>
+      <trans-unit id="numberFormat">
+        <source>numberFormat</source>
+        <target>Invalid format supplied. Use dot (.) as decimal separator.</target>
+      </trans-unit>
+      <trans-unit id="totalOutstandingPriceNotOnSellType">
+        <source>totalOutstandingPriceNotOnSellType</source>
+        <target>Total outstanding price cannot be retrieved on sell type transactions.</target>
+      </trans-unit>
+      <trans-unit id="accountingMovementAssertNotExists">
+        <source>accountingMovementAssertNotExists</source>
+        <target>Accounting movement exists for given buy and sell transaction.</target>
+      </trans-unit>
+      <trans-unit id="accountingMovementAssertDateTime">
+        <source>accountingMovementAssertDateTime</source>
+        <target>Accounting movement expects sell transaction to be past time of buy transactions.</target>
+      </trans-unit>
+      <trans-unit id="operationRequiresBothOperandsNotZero">
+        <source>operationRequiresBothOperandsNotZero</source>
+        <target>Operation requires all operands to be positive numbers.</target>
+      </trans-unit>
+      <trans-unit id="transBadAmountOutstanding">
+        <source>transBadAmountOutstanding</source>
+        <target>Incorrect amount outstanding.</target>
+      </trans-unit>
+      <trans-unit id="invalidUserRole">
+        <source>invalidUserRole</source>
+        <target>Invalid user role.</target>
+      </trans-unit>
+      <trans-unit id="relatedEntityNotPersisted">
+        <source>relatedEntityNotPersisted</source>
+        <target>The related entity `{entity}` must be persisted before storing entity `{entity2}`</target>
+      </trans-unit>
+      <trans-unit id="invalidUploadedFile">
+        <source>invalidUploadedFile</source>
+        <target>The uploaded file is not valid.</target>
+      </trans-unit>
+      <trans-unit id="csvInvalidColumnCount">
+        <source>csvInvalidColumnCount</source>
+        <target>Import stoped at row {row}. Expected {expected} columns, got {got}</target>
+      </trans-unit>
+      <trans-unit id="importCsvDomainError">
+        <source>importCsvDomainError</source>
+        <target><![CDATA[Import stoped at row number {row}
+        Field: {field}
+        Error: {error}]]></target>
+      </trans-unit>
+      <trans-unit id="transNotPassFifoSpec">
+        <source>transNotPassFifoSpec</source>
+        <target>Transaction operation did not pass FIFO contract.</target>
+      </trans-unit>
+      <trans-unit id="expectedPersistedObjectNotFound">
+        <source>expectedPersistedObjectNotFound</source>
+        <target>The item being act upon does not exist.</target>
+      </trans-unit>
+      <trans-unit id="failedCreatingDateObjectFromString">
+        <source>failedCreatingDateObjectFromString</source>
+        <target>Failed to create date object from string. Expecting format {format}</target>
+      </trans-unit>
+      <trans-unit id="invalidFormToken">
+        <source>invalidFormToken</source>
+        <target>The CSRF token is invalid. Please try to resubmit the form.</target>
+      </trans-unit>
+      <trans-unit id="collectionInvalidOffsetPosition">
+        <source>collectionInvalidOffsetPosition</source>
+        <target>The requested offset position is invalid for this collection.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

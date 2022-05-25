@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en-GB" target-language="en-GB" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="code">
+        <source>code</source>
+        <target>Code</target>
+      </trans-unit>
+      <trans-unit id="name">
+        <source>name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="price">
+        <source>price</source>
+        <target>Price</target>
+      </trans-unit>
+      <trans-unit id="priceWithCurrencySymbol">
+        <source>priceWithCurrencySymbol</source>
+        <target>Price ({symbol})</target>
+      </trans-unit>
+      <trans-unit id="value">
+        <source>value</source>
+        <target>Value</target>
+      </trans-unit>
+      <trans-unit id="currency">
+        <source>currency</source>
+        <target>Currency</target>
+      </trans-unit>
+      <trans-unit id="type">
+        <source>type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="date">
+        <source>date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="time">
+        <source>time</source>
+        <target>Time</target>
+      </trans-unit>
+      <trans-unit id="dateWithTZ">
+        <source>dateWithTZ</source>
+        <target>Date ({timezone})</target>
+      </trans-unit>
+      <trans-unit id="amount">
+        <source>amount</source>
+        <target>Amount</target>
+      </trans-unit>
+      <trans-unit id="amountOutstanding">
+        <source>amountOutstanding</source>
+        <target>Outstanding amount</target>
+      </trans-unit>
+      <trans-unit id="expenses">
+        <source>expenses</source>
+        <target>Expenses</target>
+      </trans-unit>
+      <trans-unit id="expensesWithCurrencySymbol">
+        <source>expensesWithCurrencySymbol</source>
+        <target>Expenses ({symbol})</target>
+      </trans-unit>
+      <trans-unit id="usernameField">
+        <source>usernameField</source>
+        <target>E-mail</target>
+      </trans-unit>
+      <trans-unit id="email">
+        <source>email</source>
+        <target>E-mail</target>
+      </trans-unit>
+      <trans-unit id="password">
+        <source>password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="mustAgreeTerms">
+        <source>mustAgreeTerms</source>
+        <target>You must agree to the terms and conditions</target>
+      </trans-unit>
+      <trans-unit id="link_terms">
+        <source>link_terms</source>
+        <target><![CDATA[{link_open}Terms & Conditions{link_close}]]></target>
+      </trans-unit>
+      <trans-unit id="signUp">
+        <source>signUp</source>
+        <target>Sign up</target>
+      </trans-unit>
+      <trans-unit id="reenter_password">
+        <source>reenter_password</source>
+        <target>Repeat password</target>
+      </trans-unit>
+      <trans-unit id="dashboard">
+        <source>dashboard</source>
+        <target>Dashboard</target>
+      </trans-unit>
+      <trans-unit id="transactions">
+        <source>transactions</source>
+        <target>{transactions, plural, one {Transaction} other {Transactions}}</target>
+      </trans-unit>
+      <trans-unit id="stocks">
+        <source>stocks</source>
+        <target>{stocks, plural, one {Stock} other {Stocks}}</target>
+      </trans-unit>
+      <trans-unit id="logout">
+        <source>logout</source>
+        <target>Logout</target>
+      </trans-unit>
+      <trans-unit id="signIn">
+        <source>signIn</source>
+        <target>Sign In</target>
+      </trans-unit>
+      <trans-unit id="register">
+        <source>register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="save">
+        <source>save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="createNew">
+        <source>createNew</source>
+        <target>Create New</target>
+      </trans-unit>
+      <trans-unit id="actions">
+        <source>actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="show">
+        <source>show</source>
+        <target>Show</target>
+      </trans-unit>
+      <trans-unit id="edit">
+        <source>edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="noRecordsFound">
+        <source>noRecordsFound</source>
+        <target>No records found</target>
+      </trans-unit>
+      <trans-unit id="previousPage">
+        <source>previousPage</source>
+        <target>Previous page</target>
+      </trans-unit>
+      <trans-unit id="nextPage">
+        <source>nextPage</source>
+        <target>Next page</target>
+      </trans-unit>
+      <trans-unit id="backToList">
+        <source>backToList</source>
+        <target>Back To list</target>
+      </trans-unit>
+      <trans-unit id="update">
+        <source>update</source>
+        <target>Update</target>
+      </trans-unit>
+      <trans-unit id="newStock">
+        <source>newStock</source>
+        <target>New stock</target>
+      </trans-unit>
+      <trans-unit id="editStock">
+        <source>editStock</source>
+        <target>Edit stock</target>
+      </trans-unit>
+      <trans-unit id="confirmDeleteMsg">
+        <source>confirmDeleteMsg</source>
+        <target>Are you sure you want to delete this item?</target>
+      </trans-unit>
+      <trans-unit id="delete">
+        <source>delete</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="editTrans">
+        <source>editTrans</source>
+        <target>Edit transaction</target>
+      </trans-unit>
+      <trans-unit id="buy">
+        <source>buy</source>
+        <target>Buy</target>
+      </trans-unit>
+      <trans-unit id="sell">
+        <source>sell</source>
+        <target>Sell</target>
+      </trans-unit>
+      <trans-unit id="chooseAnOption">
+        <source>chooseAnOption</source>
+        <target>Choose an option</target>
+      </trans-unit>
+      <trans-unit id="newTransaction">
+        <source>newTransaction</source>
+        <target>New transaction</target>
+      </trans-unit>
+      <trans-unit id="purchasesTotal">
+        <source>purchasesTotal</source>
+        <target>Purchases total</target>
+      </trans-unit>
+      <trans-unit id="purchasesExpensesTotal">
+        <source>purchasesExpensesTotal</source>
+        <target>Purchases expenses total</target>
+      </trans-unit>
+      <trans-unit id="salesTotal">
+        <source>salesTotal</source>
+        <target>Sales total</target>
+      </trans-unit>
+      <trans-unit id="salesExpensesTotal">
+        <source>salesExpensesTotal</source>
+        <target>Sales expenses total</target>
+      </trans-unit>
+      <trans-unit id="result">
+        <source>result</source>
+        <target>Result</target>
+      </trans-unit>
+      <trans-unit id="accountSetting">
+        <source>accountSetting</source>
+        <target>Account</target>
+      </trans-unit>
+      <trans-unit id="timezone">
+        <source>timezone</source>
+        <target>Timezone</target>
+      </trans-unit>
+      <trans-unit id="portfolio">
+        <source>portfolio</source>
+        <target>Portfolio</target>
+      </trans-unit>      
+      <trans-unit id="portfolioCurrentPrice">
+        <source>portfolioCurrentPrice</source>
+        <target>Portfolio current price</target>
+      </trans-unit>
+      <trans-unit id="portfolioProfitPrice">
+        <source>portfolioProfitPrice</source>
+        <target>Portfolio profit price forecast</target>
+      </trans-unit>
+      <trans-unit id="portfolioProfitPercent">
+        <source>portfolioProfitPercent</source>
+        <target>Portfolio profit percentage forecast</target>
+      </trans-unit>
+      <trans-unit id="purchasePrice">
+        <source>purchasePrice</source>
+        <target>Purchase price</target>
+      </trans-unit>
+      <trans-unit id="currentPrice">
+        <source>currentPrice</source>
+        <target>Current price</target>
+      </trans-unit>
+      <trans-unit id="purchaseDate">
+        <source>purchaseDate</source>
+        <target>Purchase date</target>
+      </trans-unit>
+      <trans-unit id="purchase">
+        <source>purchase</source>
+        <target>Purchase</target>
+      </trans-unit>
+      <trans-unit id="current">
+        <source>current</source>
+        <target>Current</target>
+      </trans-unit>
+      <trans-unit id="gainprice">
+        <source>gainprice</source>
+        <target>Gain price</target>
+      </trans-unit>
+      <trans-unit id="gainpercent">
+        <source>gainpercent</source>
+        <target>Gain percentage</target>
+      </trans-unit>
+      <trans-unit id="accounting">
+        <source>accounting</source>
+        <target>Accounting</target>
+      </trans-unit>
+      <trans-unit id="allTimeResult">
+        <source>allTimeResult</source>
+        <target>All time result</target>
+      </trans-unit>
+      <trans-unit id="changeYear">
+        <source>changeYear</source>
+        <target>Change year</target>
+      </trans-unit>
+      <trans-unit id="displayedResult">
+        <source>displayedResult</source>
+        <target>Displayed result</target>
+      </trans-unit>
+      <trans-unit id="importFromCSV">
+        <source>importFromCSV</source>
+        <target>Import from CSV file</target>
+      </trans-unit>
+      <trans-unit id="csvTransactionFormat">
+        <source>csvTransactionFormat</source>
+        <target><![CDATA[CSV file having comma separator, double quote enclosure and fields:
+        <br />- operation date ['Y-m-d H:i:s'] using {timezone} timezone<br />- operation type [adquisition, liquidation]<br />- share symbol<br />- unit share price {currency}<br />- amount of shares<br />- operation fees {currency}]]></target>
+      </trans-unit>
+      <trans-unit id="upload">
+        <source>upload</source>
+        <target>Upload</target>
+      </trans-unit>
+      <trans-unit id="actionCompletedSuccessfully">
+        <source>actionCompletedSuccessfully</source>
+        <target>Action completed successfully</target>
+      </trans-unit>
+      <trans-unit id="actionFailed">
+        <source>actionFailed</source>
+        <target>Action failed. Try again.</target>
+      </trans-unit>
+      <trans-unit id="liquidationDateTime">
+        <source>liquidationDateTime</source>
+        <target><![CDATA[Liquidation Date & Time]]></target>
+      </trans-unit>
+      <trans-unit id="adquisitionDateTime">
+        <source>adquisitionDateTime</source>
+        <target><![CDATA[Adquisition Date & Time]]></target>
+      </trans-unit>
+      <trans-unit id="unitshareprice">
+        <source>unitshareprice</source>
+        <target>Unit share price</target>
+      </trans-unit>
+      <trans-unit id="totalsharesprice">
+        <source>totalsharesprice</source>
+        <target>Total shares price</target>
+      </trans-unit>
+      <trans-unit id="unrealisedgainloss">
+        <source>unrealisedgainloss</source>
+        <target>Unrealised Gain/Loss</target>
+      </trans-unit>
+      <trans-unit id="gainLoss">
+        <source>gainLoss</source>
+        <target>Gain/Loss</target>
+      </trans-unit>
+      <trans-unit id="symbol">
+        <source>symbol</source>
+        <target>Symbol</target>
+      </trans-unit>
+      <trans-unit id="shares">
+        <source>shares</source>
+        <target>Shares</target>
+      </trans-unit>
+      <trans-unit id="adquisition">
+        <source>adquisition</source>
+        <target>{amount, plural, one {Adquisition} other {Adquisitions}}</target>
+      </trans-unit>
+      <trans-unit id="liquidation">
+        <source>liquidation</source>
+        <target>{amount, plural, one {Liquidation} other {Liquidations}}</target>
+      </trans-unit>
+      <trans-unit id="market">
+        <source>market</source>
+        <target>Market</target>
+      </trans-unit>
+      <trans-unit id="adquisitionFee">
+        <source>adquisitionFee</source>
+        <target>{amount, plural, one {Adquisition Fee} other {Adquisitions Fees}}</target>
+      </trans-unit>
+      <trans-unit id="liquidationFee">
+        <source>liquidationFee</source>
+        <target>{amount, plural, one {Liquidation Fee} other {Liquidations Fees}}</target>
+      </trans-unit>
+      <trans-unit id="fees">
+        <source>fees</source>
+        <target>Fees</target>
+      </trans-unit>
+      <trans-unit id="confirmDeleteTransactionSellMsg">
+        <source>confirmDeleteTransactionSellMsg</source>
+        <target>Confirm deletion of the Shares Liquidation Transaction associted to this accounting movement?</target>
+      </trans-unit>
+      <trans-unit id="confirmDeleteTransactionBuyMsg">
+        <source>confirmDeleteTransactionBuyMsg</source>
+        <target>Confirm deletion of the Shares Adquisition Transaction?</target>
+      </trans-unit>
+      <trans-unit id="summary">
+        <source>summary</source>
+        <target>Summary</target>
+      </trans-unit>
+      <trans-unit id="detail">
+        <source>detail</source>
+        <target>Detail</target>
+      </trans-unit>
+      <trans-unit id="allTime">
+        <source>allTime</source>
+        <target>All Time</target>
+      </trans-unit>
+      <trans-unit id="fiscalYear">
+        <source>fiscalYear</source>
+        <target>Fiscal year</target>
+      </trans-unit>
+      <trans-unit id="import">
+        <source>import</source>
+        <target>Import</target>
+      </trans-unit>
+      <trans-unit id="operationsbatchimport">
+        <source>operationsbatchimport</source>
+        <target>Import stocks operations</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

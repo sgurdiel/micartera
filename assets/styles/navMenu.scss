@@ -1,0 +1,43 @@
+@import 'mixins';
+
+.navMenu {
+    background-color: #d3c1fc;
+    
+    div.items {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: space-between;
+        justify-content: center;
+        align-items: center;
+
+        a {
+            color: #0a5397;
+            text-decoration: none;
+            font-size: 1.3em;
+            padding: 4px 10px;
+            border-radius: 14px 14px 0 0;
+            margin-top: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 1px #1077d8;
+        }
+
+        a:hover {
+            color: #903c99;
+            text-shadow: 1px 1px 1px #ac53b6;
+        }
+    
+        a.selected {
+            background-color: #90bde7;
+            color: #903c99;
+            text-shadow: 1px 1px 1px #ac53b6;
+        }
+    }
+
+    div.navMenuFooter {
+        background-color: #90bde7;
+        display: block;
+        height: 3px;
+    }
+}

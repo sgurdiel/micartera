@@ -1,0 +1,105 @@
+@import 'mixins';
+
+* {
+    font-family: "Lucida Console", "Courier new", monospace;
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+div.pageContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    div.body {
+        flex: auto;
+        padding: 0 4px 4px 4px;
+    }
+    div.footer {
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 0.7em;
+        padding-bottom: 4px;
+    }
+}
+
+h2 {
+    color: #903c99;
+    text-shadow: 1px 1px 1px #ac53b6;
+    padding-top: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.actionItem {
+    color: #065bdb;
+    padding: 6px 6px;
+    margin: 2px 0;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: underline dotted;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    &:hover {
+        background-color: #d2e0f7;
+        border-color: #065bdb;
+    }
+}
+
+.disabledItem {
+    color: #595b5f;
+    padding: 6px 6px;
+    margin: 2px 0;
+    display: inline-block;
+    text-decoration: underline dotted;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.flash-error {
+    background-color: #fdaeae;
+    padding: 6px;
+    color: red;
+    text-align: center;
+    margin: 6px 0;
+    border-radius: 11px;
+    border: 2px solid red;
+    font-weight: bold;
+}
+
+.flash-success {
+    background-color: #c0fdae;
+    padding: 6px;
+    color: green;
+    text-align: center;
+    margin: 6px 0;
+    border-radius: 11px;
+    border: 2px solid green;
+    font-weight: bold;
+}
+
+.positiveValue {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+.negativeValue {
+    background-color: #fce8e6;
+    color: #a50e0e;
+}
+.positivePercent {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+.negativePercent {
+    background-color: #fce8e6;
+    color: #a50e0e;
+}
+.positivePercent svg, .negativePercent svg {
+    fill: currentColor;
+    width: 15px;
+    height: 15px;
+}
