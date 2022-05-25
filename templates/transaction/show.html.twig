@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'transactions'|trans({'transactions': 1}) }}{% endblock %}
+
+{% block body %}
+    <div class="centeredBox">
+        <table aria-label="{{ 'transactions'|trans({'transactions': 1}) }}">
+            <tbody>
+                <tr>
+                    <th>{{ 'type'|trans }}</th>
+                    <td>{% if transaction.type is same as(1) %}{{ 'sell'|trans }}{% else %}{{ 'buy'|trans }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'date'|trans }}</th>
+                    <td>{{ transaction.datetimeutc ? transaction.datetimeutc|date('d, M Y - H:i:s T') : '' }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'amount'|trans }}</th>
+                    <td>{{ transaction.amount }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'amountOutstanding'|trans }}</th>
+                    <td>{% if transaction.type is same as(0) %}{{ transaction.amountOutstanding }}{% else %} - {% endif %}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'price'|trans }}</th>
+                    <td>{{ transaction.price.value }} {{ transaction.price.currency.iso3 }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'expenses'|trans }}</th>
+                    <td>{{ transaction.expenses.value }} {{ transaction.expenses.currency.iso3 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
+{% endblock %}

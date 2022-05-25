@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+{% endblock %}
+
+{% block title %}{{ 'newStock'|trans }}{% endblock %}
+
+{% block body %}
+    {{ include('stock/_form.html.twig') }}
+{% endblock %}

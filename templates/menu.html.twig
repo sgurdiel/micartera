@@ -1,0 +1,8 @@
+ {% set route = app.request.attributes.get('_route') %}
+<ul class="menu">
+    <li id="liportfolio"{% if route starts with 'portfolio_' %} class="selected"{% endif %}><a href="{{ path('portfolio_index') }}">{{ 'portfolio'|trans }}</a></li>
+    <li id="litransactions"{% if route starts with 'transaction_' %} class="selected"{% endif %}><a href="{{ path('transaction_index') }}">{{ 'transactions'|trans({'transactions': 2}) }}</a></li>
+    <li id="listocks"{% if route starts with 'stock_' %} class="selected"{% endif %}><a href="{{ path('stock_index') }}">{{ 'stocks'|trans({'stocks': 2}) }}</a></li>
+    <li id="liaccounting"{% if route starts with 'accounting_' %} class="selected"{% endif %}><a href="{{ path('accounting_index') }}">{{ 'accounting'|trans }}</a></li>
+    <li class="logout"><a href="{{ path('app_logout') }}" class="logout">{{ 'logout'|trans }}</a></li>
+</ul>

@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+{% endblock %}
+
+{% block title %}{{ 'transactions'|trans({'transactions': 2}) }}{% endblock %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('transaction_new') }}" class="actionItem">{{ 'createNew'|trans }}</a>
+        <a href="{{ path('transaction_fromcsv') }}" class="actionItem">{{ 'createFromCSV'|trans }}</a>
+    </div>
+    
+    <table aria-describedby="litransactions">
+        <thead>
+            <tr>
+                <th scope="col">{{ 'date'|trans }}</th>
+                <th scope="col">{{ 'stocks'|trans({'stocks': 1}) }}</th>
+                <th scope="col">{{ 'type'|trans }}</th>
+                <th scope="col">{{ 'amount'|trans }}</th>
+                <th scope="col">{{ 'amountOutstanding'|trans }}</th>
+                <th scope="col">{{ 'price'|trans }}</th>
+                <th scope="col">{{ 'expenses'|trans }}</th>
+                <th scope="col">{{ 'actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transactions.getObjects() %}
+            <tr>
+                <td>{{ transaction.datetimeutc|date('M d, Y - H:i:s T', transaction.account.getTimeZone().getName()) }}</td>
+                <td>{{ transaction.stock.getId() }}</td>
+                <td>{% if transaction.type is same as(1) %}{{ 'sell'|trans }}{% else %}{{ 'buy'|trans }}{% endif %}</td>
+                <td class="number">{{ transaction.amount }}</td>
+                <td class="number">{% if transaction.type is same as(0) %}{{ transaction.amountOutstanding }}{% else %} - {% endif %}</td>
+                <td class="number">{{ transaction.price.value }} {{ transaction.currency.symbol }}</td>
+                <td class="number">{{ transaction.expenses.value }} {{ transaction.currency.symbol }}</td>
+                <td>
+                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}" class="actionItem">{{ 'show'|trans }}</a>
+                    <a href="{{ path('transaction_edit', {'id': transaction.id}) }}" class="actionItem">{{ 'edit'|trans }}</a>
+                    {{ include('transaction/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">{{ 'noRecordsFound'|trans }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if transactions.getPrevPage() and transactions.getPage() > 0 %}
+    <a href="{{ path('transaction_index') }}?page={{ transactions.getPage()-1 }}" class="actionItem">{{ 'previousPage'|trans }}</a>
+    {% endif %}
+    {% if transactions.getNextPage() %}
+    <a href="{{ path('transaction_index') }}?page={{ transactions.getPage()+1 }}" class="actionItem">{{ 'nextPage'|trans }}</a>
+    {% endif %}
+
+{% endblock %}

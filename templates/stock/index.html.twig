@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+{% endblock %}
+
+{% block title %}{{ 'stocks'|trans({'stocks': 2}) }}{% endblock %}
+
+{% block body %}
+    <div>
+        <a href="{{ path('stock_new') }}" class="actionItem">{%trans%}createNew{%endtrans%}</a>
+    </div>
+
+    <table aria-describedby="listocks">
+        <thead>
+            <tr>
+                <th scope="col">{%trans%}code{%endtrans%}</th>
+                <th scope="col">{%trans%}name{%endtrans%}</th>
+                <th scope="col">{%trans%}price{%endtrans%}</th>
+                <th scope="col">{%trans%}actions{%endtrans%}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for stock in stocks.getObjects() %}
+            <tr>
+                <td>{{ stock.getId() }}</td>
+                <td>{{ stock.name }}</td>
+                <td class="number">{{ stock.price.value }} {{ stock.currency.symbol }}</td>
+                <td>
+                    <a href="{{ path('stock_show', {'id': stock.getId()}) }}" class="actionItem">{%trans%}show{%endtrans%}</a>
+                    <a href="{{ path('stock_edit', {'id': stock.getId()}) }}" class="actionItem">{%trans%}edit{%endtrans%}</a>
+                    {{ include('stock/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">{%trans%}noRecordsFound{%endtrans%}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        {% if stocks.getPrevPage() and stocks.getPage() > 0 %}
+        <a href="{{ path('stock_index') }}?page={{ stocks.getPage()-1 }}" class="actionItem">{%trans%}previousPage{%endtrans%}</a>
+        {% endif %}
+        {% if stocks.getNextPage() %}
+        <a href="{{ path('stock_index') }}?page={{ stocks.getPage()+1 }}" class="actionItem">{%trans%}nextPage{%endtrans%}</a>
+        {% endif %}
+    </div>
+
+{% endblock %}

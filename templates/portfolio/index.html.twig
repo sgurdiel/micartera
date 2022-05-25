@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'portfolio'|trans }}{% endblock %}
+
+{% block body %}
+    {% set currencysymbol = portfolio.getAccount().currency.symbol %}
+    {% set timezone = portfolio.getAccount().getTimeZone().getName() %}
+    {% set portfolioCurrentPrice = portfolio.getCurrentPrice() %}
+    {% set portfolioProfitPrice = portfolio.getProfitForecastPrice() %}
+    {% set portfolioProfitPercentage = portfolio.getProfitForecastPercentage() %}
+    {% if portfolioProfitPrice.getValue() >= 0 %}
+        {% set totalPercentStyle = "positivePercent" %}
+        {% set totalValueStyle = "positiveValue" %}
+        {% set totalValueSign = "+" %}
+        {% set totalPercentArrow = "M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" %}
+    {% else %}
+        {% set totalPercentStyle = "negativePercent" %}
+        {% set totalValueStyle = "negativeValue" %}
+        {% set totalValueSign = "" %}
+        {% set totalPercentArrow = "M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" %}
+    {% endif %}
+
+    <div class="heading">
+        <div>&nbsp;</div>
+        <div class="containerResult">
+            <div class="headingSubtitle" title="{{ 'portfolioCurrentPrice'|trans }}">{{ portfolioCurrentPrice.getValue() }} {{ currencysymbol }}</div>
+            <div class="headingInfo {{ totalValueStyle }}" title="{{ 'portfolioProfitPrice'|trans }}">
+                {{ totalValueSign }}{{ portfolioProfitPrice.getValue() }} {{ currencysymbol }}
+            </div>
+            <div class="headingInfo {{ totalPercentStyle }}" title="{{ 'portfolioProfitPercent'|trans }}">
+                <span>
+                    <svg focusable="false" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="{{ totalPercentArrow }}"></path>
+                    </svg>
+                </span>
+                {{ portfolioProfitPercentage }}%
+            </div>
+        </div>
+    </div>
+
+    <table aria-describedby="liportfolio">
+        <thead>
+            <tr>
+                <td colspan="3" class="noBg">&nbsp;</td>
+                <th colspan="2" scope="colgroup">{{ 'stocks'|trans({"stocks": 1}) }}</th>
+                <th colspan="2" scope="colgroup">{{ 'transactions'|trans({"transactions": 1}) }}</th>
+                <td colspan="2" class="noBg">&nbsp;</td>
+            </tr>
+            <tr>
+                <th scope="col">{{ 'date'|trans }}</th>
+                <th scope="col">{{ 'stocks'|trans({'stocks': 1}) }}</th>
+                <th scope="col">{{ 'amount'|trans }}</th>
+                <th scope="col">{{ 'purchase'|trans }}</th>
+                <th scope="col">{{ 'current'|trans }}</th>
+                <th scope="col">{{ 'purchase'|trans }}</th>
+                <th scope="col">{{ 'current'|trans }}</th>
+                <th scope="col">{{ 'gainprice'| trans }}</th>
+                <th scope="col">{{ 'gainpercent'| trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for portfolioPosition in portfolio.getOutstandingPositions() %}
+                {% if portfolio.getTransOutstandingProfitPrice(loop.index0).getValue() >= 0 %}
+                    {% set percentStyle = "positivePercent" %}
+                    {% set valueStyle = "positiveValue" %}
+                    {% set valueSign = "+" %}
+                    {% set percentArrow = "M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" %}
+                {% else %}
+                    {% set percentStyle = "negativePercent" %}
+                    {% set valueStyle = "negativeValue" %}
+                    {% set valueSign = "" %}
+                    {% set percentArrow = "M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" %}
+                {% endif %}
+                <tr>
+                    <td>{{ portfolioPosition.datetimeutc|date('M d, Y - H:i:s T', timezone) }}</td>
+                    <td>{{ portfolioPosition.stock.getId() }}</td>
+                    <td class="number">{{ portfolioPosition.amountOutstanding }}</td>
+                    <td class="number">{{ portfolioPosition.price.value }} {{ currencysymbol }}</td>
+                    <td class="number">{{ portfolioPosition.stock.price.value }} {{ currencysymbol }}</td>
+                    <td class="number">{{ portfolio.getTransOutstandingPurchasePrice(loop.index0).getValue() }} {{ currencysymbol }}</td>
+                    <td class="number">{{ portfolio.getTransOutstandingCurrentPrice(loop.index0).getValue() }} {{ currencysymbol }}</td>
+                    <td class="number">
+                        <div class="{{ valueStyle }}">
+                            {{ valueSign }}{{ portfolio.getTransOutstandingProfitPrice(loop.index0).getValue() }} {{ currencysymbol }}
+                        </div>
+                    </td>
+                    <td class="number">
+                        <div class="{{ percentStyle }}">
+                            <span>
+                                <svg focusable="false" width="16" height="16" viewBox="0 0 24 24">
+                                    <path d="{{ percentArrow }}"></path>
+                                </svg>
+                            </span>
+                            {{ portfolio.getTransOutstandingProfitPercentage(loop.index0) }}%
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">{{ 'noRecordsFound'|trans }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
