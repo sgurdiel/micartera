@@ -1,4 +1,6 @@
 {
+    "name": "xver/micartera",
+    "description": "MiCartera App",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
