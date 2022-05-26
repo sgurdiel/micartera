@@ -5,7 +5,6 @@
 /config/secrets/prod/prod.decrypt.private.php
 /var/
 /vendor/
-/bin/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
