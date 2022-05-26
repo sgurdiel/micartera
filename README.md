@@ -1,0 +1,1 @@
+[![PHPUnit test & Static code analysis](https://github.com/sgurdiel/micartera/actions/workflows/php.yml/badge.svg?branch=main&event=push)](https://github.com/sgurdiel/micartera/actions/workflows/php.yml)
