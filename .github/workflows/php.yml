@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - '**.md'
       - 'translations/**'
+      - LICENSE
+      - sonar-project.properties
 
 permissions:
   contents: read

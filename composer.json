@@ -2,7 +2,7 @@
     "name": "xver/micartera",
     "description": "MiCartera App",
     "type": "project",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "config": {
