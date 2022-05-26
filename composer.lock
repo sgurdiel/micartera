@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed2f3cbafd086c6b6dd8e3a0bdcacf3b",
+    "content-hash": "34888847dd5c297678624e47bb6edfb2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -7307,16 +7307,16 @@
         },
         {
             "name": "xver/domain-bundle",
-            "version": "0.0.1",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sgurdiel/php-domain-bundle.git",
-                "reference": "70ce1389e0c6025422207ab7e5ecbe72cc1832a8"
+                "reference": "3e323d0d588573c49a92d020889eb9e06ad6636b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/php-domain-bundle/zipball/70ce1389e0c6025422207ab7e5ecbe72cc1832a8",
-                "reference": "70ce1389e0c6025422207ab7e5ecbe72cc1832a8",
+                "url": "https://api.github.com/repos/sgurdiel/php-domain-bundle/zipball/3e323d0d588573c49a92d020889eb9e06ad6636b",
+                "reference": "3e323d0d588573c49a92d020889eb9e06ad6636b",
                 "shasum": ""
             },
             "require": {
@@ -7338,34 +7338,34 @@
                 }
             },
             "license": [
-                "AGPLv3"
+                "AGPL-3.0-or-later"
             ],
             "description": "Provides a basic domain skeleton",
             "support": {
-                "source": "https://github.com/sgurdiel/php-domain-bundle/tree/0.0.1",
+                "source": "https://github.com/sgurdiel/php-domain-bundle/tree/0.0.3",
                 "issues": "https://github.com/sgurdiel/php-domain-bundle/issues"
             },
-            "time": "2022-05-24T14:45:34+00:00"
+            "time": "2022-05-26T21:21:47+00:00"
         },
         {
             "name": "xver/persistancedoctrine-component",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sgurdiel/php-persistancedoctrine-component.git",
-                "reference": "5b11703842b834ca6179bbfa64c85fb72cae13e2"
+                "reference": "13dbe9855fee14e88694437a572803859fd0b42e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/php-persistancedoctrine-component/zipball/5b11703842b834ca6179bbfa64c85fb72cae13e2",
-                "reference": "5b11703842b834ca6179bbfa64c85fb72cae13e2",
+                "url": "https://api.github.com/repos/sgurdiel/php-persistancedoctrine-component/zipball/13dbe9855fee14e88694437a572803859fd0b42e",
+                "reference": "13dbe9855fee14e88694437a572803859fd0b42e",
                 "shasum": ""
             },
             "require": {
                 "doctrine/doctrine-bundle": "^2.5",
                 "doctrine/orm": "^2.11",
                 "php": "^8.0",
-                "xver/domain-bundle": "0.0.*"
+                "xver/domain-bundle": "^0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5",
@@ -7383,27 +7383,27 @@
                 }
             },
             "license": [
-                "AGPLv3"
+                "AGPL-3.0-or-later"
             ],
             "description": "Provides data persitance",
             "support": {
-                "source": "https://github.com/sgurdiel/php-persistancedoctrine-component/tree/0.0.1",
+                "source": "https://github.com/sgurdiel/php-persistancedoctrine-component/tree/0.0.2",
                 "issues": "https://github.com/sgurdiel/php-persistancedoctrine-component/issues"
             },
-            "time": "2022-05-24T15:40:10+00:00"
+            "time": "2022-05-26T21:31:52+00:00"
         },
         {
             "name": "xver/symfony-baseapp-bundle",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sgurdiel/symfony-baseapp-bundle.git",
-                "reference": "634cc8859c13408c04382fdf3f2a8b824c062ba0"
+                "reference": "2389e6d9a33259ab37e1e707d040962238841974"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/symfony-baseapp-bundle/zipball/634cc8859c13408c04382fdf3f2a8b824c062ba0",
-                "reference": "634cc8859c13408c04382fdf3f2a8b824c062ba0",
+                "url": "https://api.github.com/repos/sgurdiel/symfony-baseapp-bundle/zipball/2389e6d9a33259ab37e1e707d040962238841974",
+                "reference": "2389e6d9a33259ab37e1e707d040962238841974",
                 "shasum": ""
             },
             "require": {
@@ -7413,8 +7413,8 @@
                 "symfony/security-bundle": "6.0.*",
                 "symfony/translation-contracts": "^2.3|^3.0",
                 "symfony/validator": "^5.4|^6.0",
-                "xver/domain-bundle": "0.0.*",
-                "xver/persistancedoctrine-component": "0.0.*"
+                "xver/domain-bundle": "^0",
+                "xver/persistancedoctrine-component": "^0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9.5",
@@ -7432,14 +7432,14 @@
                 }
             },
             "license": [
-                "AGPLv3"
+                "AGPL-3.0-or-later"
             ],
             "description": "Provides base for symfony app",
             "support": {
-                "source": "https://github.com/sgurdiel/symfony-baseapp-bundle/tree/0.0.1",
+                "source": "https://github.com/sgurdiel/symfony-baseapp-bundle/tree/0.0.2",
                 "issues": "https://github.com/sgurdiel/symfony-baseapp-bundle/issues"
             },
-            "time": "2022-05-24T15:53:05+00:00"
+            "time": "2022-05-26T21:31:44+00:00"
         }
     ],
     "packages-dev": [
