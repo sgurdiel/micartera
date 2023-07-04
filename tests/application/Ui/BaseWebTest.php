@@ -2,16 +2,10 @@
 
 namespace Tests\application\Ui;
 
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Route;
-use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
-use xVer\MiCartera\Application\Query\Account\AccountQuery;
-use xVer\Symfony\Bundle\BaseAppBundle\Ui\Entity\AuthUser;
-use xVer\Symfony\Bundle\BaseAppBundle\Ui\Security\Provider;
+use Tests\application\ApplicationTestCase;;
 
 /**
  * @covers xVer\MiCartera\Ui\Controller\AccountingController
@@ -52,32 +46,16 @@ use xVer\Symfony\Bundle\BaseAppBundle\Ui\Security\Provider;
  * @uses xVer\MiCartera\Ui\Controller\StockOperateController
  * @uses xVer\MiCartera\Ui\Form\StockOperateImportType
  */
-class BaseWebTest extends WebTestCase
+class BaseWebTest extends ApplicationTestCase
 {
-    private KernelBrowser $client;
     private static array $pages = [];
-    private static AuthUser $user;
 
     public static function setUpBeforeClass(): void
     {
-        // (1) boot the Symfony kernel
-        self::bootKernel(['debug' => false]);
-
-        // (2) use static::getContainer() to access the service container
-        $container = static::getContainer();
-
+        parent::setUpBeforeClass();
         /** @var Router */
-        $router = $container->get('router');
+        $router = static::getContainer()->get('router');
         self::configurePages($router);
-        self::$user = (
-            new Provider(
-                new AccountQuery(
-                    EntityObjectRepositoryLoader::doctrine(
-                        $container->get(ManagerRegistry::class)
-                    )
-                )
-            )
-        )->loadUserByIdentifier('test@example.com');
     }
 
     private static function skipRoute(Route $route): bool
@@ -124,12 +102,6 @@ class BaseWebTest extends WebTestCase
                 ];
             }
         }
-    }
-
-    public function setUp(): void
-    {
-        static::ensureKernelShutdown();
-        $this->client = static::createClient();
     }
 
     public function testPagesRedirectToPortfolioWhenAccessedWhileLoggedIn(): void

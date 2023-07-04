@@ -49,7 +49,6 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
 {
     private LiquidationRepositoryInterface $repo;
     private Account $account;
-    private Account $account2;
     private Stock $stock;
     private Stock $stock2;
     private MoneyVO $expenses;
@@ -61,7 +60,6 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         $repoAccount = new AccountRepositoryDoctrine(self::$registry);
         $repoStock = new StockRepositoryDoctrine(self::$registry);
         $this->account = $repoAccount->findByIdentifier('test@example.com');
-        $this->account2 = $repoAccount->findByIdentifier('test_other@example.com');
         $this->stock = $repoStock->findById('CABK');
         $this->stock2 = $repoStock->findById('SAN');
         $this->expenses = new MoneyVO('11.43', $this->account->getCurrency());
