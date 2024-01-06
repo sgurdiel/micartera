@@ -22,7 +22,7 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.0.28
+        image: mysql:8.2.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
           MYSQL_ROOT_PASSWORD: password
@@ -40,8 +40,8 @@ jobs:
     env:
       APP_ENV: test
       APP_SECRET: kv95njkb5t90v89jtrbjh3bvdv
-      DATABASE_URL: mysql://root:password@127.0.0.1:3306/micartera?serverVersion=8.0
-      TRUSTED_PROXIES: 
+      DATABASE_URL: mysql://root:password@127.0.0.1:3306/micartera?serverVersion=8.2
+      TRUSTED_PROXIES:
       SYMFONY_DEPRECATIONS_HELPER: disabled=1
 
     steps:
@@ -65,7 +65,8 @@ jobs:
     - name: Run Database setup
       run: |
         bin/console doctrine:database:create --if-not-exists --env=test || echo "Schema creation failed"
-        bin/console doctrine:schema:update --force --complete --env=test || echo "Schema updated failed"
+        bin/console doctrine:schema:drop --force --env=test || echo "Schema drop failed"
+        bin/console doctrine:schema:create --env=test || echo "Schema create failed"
         bin/console doctrine:fixtures:load --no-interaction --env=test || echo "Fixtures load failed"
 
     - name: Install NPM dependencies

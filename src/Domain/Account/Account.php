@@ -13,6 +13,7 @@ use xVer\Symfony\Bundle\BaseAppBundle\Domain\Account\Account as BaseAccount;
 
 class Account extends BaseAccount
 {
+    /** @var non-empty-string */
     private readonly string $timezone;
 
     /**

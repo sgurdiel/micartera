@@ -71,13 +71,6 @@ class StockOperateImportType extends AbstractType implements DataMapperInterface
      */
     public function mapFormsToData(\Traversable $forms, mixed &$viewData): void
     {
-        // @codeCoverageIgnoreStart
-        // there is no data yet, so nothing to prepopulate
-        if (!$forms instanceof \Traversable) {
-            return;
-        }
-        // @codeCoverageIgnoreEnd
-
         $forms = \iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 

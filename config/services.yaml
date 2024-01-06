@@ -45,8 +45,9 @@ services:
             - '@security_provider.account_query'
 
     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+        public: false
         arguments:
-            - '%env(DATABASE_URL)%'
+            - '%env(resolve:DATABASE_URL)%'
             - { db_table: 'session' }
 
 when@test:
@@ -56,3 +57,9 @@ when@test:
             arguments:
                 - '@Doctrine\Persistence\ManagerRegistry'
             tags: [doctrine.fixture.orm]
+        
+        Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler:
+            public: false
+            arguments:
+                - '%env(string:key:scheme:url:DATABASE_URL)%:dbname=%env(string:key:path:url:DATABASE_URL)%%doctrine_test_dbname_suffix%;host=%env(string:key:host:url:DATABASE_URL)%;port=%env(string:key:port:url:DATABASE_URL)%'
+                - { db_username: '%env(string:key:user:url:DATABASE_URL)%', db_password: '%env(string:key:pass:url:DATABASE_URL)%', db_table: 'session' }
