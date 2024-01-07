@@ -61,7 +61,7 @@ class Currency implements EntityObjectInterface
         if (!$otherEntityObject instanceof Currency) {
             throw new InvalidArgumentException();
         }
-        return (0 === strcmp($this->getIso3(), $otherEntityObject->getIso3()));
+        return 0 === strcmp($this->getIso3(), $otherEntityObject->getIso3());
     }
 
     public function getSymbol(): string

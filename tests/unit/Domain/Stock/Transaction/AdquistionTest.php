@@ -159,28 +159,38 @@ class AdquistionTest extends TestCase
         ];
     }
 
-    public function testAccountMovementWithWrongLiquidationThrowsException(): void
+    public function testAccountMovementWithWrongAdquisitionThrowsException(): void
     {
         /** @var Adquisition&MockObject */
-        $transaction = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
+        $transaction1 = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
+            [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
+        )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
+        /** @var Adquisition&MockObject */
+        $transaction2 = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
             [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
         /** @var Movement&MockObject */
         $movement = $this->createStub(Movement::class);
+        $movement->method('getAdquisition')->willReturn($transaction2);
         $this->expectException(InvalidArgumentException::class);
-        $transaction->accountMovement($this->repoLoader, $movement);
+        $transaction1->accountMovement($this->repoLoader, $movement);
     }
 
-    public function testUnaccountMovementWithWrongLiquidationThrowsException(): void
+    public function testUnaccountMovementWithWrongAdquisitionThrowsException(): void
     {
         /** @var Adquisition&MockObject */
-        $transaction = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
+        $transaction1 = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
+            [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
+        )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
+        /** @var Adquisition&MockObject */
+        $transaction2 = $this->getMockBuilder(Adquisition::class)->enableOriginalConstructor()->setConstructorArgs(
             [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
         /** @var Movement&MockObject */
         $movement = $this->createStub(Movement::class);
+        $movement->method('getAdquisition')->willReturn($transaction2);
         $this->expectException(InvalidArgumentException::class);
-        $transaction->unaccountMovement($this->repoLoader, $movement);
+        $transaction1->unaccountMovement($this->repoLoader, $movement);
     }
 
     /**

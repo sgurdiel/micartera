@@ -159,13 +159,18 @@ class LiquidationTest extends TestCase
     public function testMovementWithWrongLiquidationThrowsException(): void
     {
         /** @var Liquidation&MockObject */
-        $transaction = $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
+        $transaction1 = $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
+            [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
+        )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
+        /** @var Liquidation&MockObject */
+        $transaction2 = $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
             [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
         /** @var Movement&MockObject */
         $movement = $this->createStub(Movement::class);
+        $movement->method('getLiquidation')->willReturn($transaction2);
         $this->expectException(InvalidArgumentException::class);
-        $transaction->accountMovement($this->repoLoader, $movement);
+        $transaction1->accountMovement($this->repoLoader, $movement);
     }
     
     /**

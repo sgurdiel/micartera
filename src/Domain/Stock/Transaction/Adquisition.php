@@ -36,7 +36,9 @@ class Adquisition extends TransactionAbstract implements EntityObjectInterface
         if (!$otherEntityObject instanceof Adquisition) {
             throw new InvalidArgumentException();
         }
-        return parent::getId()->equals($otherEntityObject->getId());
+        return parent::getId()->equals(
+            $otherEntityObject->getId()
+        );
     }
 
     public function getAmountOutstanding(): int

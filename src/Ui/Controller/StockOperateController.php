@@ -39,11 +39,10 @@ class StockOperateController extends AbstractController
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
-                return (
+                return
                     $form->get('refererPage')->getData()
                     ? $this->redirect((string) $form->get('refererPage')->getData(), Response::HTTP_SEE_OTHER)
-                    : $this->redirectToRoute('portfolio_index', [], Response::HTTP_SEE_OTHER)
-                );
+                    : $this->redirectToRoute('portfolio_index', [], Response::HTTP_SEE_OTHER);
             }
         } catch (\DomainException $de) {
             $this->addFlash('error', $de->getMessage());
@@ -85,11 +84,10 @@ class StockOperateController extends AbstractController
                 $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
         }
-        return (
+        return
             $request->headers->get('referer')
             ? $this->redirect((string) $request->headers->get('referer'), Response::HTTP_SEE_OTHER)
-            : $this->redirectToRoute($route, [], Response::HTTP_SEE_OTHER)
-        );
+            : $this->redirectToRoute($route, [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/import', name: 'import', methods: ['GET','POST'])]

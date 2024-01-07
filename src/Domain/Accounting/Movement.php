@@ -64,10 +64,9 @@ class Movement implements EntityObjectInterface
         if (!$otherEntityObject instanceof Movement) {
             throw new InvalidArgumentException();
         }
-        return (
+        return
             $this->adquisition->sameId($otherEntityObject->getAdquisition())
-            && $this->liquidation->sameId($otherEntityObject->getLiquidation())
-        );
+            && $this->liquidation->sameId($otherEntityObject->getLiquidation());
     }
 
     public function getAdquisition(): Adquisition

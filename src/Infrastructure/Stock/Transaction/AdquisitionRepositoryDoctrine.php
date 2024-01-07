@@ -162,11 +162,11 @@ class AdquisitionRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
 
     private function sortFieldToString(string $sortField): string
     {
-        return ('amount' === $sortField ? 'amount' : 'datetimeutc');
+        return 'amount' === $sortField ? 'amount' : 'datetimeutc';
     }
 
     private function sortOrderToString(string $sortOrder): string
     {
-        return ('ASC' === $sortOrder ? 'ASC' : 'DESC');
+        return 'ASC' === $sortOrder ? 'ASC' : 'DESC';
     }
 }
