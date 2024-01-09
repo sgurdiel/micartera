@@ -10,28 +10,12 @@ class SummaryVO
 {
     private readonly int $yearOfFirstLiquidation;
 
-    /**
-     * @param numeric-string $allTimeAdquisitionsPrice,
-     * @param numeric-string $allTimeAdquisitionsExpenses,
-     * @param numeric-string $allTimeLiquidationsPrice,
-     * @param numeric-string $allTimeLiquidationsExpenses,
-     * @param numeric-string $displayedYearAdquisitionsPrice,
-     * @param numeric-string $displayedYearAdquisitionsExpenses,
-     * @param numeric-string $displayedYearLiquidationsPrice,
-     * @param numeric-string $displayedYearLiquidationsExpenses
-     */
     public function __construct(
         private readonly Account $account,
         private readonly int $displayedYear,
         readonly ?DateTime $dateTimeFirstLiquidationUtc,
-        private readonly string $allTimeAdquisitionsPrice,
-        private readonly string $allTimeAdquisitionsExpenses,
-        private readonly string $allTimeLiquidationsPrice,
-        private readonly string $allTimeLiquidationsExpenses,
-        private readonly string $displayedYearAdquisitionsPrice,
-        private readonly string $displayedYearAdquisitionsExpenses,
-        private readonly string $displayedYearLiquidationsPrice,
-        private readonly string $displayedYearLiquidationsExpenses
+        private readonly SummaryDTO $summaryAllTimeDTO,
+        private readonly SummaryDTO $summaryDisplayedYearDTO
     ) {
         if (false === is_null($dateTimeFirstLiquidationUtc)) {
             $this->yearOfFirstLiquidation = (int) $dateTimeFirstLiquidationUtc->setTimezone($this->account->getTimeZone())
@@ -49,22 +33,22 @@ class SummaryVO
 
     public function getAllTimeAdquisitionsPrice(): MoneyVO
     {
-        return new MoneyVO($this->allTimeAdquisitionsPrice, $this->account->getCurrency());
+        return new MoneyVO($this->summaryAllTimeDTO->adquisitionsPrice, $this->account->getCurrency());
     }
 
     public function getAllTimeAdquisitionsExpenses(): MoneyVO
     {
-        return new MoneyVO($this->allTimeAdquisitionsExpenses, $this->account->getCurrency());
+        return new MoneyVO($this->summaryAllTimeDTO->adquisitionsExpenses, $this->account->getCurrency());
     }
 
     public function getAllTimeLiquidationsPrice(): MoneyVO
     {
-        return new MoneyVO($this->allTimeLiquidationsPrice, $this->account->getCurrency());
+        return new MoneyVO($this->summaryAllTimeDTO->liquidationsPrice, $this->account->getCurrency());
     }
 
     public function getAllTimeLiquidationsExpenses(): MoneyVO
     {
-        return new MoneyVO($this->allTimeLiquidationsExpenses, $this->account->getCurrency());
+        return new MoneyVO($this->summaryAllTimeDTO->liquidationsExpenses, $this->account->getCurrency());
     }
 
     public function getAllTimeProfitPrice(): MoneyVO
@@ -91,22 +75,22 @@ class SummaryVO
 
     public function getDisplayedYearAdquisitionsPrice(): MoneyVO
     {
-        return new MoneyVO($this->displayedYearAdquisitionsPrice, $this->account->getCurrency());
+        return new MoneyVO($this->summaryDisplayedYearDTO->adquisitionsPrice, $this->account->getCurrency());
     }
 
     public function getDisplayedYearAdquisitionsExpenses(): MoneyVO
     {
-        return new MoneyVO($this->displayedYearAdquisitionsExpenses, $this->account->getCurrency());
+        return new MoneyVO($this->summaryDisplayedYearDTO->adquisitionsExpenses, $this->account->getCurrency());
     }
 
     public function getDisplayedYearLiquidationsPrice(): MoneyVO
     {
-        return new MoneyVO($this->displayedYearLiquidationsPrice, $this->account->getCurrency());
+        return new MoneyVO($this->summaryDisplayedYearDTO->liquidationsPrice, $this->account->getCurrency());
     }
 
     public function getDisplayedYearLiquidationsExpenses(): MoneyVO
     {
-        return new MoneyVO($this->displayedYearLiquidationsExpenses, $this->account->getCurrency());
+        return new MoneyVO($this->summaryDisplayedYearDTO->liquidationsExpenses, $this->account->getCurrency());
     }
 
     public function getDisplayedYearProfitPrice(): MoneyVO

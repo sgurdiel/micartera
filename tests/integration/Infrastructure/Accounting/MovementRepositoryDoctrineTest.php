@@ -27,6 +27,7 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\Accounting\SummaryVO
+ * @uses xVer\MiCartera\Domain\Accounting\SummaryDTO
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation

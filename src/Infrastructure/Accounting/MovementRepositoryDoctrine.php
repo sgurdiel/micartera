@@ -4,6 +4,7 @@ namespace xVer\MiCartera\Infrastructure\Accounting;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Uuid;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
@@ -12,6 +13,7 @@ use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Accounting\Movement;
 use xVer\MiCartera\Domain\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\Accounting\MovementRepositoryInterface;
+use xVer\MiCartera\Domain\Accounting\SummaryDTO;
 use xVer\MiCartera\Domain\Accounting\SummaryVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine;
@@ -101,6 +103,12 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
             ->setParameter('account_id', $account->getId(), 'uuid');
         /** @var non-empty-array<string,string,string,string> */
         $allTimeresult = $qb->getQuery()->getSingleResult();
+        $summaryAllTimeDTO = new SummaryDTO(
+            $allTimeresult['adquisitionPrice'],
+            $allTimeresult['adquisitionExpenses'],
+            $allTimeresult['liquidationPrice'],
+            $allTimeresult['liquidationExpenses']
+        );
 
         $qb = $this->createQueryBuilder('a')
             ->select(
@@ -129,20 +137,20 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
                 ->format('Y-m-d H:i:s')
             );
         /** @var non-empty-array<string,string,string,string> */
-        $displayedYearResult = $qb->getQuery()->getSingleResult();
+        $displayedYearResult = $qb->getQuery()->getSingleResult(Query::HYDRATE_OBJECT);
+        $summaryDisplayedYearDTO = new SummaryDTO(
+            $displayedYearResult['adquisitionPrice'],
+            $displayedYearResult['adquisitionExpenses'],
+            $displayedYearResult['liquidationPrice'],
+            $displayedYearResult['liquidationExpenses']
+        );
 
         return new SummaryVO(
             $account,
             $displayedYear,
             $allTimeresult['firstDateTimeUtc'] ? DateTime::createFromFormat('Y-m-d H:i:s', $allTimeresult['firstDateTimeUtc'], new DateTimeZone('UTC')) : null,
-            $allTimeresult['adquisitionPrice'],
-            $allTimeresult['adquisitionExpenses'],
-            $allTimeresult['liquidationPrice'],
-            $allTimeresult['liquidationExpenses'],
-            $displayedYearResult['adquisitionPrice'],
-            $displayedYearResult['adquisitionExpenses'],
-            $displayedYearResult['liquidationPrice'],
-            $displayedYearResult['liquidationExpenses']
+            $summaryAllTimeDTO,
+            $summaryDisplayedYearDTO
         );
 
     }

@@ -7,6 +7,7 @@ use DateTimeZone;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use xVer\MiCartera\Domain\Account\Account;
+use xVer\MiCartera\Domain\Accounting\SummaryDTO;
 use xVer\MiCartera\Domain\Accounting\SummaryVO;
 use xVer\MiCartera\Domain\Currency\Currency;
 
@@ -22,16 +23,10 @@ class SummaryVOTest extends TestCase
         int $displayedYear,
         ?DateTime $dateTimeFirstLiquidationUtc,
         int $yearFirstLiquidation,
-        string $allTimeAdquisitionsPrice,
-        string $allTimeAdquisitionsExpenses,
-        string $allTimeLiquidationsPrice,
-        string $allTimeLiquidationsExpenses,
+        SummaryDTO $allTimeSummaryDTO,
         string $allTimeProfitPrice,
         string $allTimeProfitPercentage,
-        string $displayedYearAdquisitionsPrice,
-        string $displayedYearAdquisitionsExpenses,
-        string $displayedYearLiquidationsPrice,
-        string $displayedYearLiquidationsExpenses,
+        SummaryDTO $displayedYearSummaryDTO,
         string $displayedYearProfitPrice,
         string $displayedYearProfitPercentage
     ): void {
@@ -42,18 +37,18 @@ class SummaryVOTest extends TestCase
         $account = $this->createStub(Account::class);
         $account->method('getTimeZone')->willReturn(new DateTimeZone('UTC'));
         $account->method('getCurrency')->willReturn($currency);
-        $accountingMovement = new SummaryVO($account, $displayedYear, $dateTimeFirstLiquidationUtc, $allTimeAdquisitionsPrice, $allTimeAdquisitionsExpenses, $allTimeLiquidationsPrice, $allTimeLiquidationsExpenses, $displayedYearAdquisitionsPrice, $displayedYearAdquisitionsExpenses, $displayedYearLiquidationsPrice, $displayedYearLiquidationsExpenses);
+        $accountingMovement = new SummaryVO($account, $displayedYear, $dateTimeFirstLiquidationUtc, $allTimeSummaryDTO, $displayedYearSummaryDTO);
         $this->assertSame($yearFirstLiquidation, $accountingMovement->getYearFirstLiquidation());
-        $this->assertSame($allTimeAdquisitionsPrice, $accountingMovement->getAllTimeAdquisitionsPrice()->getValue());
-        $this->assertSame($allTimeAdquisitionsExpenses, $accountingMovement->getAllTimeAdquisitionsExpenses()->getValue());
-        $this->assertSame($allTimeLiquidationsPrice, $accountingMovement->getAllTimeLiquidationsPrice()->getValue());
-        $this->assertSame($allTimeLiquidationsExpenses, $accountingMovement->getAllTimeLiquidationsExpenses()->getValue());
+        $this->assertSame($allTimeSummaryDTO->adquisitionsPrice, $accountingMovement->getAllTimeAdquisitionsPrice()->getValue());
+        $this->assertSame($allTimeSummaryDTO->adquisitionsExpenses, $accountingMovement->getAllTimeAdquisitionsExpenses()->getValue());
+        $this->assertSame($allTimeSummaryDTO->liquidationsPrice, $accountingMovement->getAllTimeLiquidationsPrice()->getValue());
+        $this->assertSame($allTimeSummaryDTO->liquidationsExpenses, $accountingMovement->getAllTimeLiquidationsExpenses()->getValue());
         $this->assertSame($allTimeProfitPrice, $accountingMovement->getAllTimeProfitPrice()->getValue());
         $this->assertSame($allTimeProfitPercentage, $accountingMovement->getAllTimeProfitPercentage());
-        $this->assertSame($displayedYearAdquisitionsPrice, $accountingMovement->getDisplayedYearAdquisitionsPrice()->getValue());
-        $this->assertSame($displayedYearAdquisitionsExpenses, $accountingMovement->getDisplayedYearAdquisitionsExpenses()->getValue());
-        $this->assertSame($displayedYearLiquidationsPrice, $accountingMovement->getDisplayedYearLiquidationsPrice()->getValue());
-        $this->assertSame($displayedYearLiquidationsExpenses, $accountingMovement->getDisplayedYearLiquidationsExpenses()->getValue());
+        $this->assertSame($displayedYearSummaryDTO->adquisitionsPrice, $accountingMovement->getDisplayedYearAdquisitionsPrice()->getValue());
+        $this->assertSame($displayedYearSummaryDTO->adquisitionsExpenses, $accountingMovement->getDisplayedYearAdquisitionsExpenses()->getValue());
+        $this->assertSame($displayedYearSummaryDTO->liquidationsPrice, $accountingMovement->getDisplayedYearLiquidationsPrice()->getValue());
+        $this->assertSame($displayedYearSummaryDTO->liquidationsExpenses, $accountingMovement->getDisplayedYearLiquidationsExpenses()->getValue());
         $this->assertSame($displayedYearProfitPrice, $accountingMovement->getDisplayedYearProfitPrice()->getValue());
         $this->assertSame($displayedYearProfitPercentage, $accountingMovement->getDisplayedYearProfitPercentage());
     }
@@ -64,14 +59,14 @@ class SummaryVOTest extends TestCase
         $dateThreeYearsAgo = new DateTime('3 years ago', new DateTimeZone('UTC'));
         return [
             [(int) $dateNow->format('Y'), null, (int) $dateNow->format('Y'),
-            '0.00', '0.00', '0.00', '0.00', '0.00', '0.00',
-            '0.00', '0.00', '0.00', '0.00', '0.00', '0.00'],
+            new SummaryDTO('0.00', '0.00', '0.00', '0.00'), '0.00', '0.00',
+            new SummaryDTO('0.00', '0.00', '0.00', '0.00'), '0.00', '0.00'],
             [(int) $dateThreeYearsAgo->format('Y'), $dateThreeYearsAgo, (int) $dateThreeYearsAgo->format('Y'),
-            '450.00', '11.34', '1013.23', '8.05', '543.84', '120.85',
-            '0.00', '0.00', '0.00', '0.00', '0.00', '0.00'],
+            new SummaryDTO('450.00', '11.34', '1013.23', '8.05'), '543.84', '120.85',
+            new SummaryDTO('0.00', '0.00', '0.00', '0.00'), '0.00', '0.00'],
             [(int) $dateThreeYearsAgo->format('Y'), $dateThreeYearsAgo, (int) $dateThreeYearsAgo->format('Y'),
-            '450.00', '11.34', '1013.23', '8.05', '543.84', '120.85',
-            '450.00', '11.34', '1013.23', '8.05', '543.84', '120.85']
+            new SummaryDTO('450.00', '11.34', '1013.23', '8.05'), '543.84', '120.85',
+            new SummaryDTO('450.00', '11.34', '1013.23', '8.05'), '543.84', '120.85']
         ];
     }
 }

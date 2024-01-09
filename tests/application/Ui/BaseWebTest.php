@@ -26,6 +26,7 @@ use Tests\application\ApplicationTestCase;;
  * @uses xVer\MiCartera\Domain\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\Accounting\SummaryVO
+ * @uses xVer\MiCartera\Domain\Accounting\SummaryDTO
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\Currency\CurrenciesCollection
  * @uses xVer\MiCartera\Domain\MoneyVO
