@@ -267,6 +267,14 @@ class StockOperateControllerTest extends ApplicationTestCase
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
+        // Test file upload error
+        $file = new UploadedFile('/tmp/nonexistent.csv', 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
+        $formFields = [
+            $formName.'[csv]' => $file
+        ];
+        $this->client->submit($form, $formFields);
+        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidUploadedFile', [], 'validators'));
+
         // Test invalid column count exception
         $fp = fopen($filePath, 'w+');
         $dateLiquidation = (new DateTime('20 mins ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');

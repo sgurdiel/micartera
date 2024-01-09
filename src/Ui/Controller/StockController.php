@@ -41,17 +41,33 @@ class StockController extends AbstractController
     }
 
     #[Route('/form-new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TranslatorInterface $translator): Response|RedirectResponse
-    {
+    public function new(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry
+    ): Response|RedirectResponse {
         $form = $this->createForm(StockType::class);
-        try {
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $command = new StockCommand(
+                    EntityObjectRepositoryLoader::doctrine($managerRegistry)
+                );
+                /** @psalm-var numeric-string */
+                $price = $form->get('price')->getData();
+                /** @psalm-suppress PossiblyNullReference */
+                $userIdentifier = $this->getUser()->getUserIdentifier();
+                $command->create(
+                    (string) $form->get('code')->getData(),
+                    (string) $form->get('name')->getData(),
+                    $price,
+                    $userIdentifier
+                );
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return $this->redirectToRoute('stock_list', [], Response::HTTP_SEE_OTHER);
+            } catch (\DomainException $de) {
+                $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
-        } catch (\DomainException $de) {
-            $this->addFlash('error', $de->getMessage());
         }
         return $this->render('stock/form.html.twig', [
             'form' => $form,
@@ -60,8 +76,11 @@ class StockController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['GET', 'POST'])]
-    public function update(Request $request, TranslatorInterface $translator): Response|RedirectResponse
-    {
+    public function update(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry
+    ): Response|RedirectResponse {
         if ($request->isMethod('GET')) {
             $formData = [
                 'code' => $request->attributes->get('id'),
@@ -69,23 +88,28 @@ class StockController extends AbstractController
             ];
         } else {
             $formData = [
-                'updatePost' => true,
                 'code' => $request->attributes->get('id'),
                 'refererPage' => $request->request->all('stock')['refererPage']
             ];
         }
         $form = $this->createForm(StockType::class, $formData);
-        try {
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $command = new StockCommand(
+                    EntityObjectRepositoryLoader::doctrine($managerRegistry)
+                );
+                /** @psalm-var numeric-string */
+                $price = $form->get('price')->getData();
+                $command->update((string) $formData['code'], (string) $form->get('name')->getData(), $price);
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return
                     $form->get('refererPage')->getData()
                     ? $this->redirect((string) $form->get('refererPage')->getData(), Response::HTTP_SEE_OTHER)
                     : $this->redirectToRoute('stock_list', [], Response::HTTP_SEE_OTHER);
+            } catch (\DomainException $de) {
+                $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
-        } catch (\DomainException $de) {
-            $this->addFlash('error', $de->getMessage());
         }
         return $this->render('stock/form.html.twig', [
             'form' => $form,

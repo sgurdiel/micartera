@@ -14,23 +14,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use xVer\MiCartera\Application\Command\Stock\StockOperateCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Account\AccountQuery;
-use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
 
 class StockOperateType extends AbstractType implements DataMapperInterface
 {
-    use ExceptionTranslatorTrait;
-
     private readonly string $accountIdentifier;
 
     public function __construct(
         TokenStorageInterface $token,
         private readonly ManagerRegistry $managerRegistry,
-        private readonly ContainerBagInterface $params,
-        private readonly TranslatorInterface $translator
+        private readonly ContainerBagInterface $params
     ) {
         /** @psalm-suppress PossiblyNullReference */
         $this->accountIdentifier = $token->getToken()->getUser()->getUserIdentifier();
@@ -113,50 +107,5 @@ class StockOperateType extends AbstractType implements DataMapperInterface
      */
     public function mapFormsToData(\Traversable $forms, mixed &$viewData): void
     {
-        // @codeCoverageIgnoreStart
-        // there is no data yet, so nothing to prepopulate
-        if (!$forms instanceof \Traversable) {
-            return;
-        }
-        // @codeCoverageIgnoreEnd
-
-        $forms = \iterator_to_array($forms);
-        /** @var FormInterface[] $forms */
-
-        try {
-            $repoLoader = EntityObjectRepositoryLoader::doctrine($this->managerRegistry);
-            $command = new StockOperateCommand(
-                $repoLoader
-            );
-            /** @psalm-var numeric-string */
-            $price = $forms['price']->getData();
-            /** @psalm-var numeric-string */
-            $expenses = $forms['expenses']->getData();
-            /** @psalm-var \DateTime */
-            $dateTime = $forms['datetime']->getData();
-            if ((int) $viewData['type'] === 0) {
-                $command->purchase(
-                    // (string) $stockId,
-                    (string) $viewData['stock'],
-                    $dateTime,
-                    (int) $forms['amount']->getData(),
-                    $price,
-                    $expenses,
-                    $this->accountIdentifier
-                );
-            } else {
-                $command->sell(
-                    // (string) $stockId,
-                    (string) $viewData['stock'],
-                    $dateTime,
-                    (int) $forms['amount']->getData(),
-                    $price,
-                    $expenses,
-                    $this->accountIdentifier
-                );
-            }
-        } catch (\DomainException $de) {
-            throw $this->getTranslatedException($de, $this->translator);
-        }
     }
 }

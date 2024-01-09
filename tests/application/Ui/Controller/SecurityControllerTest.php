@@ -62,5 +62,18 @@ class SecurityControllerTest extends ApplicationTestCase
         $this->assertRouteSame('app_register');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('accountEmailExists', [], 'validators'));
+
+        // symfony form validation
+        $formFields = [
+            $formName.'[email]' => 'test2@example.com',
+            $formName.'[plainPassword][first]' => '123456',
+            $formName.'[plainPassword][second]' => '123456',
+            $formName.'[currency]' => 'EUR',
+            $formName.'[timezone]' => 'Europe/Madrid',
+            $formName.'[agreeTerms]' => '1'
+        ];
+        $this->client->submit($form, $formFields);
+        $this->assertRouteSame('app_register');
+        $this->assertResponseIsUnprocessable();
     }
 }

@@ -13,23 +13,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use xVer\MiCartera\Application\Command\Stock\StockCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Account\AccountQuery;
 use xVer\MiCartera\Application\Query\Stock\StockQuery;
-use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
 
 class StockType extends AbstractType implements DataMapperInterface
 {
-    use ExceptionTranslatorTrait;
-
     private readonly string $accountIdentifier;
 
     public function __construct(
         TokenStorageInterface $token,
-        private readonly ManagerRegistry $managerRegistry,
-        private readonly TranslatorInterface $translator
+        private readonly ManagerRegistry $managerRegistry
     ) {
         /** @psalm-suppress PossiblyNullReference */
         $this->accountIdentifier = $token->getToken()->getUser()->getUserIdentifier();
@@ -109,34 +103,5 @@ class StockType extends AbstractType implements DataMapperInterface
      */
     public function mapFormsToData(\Traversable $forms, mixed &$viewData): void
     {
-        // @codeCoverageIgnoreStart
-        // there is no data yet, so nothing to prepopulate
-        if (!$forms instanceof \Traversable) {
-            return;
-        }
-        // @codeCoverageIgnoreEnd
-
-        $forms = \iterator_to_array($forms);
-        /** @var FormInterface[] $forms */
-
-        try {
-            $command = new StockCommand(
-                EntityObjectRepositoryLoader::doctrine($this->managerRegistry)
-            );
-            /** @psalm-var numeric-string */
-            $price = $forms['price']->getData();
-            if (isset($viewData['updatePost'])) {
-                $command->update((string) $viewData['code'], (string) $forms['name']->getData(), $price);
-            } else {
-                $command->create(
-                    (string) $forms['code']->getData(),
-                    (string) $forms['name']->getData(),
-                    $price,
-                    $this->accountIdentifier
-                );
-            }
-        } catch (\DomainException $de) {
-            throw $this->getTranslatedException($de, $this->translator);
-        }
     }
 }

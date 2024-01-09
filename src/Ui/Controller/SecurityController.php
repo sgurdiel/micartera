@@ -2,14 +2,20 @@
 
 namespace xVer\MiCartera\Ui\Controller;
 
+use DateTimeZone;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use xVer\MiCartera\Application\Command\Account\AccountCommand;
+use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Ui\Form\RegistrationFormType;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
+use xVer\Symfony\Bundle\BaseAppBundle\Ui\Entity\AuthUser;
 
 class SecurityController extends AbstractController
 {
@@ -58,7 +64,9 @@ class SecurityController extends AbstractController
     #[Route("/{_locale<%app.locales%>}/register", name: "app_register")]
     public function register(
         Request $request,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        UserPasswordHasherInterface $passwordHasher
     ): Response {
         if ($this->getUser()) {
             return $this->redirectToRoute('portfolio_index');
@@ -77,23 +85,53 @@ class SecurityController extends AbstractController
             )
         ];
         $form = $this->createForm(RegistrationFormType::class, [], $options);
-        try {
-            $form->handleRequest($request);
-            if ($form->isSubmitted() && $form->isValid()) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $command = new AccountCommand(
+                    EntityObjectRepositoryLoader::doctrine($managerRegistry)
+                );
+                $roles = ['ROLE_USER'];
+                $hashedPassword = $passwordHasher->hashPassword(
+                    new AuthUser(
+                        (string) $form->get('email')->getData(),
+                        $roles,
+                        ''
+                    ),
+                    (string) $form->get('plainPassword')->getData()
+                );
+                /**
+                 * @psalm-suppress MixedAssignment
+                 * @psalm-suppress MixedMethodCall
+                 */
+                $currencyIso3 = $form->get('currency')->getData()->getIso3();
+                /** @psalm-var DateTimeZone */
+                $timezone = $form->get('timezone')->getData();
+                $command->create(
+                    (string) $form->get('email')->getData(),
+                    $hashedPassword,
+                    (string) $currencyIso3,
+                    $timezone,
+                    $roles,
+                    (bool) $form->get('agreeTerms')->getData()
+                );
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);
+            } catch (\DomainException $de) {
+                $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
-        } catch (\DomainException $de) {
-            $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
         }
-        return $this->render('@BaseApp/form/reusable_form.html.twig', [
-            'form' => $form,
-            'formTitle' => 'signUp',
-            'formSubmit' => 'signUp',
-            'formFooterLinks' => [
-                ['href' => $this->generateUrl('app_login'), 'text' => 'signIn']
+        return $this->render(
+            '@BaseApp/form/reusable_form.html.twig',
+            [
+                'form' => $form,
+                'formTitle' => 'signUp',
+                'formSubmit' => 'signUp',
+                'formFooterLinks' => [
+                    ['href' => $this->generateUrl('app_login'), 'text' => 'signIn']
+                ]
             ]
-        ]);
+        );
     }
 
     #[Route("/{_locale<%app.locales%>}/terms-conditions", name: "terms_conditions", methods: ["GET"])]
