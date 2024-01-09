@@ -2,7 +2,9 @@
 
 namespace xVer\MiCartera\Ui\Controller;
 
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use DomainException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,7 +52,7 @@ class StockOperateController extends AbstractController
                 $price = $form->get('price')->getData();
                 /** @psalm-var numeric-string */
                 $expenses = $form->get('expenses')->getData();
-                /** @psalm-var \DateTime */
+                /** @psalm-var DateTime */
                 $dateTime = $form->get('datetime')->getData();
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
@@ -157,7 +159,7 @@ class StockOperateController extends AbstractController
                     while (false !== ($line = fgetcsv($fp))) {
                         $numCols = count($line);
                         if (6 != $numCols) {
-                            throw new \DomainException(
+                            throw new DomainException(
                                 $translator->trans(
                                     'csvInvalidColumnCount',
                                     [
@@ -179,7 +181,7 @@ class StockOperateController extends AbstractController
                     }
                     fclose($fp);
                 } else {
-                    throw new \DomainException($translator->trans('invalidUploadedFile', [], 'validators'));
+                    throw new DomainException($translator->trans('invalidUploadedFile', [], 'validators'));
                 }
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return $this->redirectToRoute('stock_list', [], Response::HTTP_SEE_OTHER);

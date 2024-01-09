@@ -3,7 +3,6 @@
 namespace xVer\MiCartera\Domain;
 
 use InvalidArgumentException;
-use phpDocumentor\Reflection\Types\Boolean;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 

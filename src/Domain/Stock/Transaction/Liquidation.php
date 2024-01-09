@@ -3,10 +3,9 @@
 namespace xVer\MiCartera\Domain\Stock\Transaction;
 
 use DateTime;
-use Doctrine\Common\Collections\Collection;
-use Exception;
 use InvalidArgumentException;
 use Throwable;
+use Doctrine\Common\Collections\Collection;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;

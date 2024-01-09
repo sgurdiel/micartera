@@ -4,6 +4,8 @@ namespace xVer\MiCartera\Application;
 
 use Doctrine\Persistence\ManagerRegistry;
 use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionException;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 
@@ -61,10 +63,10 @@ class EntityObjectRepositoryLoader implements EntityObjectRepositoryLoaderInterf
              * @var EntityObjectRepositoryInterface|null
              * @psalm-var TRepo|null
              */
-            $returnRepo = (new \ReflectionClass($repoConcreate))->newInstanceArgs([$this->managerRegistry]);
+            $returnRepo = (new ReflectionClass($repoConcreate))->newInstanceArgs([$this->managerRegistry]);
             // @codeCoverageIgnoreStart
-        } catch (\ReflectionException $e) {
-            throw new \ReflectionException(
+        } catch (ReflectionException $e) {
+            throw new ReflectionException(
                 $e->getMessage(),
                 $e->getCode(),
                 $e

@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Traversable;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Account\AccountQuery;
 
@@ -53,7 +54,7 @@ class StockOperateImportType extends AbstractType implements DataMapperInterface
      * {@inheritDoc}
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function mapDataToForms(mixed $viewData, \Traversable $forms): void
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
     }
 

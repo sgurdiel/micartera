@@ -25,12 +25,10 @@ class StockQueryTest extends KernelTestCase
         $repoAccount = $this->createStub(AccountRepositoryDoctrine::class);
         /** @var EntityObjectRepositoryLoaderInterface&Stub */
         $repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
-        $repoLoader->method('load')->will(
-            $this->returnValueMap([
-                [StockRepositoryInterface::class, $repoStock],
-                [AccountRepositoryInterface::class, $repoAccount]
-            ])
-        );
+        $repoLoader->method('load')->willReturnMap([
+            [StockRepositoryInterface::class, $repoStock],
+            [AccountRepositoryInterface::class, $repoAccount]
+        ]);
         $query = new StockQuery($repoLoader);
         $response = $query->byAccountsCurrency(
             '',
@@ -55,11 +53,9 @@ class StockQueryTest extends KernelTestCase
         $repoStock = $this->createStub(StockRepositoryDoctrine::class);
         /** @var EntityObjectRepositoryLoaderInterface&Stub */
         $repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
-        $repoLoader->method('load')->will(
-            $this->returnValueMap([
-                [StockRepositoryInterface::class, $repoStock],
-            ])
-        );
+        $repoLoader->method('load')->willReturnMap([
+            [StockRepositoryInterface::class, $repoStock],
+        ]);
         $query = new StockQuery($repoLoader);
         $response = $query->byCode('');
         $this->assertInstanceOf(Stock::class, $response);

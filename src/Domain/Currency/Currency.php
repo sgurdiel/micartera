@@ -11,42 +11,21 @@ use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 
 class Currency implements EntityObjectInterface
 {
+    final public const LENGTH_ISO3 = 3;
+    final public const MAX_LENGTH_SYMBOL = 10;
+    final public const MIN_LENGTH_SYMBOL = 1;
+    final public const MAX_DECIMALS = 4;
+    final public const MIN_DECIMALS = 1;
+
     public function __construct(
         readonly EntityObjectRepositoryLoaderInterface $repoLoader,
         private string $iso3,
         private readonly string $symbol,
         private readonly int $decimals
     ) {
-        if (3 !== strlen($this->iso3)) {
-            throw new DomainException(
-                new TranslationVO(
-                    'invalidIso3',
-                    [],
-                    TranslationVO::DOMAIN_VALIDATORS
-                ),
-                'iso3'
-            );
-        }
-        if (0 >= strlen($this->symbol) || strlen($this->symbol) > 10) {
-            throw new DomainException(
-                new TranslationVO(
-                    'invalidSymbol',
-                    [],
-                    TranslationVO::DOMAIN_VALIDATORS
-                ),
-                'symbol'
-            );
-        }
-        if (0 >= $this->decimals || 4 < $this->decimals) {
-            throw new DomainException(
-                new TranslationVO(
-                    'numberBetween',
-                    ['minimum' => '1', 'maximum' => '4'],
-                    TranslationVO::DOMAIN_VALIDATORS
-                ),
-                'amount'
-            );
-        }
+        $this->validIso3();
+        $this->validSymbol();
+        $this->validDecimals();
         $this->iso3 = strtoupper($this->iso3);
         $this->persistCreate($repoLoader);
     }
@@ -72,6 +51,49 @@ class Currency implements EntityObjectInterface
     public function getDecimals(): int
     {
         return $this->decimals;
+    }
+
+    private function validIso3(): void
+    {
+        if (strlen($this->iso3) !== self::LENGTH_ISO3) {
+            throw new DomainException(
+                new TranslationVO(
+                    'invalidIso3',
+                    [],
+                    TranslationVO::DOMAIN_VALIDATORS
+                ),
+                'iso3'
+            );
+        }
+    }
+
+    private function validSymbol(): void
+    {
+        $symbolLength = strlen($this->symbol);
+        if ($symbolLength < self::MIN_LENGTH_SYMBOL || $symbolLength > self::MAX_LENGTH_SYMBOL) {
+            throw new DomainException(
+                new TranslationVO(
+                    'invalidSymbol',
+                    [],
+                    TranslationVO::DOMAIN_VALIDATORS
+                ),
+                'symbol'
+            );
+        }
+    }
+
+    private function validDecimals(): void
+    {
+        if ($this->decimals < self::MIN_DECIMALS || $this->decimals > self::MAX_DECIMALS) {
+            throw new DomainException(
+                new TranslationVO(
+                    'numberBetween',
+                    ['minimum' => self::MIN_DECIMALS, 'maximum' => self::MAX_DECIMALS],
+                    TranslationVO::DOMAIN_VALIDATORS
+                ),
+                'amount'
+            );
+        }
     }
 
     private function persistCreate(

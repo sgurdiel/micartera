@@ -7389,16 +7389,16 @@
         },
         {
             "name": "xver/symfony-baseapp-bundle",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sgurdiel/symfony-baseapp-bundle.git",
-                "reference": "449b6b0ea1d3729a03d3a29013842bc7582d636e"
+                "reference": "2da7100e4193259a171f8127073b2a052d56ab8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/symfony-baseapp-bundle/zipball/449b6b0ea1d3729a03d3a29013842bc7582d636e",
-                "reference": "449b6b0ea1d3729a03d3a29013842bc7582d636e",
+                "url": "https://api.github.com/repos/sgurdiel/symfony-baseapp-bundle/zipball/2da7100e4193259a171f8127073b2a052d56ab8b",
+                "reference": "2da7100e4193259a171f8127073b2a052d56ab8b",
                 "shasum": ""
             },
             "require": {
@@ -7429,10 +7429,10 @@
             ],
             "description": "Provides base for symfony app",
             "support": {
-                "source": "https://github.com/sgurdiel/symfony-baseapp-bundle/tree/v2.0.0",
+                "source": "https://github.com/sgurdiel/symfony-baseapp-bundle/tree/v2.0.1",
                 "issues": "https://github.com/sgurdiel/symfony-baseapp-bundle/issues"
             },
-            "time": "2024-01-07T17:13:19+00:00"
+            "time": "2024-01-09T16:42:16+00:00"
         }
     ],
     "packages-dev": [

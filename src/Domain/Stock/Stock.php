@@ -14,6 +14,10 @@ use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
 class Stock implements EntityObjectInterface
 {
     final public const MAX_TRANSACTION_AMOUNT = 999999;
+    final public const MAX_CODE_LENGTH = 4;
+    final public const MIN_CODE_LENGTH = 1;
+    final public const MAX_NAME_LENGTH = 255;
+    final public const MIN_NAME_LENGTH = 1;
     private string $code;
     private string $name;
     private readonly Currency $currency;
@@ -49,11 +53,11 @@ class Stock implements EntityObjectInterface
     private function setCode(string $code): self
     {
         $length = mb_strlen($code);
-        if ($length > 4 || $length === 0) {
+        if ($length > self::MAX_CODE_LENGTH || $length < self::MIN_CODE_LENGTH) {
             throw new DomainException(
                 new TranslationVO(
                     'stringLength',
-                    ['minimum' => 1, 'maximum' => 4],
+                    ['minimum' => self::MIN_CODE_LENGTH, 'maximum' => self::MAX_CODE_LENGTH],
                     TranslationVO::DOMAIN_VALIDATORS
                 ),
                 'code'
@@ -72,11 +76,11 @@ class Stock implements EntityObjectInterface
     final public function setName(string $name): self
     {
         $length = mb_strlen($name);
-        if ($length > 255 || $length === 0) {
+        if ($length > self::MAX_NAME_LENGTH || $length <  self::MIN_NAME_LENGTH) {
             throw new DomainException(
                 new TranslationVO(
                     'stringLength',
-                    ['minimum' => 1, 'maximum' => 255],
+                    ['minimum' => self::MIN_NAME_LENGTH, 'maximum' => self::MAX_NAME_LENGTH],
                     TranslationVO::DOMAIN_VALIDATORS
                 ),
                 'name'

@@ -3,6 +3,7 @@
 namespace xVer\MiCartera\Ui\Form;
 
 use Doctrine\Persistence\ManagerRegistry;
+use NumberFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Traversable;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Account\AccountQuery;
 use xVer\MiCartera\Application\Query\Stock\StockQuery;
@@ -55,7 +57,7 @@ class StockType extends AbstractType implements DataMapperInterface
             ])
             ->add('price', NumberType::class, [
                 'scale' => 4,
-                'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
+                'rounding_mode' => NumberFormatter::ROUND_HALFUP,
                 'html5' => true,
                 'attr' => ['step' => 0.0001],
                 'label' => new TranslatableMessage(
@@ -75,14 +77,14 @@ class StockType extends AbstractType implements DataMapperInterface
      * @psalm-param array|null $viewData,
      * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function mapDataToForms(mixed $viewData, \Traversable $forms): void
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
         // there is no data yet, so nothing to prepopulate
-        if (null === $viewData || !$forms instanceof \Traversable) {
+        if (null === $viewData || !$forms instanceof Traversable) {
             return;
         }
 
-        $forms = \iterator_to_array($forms);
+        $forms = iterator_to_array($forms);
         /** @var FormInterface[] $forms */
 
         // initialize form field values
