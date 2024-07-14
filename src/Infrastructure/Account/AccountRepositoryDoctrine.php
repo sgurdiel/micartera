@@ -22,7 +22,7 @@ class AccountRepositoryDoctrine extends EntityObjectRepositoryDoctrine implement
 
     public function persist(Account $account): Account
     {
-        $this->_em->persist($account);
+        $this->getEntityManager()->persist($account);
         return $account;
     }
 

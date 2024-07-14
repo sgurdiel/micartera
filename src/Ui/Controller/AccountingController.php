@@ -21,7 +21,7 @@ class AccountingController extends AbstractController
         $query = new AccountingQuery(EntityObjectRepositoryLoader::doctrine($managerRegistry));
         $accountingDTO = $query->byAccountYear(
             $userIdentifier,
-            $request->query->get('year', null) ? (int) $request->query->get('year') : null,
+            is_null($request->query->get('year')) === false ? (int) $request->query->get('year') : null,
             20,
             (int) $request->query->get('page', 0)
         );

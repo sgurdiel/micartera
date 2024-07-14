@@ -24,13 +24,13 @@ class StockRepositoryDoctrine extends EntityObjectRepositoryDoctrine implements 
 
     public function persist(Stock $stock): Stock
     {
-        $this->_em->persist($stock);
+        $this->getEntityManager()->persist($stock);
         return $stock;
     }
 
     public function remove(Stock $stock): void
     {
-        $this->_em->remove($stock);
+        $this->getEntityManager()->remove($stock);
     }
 
     /**

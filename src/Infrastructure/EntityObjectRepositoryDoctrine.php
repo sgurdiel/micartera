@@ -14,21 +14,21 @@ abstract class EntityObjectRepositoryDoctrine extends ServiceEntityRepository im
 {
     public function flush(): void
     {
-        $this->_em->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function beginTransaction(): void
     {
-        $this->_em->beginTransaction();
+        $this->getEntityManager()->beginTransaction();
     }
 
     public function commit(): void
     {
-        $this->_em->commit();
+        $this->getEntityManager()->commit();
     }
 
     public function rollBack(): void
     {
-        $this->_em->rollback();
+        $this->getEntityManager()->rollback();
     }
 }

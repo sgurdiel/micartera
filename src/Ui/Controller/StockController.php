@@ -138,7 +138,7 @@ class StockController extends AbstractController
             }
         }
         return
-            $request->headers->get('referer')
+            $request->headers->get('referer') != ''
             ? $this->redirect((string) $request->headers->get('referer'), Response::HTTP_SEE_OTHER)
             : $this->redirectToRoute('stock_list', [], Response::HTTP_SEE_OTHER);
     }

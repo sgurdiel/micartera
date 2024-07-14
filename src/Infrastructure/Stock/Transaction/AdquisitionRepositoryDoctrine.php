@@ -29,13 +29,13 @@ class AdquisitionRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
 
     public function persist(Adquisition $adquisition): Adquisition
     {
-        $this->_em->persist($adquisition);
+        $this->getEntityManager()->persist($adquisition);
         return $adquisition;
     }
 
     public function remove(Adquisition $adquisition): void
     {
-        $this->_em->remove($adquisition);
+        $this->getEntityManager()->remove($adquisition);
     }
 
     /**
@@ -77,7 +77,7 @@ class AdquisitionRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
             ->orderBy('t.datetimeutc', 'ASC');
         return new AdquisitionsCollection(
             $qb->getQuery()->setLockMode(
-                $this->_em->getConnection()->isTransactionActive()
+                $this->getEntityManager()->getConnection()->isTransactionActive()
                 ? LockMode::PESSIMISTIC_WRITE
                 : LockMode::NONE
             )->getResult()

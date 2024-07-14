@@ -27,13 +27,13 @@ class LiquidationRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
 
     public function persist(Liquidation $liquidation): Liquidation
     {
-        $this->_em->persist($liquidation);
+        $this->getEntityManager()->persist($liquidation);
         return $liquidation;
     }
 
     public function remove(Liquidation $liquidation): void
     {
-        $this->_em->remove($liquidation);
+        $this->getEntityManager()->remove($liquidation);
     }
 
     /**
@@ -101,7 +101,7 @@ class LiquidationRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
             ->orderBy('t.datetimeutc', 'ASC');
         return new LiquidationsCollection(
             $qb->getQuery()->setLockMode(
-                $this->_em->getConnection()->isTransactionActive()
+                $this->getEntityManager()->getConnection()->isTransactionActive()
                 ? LockMode::PESSIMISTIC_WRITE
                 : LockMode::NONE
             )->getResult()

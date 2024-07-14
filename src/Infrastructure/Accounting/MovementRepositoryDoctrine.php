@@ -30,13 +30,13 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
 
     public function persist(Movement $movement): Movement
     {
-        $this->_em->persist($movement);
+        $this->getEntityManager()->persist($movement);
         return $movement;
     }
 
     public function remove(Movement $movement): void
     {
-        $this->_em->remove($movement);
+        $this->getEntityManager()->remove($movement);
     }
 
     public function findByIdOrThrowException(Uuid $adquisitionUuid, Uuid $liquidationUuid): Movement

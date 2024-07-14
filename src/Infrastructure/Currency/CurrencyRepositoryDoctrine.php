@@ -23,7 +23,7 @@ class CurrencyRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
 
     public function persist(Currency $currency): Currency
     {
-        $this->_em->persist($currency);
+        $this->getEntityManager()->persist($currency);
         return $currency;
     }
 
