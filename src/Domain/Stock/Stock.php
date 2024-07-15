@@ -9,7 +9,7 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Currency\Currency;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 
 class Stock implements EntityObjectInterface
 {
@@ -173,7 +173,7 @@ class Stock implements EntityObjectInterface
         EntityObjectRepositoryLoaderInterface $repoLoader
     ): void {
         if (
-            $repoLoader->load(AdquisitionRepositoryInterface::class)
+            $repoLoader->load(AcquisitionRepositoryInterface::class)
             ->findByStockId($this)->count() !== 0
         ) {
             throw new DomainException(

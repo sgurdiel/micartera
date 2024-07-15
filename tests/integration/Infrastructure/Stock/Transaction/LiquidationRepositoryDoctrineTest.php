@@ -11,7 +11,7 @@ use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
@@ -26,24 +26,24 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
  * @covers xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Domain\Account\Account
- * @uses xVer\MiCartera\Domain\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FifoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Accounting\MovementRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  */
 class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
 {
@@ -120,7 +120,7 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         $transactionsCollection = $this->repo->findByStockId($this->stock2, 20, 0);
         $this->assertInstanceOf(LiquidationsCollection::class, $transactionsCollection);
         $this->assertSame(0, $transactionsCollection->count());
-        new Adquisition(
+        new Acquisition(
             $this->repoLoader,
             $this->stock2, new DateTime('30 minutes ago', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
         );

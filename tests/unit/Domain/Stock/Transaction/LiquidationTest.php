@@ -15,13 +15,13 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Domain\Account\Account;
-use xVer\MiCartera\Domain\Accounting\Movement;
-use xVer\MiCartera\Domain\Accounting\MovementRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Accounting\Movement;
+use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 
@@ -30,11 +30,11 @@ use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
  * @covers xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  */
 
 class LiquidationTest extends TestCase
@@ -244,8 +244,8 @@ class LiquidationTest extends TestCase
         $this->assertSame($transaction, $transaction->accountMovement($repoLoader, $movement));
         $this->assertSame(0, $transaction->getAmountRemaining());
         $this->assertEquals(new MoneyVO('0.00', $this->currency), $transaction->getExpensesUnaccountedFor());
-        $adquisitionsCollection = $transaction->clearMovementsCollection($repoLoader);
-        $this->assertInstanceOf(AdquisitionsCollection::class, $adquisitionsCollection);
+        $acquisitionsCollection = $transaction->clearMovementsCollection($repoLoader);
+        $this->assertInstanceOf(AcquisitionsCollection::class, $acquisitionsCollection);
         $this->assertSame(self::$amount, $transaction->getAmountRemaining());
         $this->assertEquals($this->expenses, $transaction->getExpensesUnaccountedFor());  
     }

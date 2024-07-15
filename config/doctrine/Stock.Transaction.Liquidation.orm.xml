@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity repository-class="xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine" name="xVer\MiCartera\Domain\Stock\Transaction\Liquidation" table="transactionLiquidation" change-tracking-policy="DEFERRED_EXPLICIT">
+  <entity repository-class="xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine" name="xVer\MiCartera\Domain\Stock\Transaction\Liquidation" table="stockTransactionLiquidation" change-tracking-policy="DEFERRED_EXPLICIT">
     <id name="id" type="uuid" column="id"/>
     <field name="datetimeutc" type="datetime" column="datetimeutc" nullable="false"/>
     <field name="amount" type="integer" column="amount" nullable="false">
@@ -33,7 +33,7 @@
         <join-column name="account_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
-    <one-to-many field="movementsCollection" target-entity="xVer\MiCartera\Domain\Accounting\Movement" mapped-by="liquidation">
+    <one-to-many field="movementsCollection" target-entity="xVer\MiCartera\Domain\Stock\Accounting\Movement" mapped-by="liquidation">
       <cascade>
           <cascade-all/>
       </cascade>

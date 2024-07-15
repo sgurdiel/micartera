@@ -13,7 +13,7 @@ use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 
 class BaseDataFixtures extends Fixture
 {
@@ -51,7 +51,7 @@ class BaseDataFixtures extends Fixture
         $price3 = new StockPriceVO('5.9620', $currencyEuro);
         new Stock($this->repoLoader, 'ROVI', 'Laboratorios Rovi', $price3);
         $expenses = new MoneyVO('10.23', $currencyEuro);
-        new Adquisition(
+        new Acquisition(
             $this->repoLoader,
             $stock,
             new DateTime('last week', new DateTimeZone('UTC')),

@@ -14,47 +14,47 @@ use xVer\MiCartera\Domain\Stock\Stock;
  * @covers xVer\MiCartera\Ui\Controller\StockOperateController
  * @covers xVer\MiCartera\Ui\Form\StockOperateType
  * @covers xVer\MiCartera\Ui\Form\StockOperateImportType
- * @uses xVer\MiCartera\Application\Query\Accounting\AccountingDTO
- * @uses xVer\MiCartera\Application\Query\Accounting\AccountingQuery
+ * @uses xVer\MiCartera\Application\Query\Stock\Accounting\AccountingDTO
+ * @uses xVer\MiCartera\Application\Query\Stock\Accounting\AccountingQuery
  * @uses xVer\MiCartera\Application\Query\Stock\StockQuery
  * @uses xVer\MiCartera\Application\Command\Stock\StockOperateCommand
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Application\Query\Account\AccountQuery
- * @uses xVer\MiCartera\Application\Query\Portfolio\PortfolioDTO
- * @uses xVer\MiCartera\Application\Query\Portfolio\PortfolioQuery
+ * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioDTO
+ * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery
  * @uses xVer\MiCartera\Domain\Account\Account
- * @uses xVer\MiCartera\Domain\Accounting\Movement
- * @uses xVer\MiCartera\Domain\Accounting\MovementsCollection
- * @uses xVer\MiCartera\Domain\Accounting\SummaryVO
- * @uses xVer\MiCartera\Domain\Accounting\SummaryDTO
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryVO
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryDTO
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
- * @uses xVer\MiCartera\Domain\Portfolio\SummaryVO
+ * @uses xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StocksCollection
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FifoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Accounting\MovementRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine
- * @uses xVer\MiCartera\Ui\Controller\AccountingController
- * @uses xVer\MiCartera\Ui\Controller\PortfolioController
+ * @uses xVer\MiCartera\Ui\Controller\StockAccountingController
+ * @uses xVer\MiCartera\Ui\Controller\StockPortfolioController
  * @uses xVer\MiCartera\Ui\Controller\StockController
  */
 class StockOperateControllerTest extends ApplicationTestCase
 {
     /** @depends testFromCsv */
-    public function testAdquisition(): void
+    public function testAcquisition(): void
     {
         $this->client->loginUser(self::$user);
         $crawler = $this->client->request('GET', "/en_GB/stockoperate/purchase/SAN");
@@ -77,7 +77,7 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // test new
         $this->client->submit($form, $formFields);
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -89,7 +89,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('numberBetween', ['minimum' => '1', 'maximum' => Stock::MAX_TRANSACTION_AMOUNT], TranslationVO::DOMAIN_VALIDATORS));
     }
 
-    /** @depends testAdquisition */
+    /** @depends testAcquisition */
     public function testLiquidation(): void
     {
         $this->client->loginUser(self::$user);
@@ -113,13 +113,13 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // test new
         $this->client->submit($form, $formFields);
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
         // test new with referer
         $formFields[$formName.'[datetime]'] = (new DateTime('29 minutes ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $referer = 'http://localhost/en_GB/portfolio?page=3';
+        $referer = 'http://localhost/en_GB/stockportfolio?page=3';
         $formFields[$formName.'[refererPage]'] = $referer;
         $this->client->submit($form, $formFields);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);
@@ -135,10 +135,10 @@ class StockOperateControllerTest extends ApplicationTestCase
     }
 
     /** @depends testLiquidation */
-    public function testDeleteAdquisitionThrowsDomainError(): void
+    public function testDeleteAcquisitionThrowsDomainError(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/portfolio');
+        $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_1');
@@ -149,16 +149,16 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('transBuyCannotBeRemovedWithoutFullAmountOutstanding', [], 'validators'));
     }
 
-    /** @depends testDeleteAdquisitionThrowsDomainError */
+    /** @depends testDeleteAcquisitionThrowsDomainError */
     public function testDeleteLiquidation(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/accounting');
+        $crawler = $this->client->request('GET', '/en_GB/stockaccounting');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_0');
@@ -169,7 +169,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/accounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -178,7 +178,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_0');
         $form = $buttonCrawlerNode->form();
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/accounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -186,7 +186,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $values = $form->getValues();
         $values['_token'] = 'BADTOKEN';
         $form->setValues($values);
-        $referer = 'http://localhost/en_GB/accounting?year='.(new DateTime('now', new DateTimeZone('UTC')))->format('Y');
+        $referer = 'http://localhost/en_GB/stockaccounting?year='.(new DateTime('now', new DateTimeZone('UTC')))->format('Y');
         $this->client->setServerParameter('HTTP_REFERER', $referer);
         $crawler = $this->client->submit($form);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);
@@ -199,16 +199,16 @@ class StockOperateControllerTest extends ApplicationTestCase
         $form->setValues($values);
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/accounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidFormToken', [], 'validators'));
     }
 
     /** @depends testDeleteLiquidation */
-    public function testDeleteAdquisition(): void
+    public function testDeleteAcquisition(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/portfolio');
+        $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_1');
@@ -219,7 +219,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -229,7 +229,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $form->setValues($values);
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidFormToken', [], 'validators'));
     }
@@ -251,11 +251,11 @@ class StockOperateControllerTest extends ApplicationTestCase
         $form = $buttonCrawlerNode->form();
         $formName = $form->getName();
 
-        // Test add adquisition and liquidation
+        // Test add acquisition and liquidation
         $fp = fopen($filePath, 'w+');
-        $dateAdquisition = (new DateTime('30 mins ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        $dateAcquisition = (new DateTime('30 mins ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
         $dateLiquidation = (new DateTime('20 mins ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $fileContent = $dateAdquisition.',adquisition,SAN,1,2,3'.PHP_EOL;
+        $fileContent = $dateAcquisition.',acquisition,SAN,1,2,3'.PHP_EOL;
         $fileContent .= $dateLiquidation.',liquidation,SAN,1,2,3';
         fputs($fp, $fileContent);
         $file = new UploadedFile($filePath, 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);

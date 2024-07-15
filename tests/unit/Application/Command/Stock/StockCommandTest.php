@@ -12,9 +12,11 @@ use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 use xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
-use xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine;
+use xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine;
 
 /**
@@ -86,12 +88,12 @@ class StockCommandTest extends TestCase
     {
         $this->repoStock->expects($this->once())->method('findByIdOrThrowException')->willReturn($this->stock);
         $this->stock->expects($this->once())->method('persistRemove');
-        $repoAdquisition = $this->createStub(AdquisitionRepositoryDoctrine::class);
+        $repoAcquisition = $this->createStub(AcquisitionRepositoryDoctrine::class);
         $repoLiquidation = $this->createStub(LiquidationRepositoryDoctrine::class);
         $this->repoLoader->method('load')->will(
             $this->returnValueMap([
                 [StockRepositoryInterface::class, $this->repoStock],
-                [AdquisitionRepositoryInterface::class, $repoAdquisition],
+                [AcquisitionRepositoryInterface::class, $repoAcquisition],
                 [LiquidationRepositoryInterface::class, $repoLiquidation]
             ])
         );

@@ -11,9 +11,9 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Account\Account;
-use xVer\MiCartera\Domain\Accounting\Movement;
-use xVer\MiCartera\Domain\Accounting\MovementRepositoryInterface;
-use xVer\MiCartera\Domain\Accounting\MovementsCollection;
+use xVer\MiCartera\Domain\Stock\Accounting\Movement;
+use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 
@@ -67,17 +67,17 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
 
     public function clearMovementsCollection(
         EntityObjectRepositoryLoaderInterface $repoLoader
-    ): AdquisitionsCollection {
+    ): AcquisitionsCollection {
         $repoMovement = $repoLoader->load(MovementRepositoryInterface::class);
-        $updatedAdquisitionsCollection = new AdquisitionsCollection([]);
+        $updatedAcquisitionsCollection = new AcquisitionsCollection([]);
         foreach ($this->movementsCollection->toArray() as $movement) {
-            $adquisition = $movement->getAdquisition();
-            $adquisition->unaccountMovement(
+            $acquisition = $movement->getAcquisition();
+            $acquisition->unaccountMovement(
                 $repoLoader,
                 $movement
             );
-            if (false === $updatedAdquisitionsCollection->contains($adquisition)) {
-                $updatedAdquisitionsCollection->add($adquisition);
+            if (false === $updatedAcquisitionsCollection->contains($acquisition)) {
+                $updatedAcquisitionsCollection->add($acquisition);
             }
             $repoMovement->remove($movement);
             $repoMovement->flush();
@@ -87,7 +87,7 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
         $this->amountRemaining = $this->amount;
         $repoLoader->load(LiquidationRepositoryInterface::class)->persist($this);
 
-        return $updatedAdquisitionsCollection;
+        return $updatedAcquisitionsCollection;
     }
 
     public function accountMovement(

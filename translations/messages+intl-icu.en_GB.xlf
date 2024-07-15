@@ -284,7 +284,7 @@
       <trans-unit id="csvTransactionFormat">
         <source>csvTransactionFormat</source>
         <target><![CDATA[CSV file having comma separator, double quote enclosure and fields:
-        <br />- operation date ['Y-m-d H:i:s'] using {timezone} timezone<br />- operation type [adquisition, liquidation]<br />- share symbol<br />- unit share price {currency}<br />- amount of shares<br />- operation fees {currency}]]></target>
+        <br />- operation date ['Y-m-d H:i:s'] using {timezone} timezone<br />- operation type [acquisition, liquidation]<br />- share symbol<br />- unit share price {currency}<br />- amount of shares<br />- operation fees {currency}]]></target>
       </trans-unit>
       <trans-unit id="upload">
         <source>upload</source>
@@ -302,9 +302,9 @@
         <source>liquidationDateTime</source>
         <target><![CDATA[Liquidation Date & Time]]></target>
       </trans-unit>
-      <trans-unit id="adquisitionDateTime">
-        <source>adquisitionDateTime</source>
-        <target><![CDATA[Adquisition Date & Time]]></target>
+      <trans-unit id="acquisitionDateTime">
+        <source>acquisitionDateTime</source>
+        <target><![CDATA[Acquisition Date & Time]]></target>
       </trans-unit>
       <trans-unit id="unitshareprice">
         <source>unitshareprice</source>
@@ -330,9 +330,9 @@
         <source>shares</source>
         <target>Shares</target>
       </trans-unit>
-      <trans-unit id="adquisition">
-        <source>adquisition</source>
-        <target>{amount, plural, one {Adquisition} other {Adquisitions}}</target>
+      <trans-unit id="acquisition">
+        <source>acquisition</source>
+        <target>{amount, plural, one {Acquisition} other {Acquisitions}}</target>
       </trans-unit>
       <trans-unit id="liquidation">
         <source>liquidation</source>
@@ -342,9 +342,9 @@
         <source>market</source>
         <target>Market</target>
       </trans-unit>
-      <trans-unit id="adquisitionFee">
-        <source>adquisitionFee</source>
-        <target>{amount, plural, one {Adquisition Fee} other {Adquisitions Fees}}</target>
+      <trans-unit id="acquisitionFee">
+        <source>acquisitionFee</source>
+        <target>{amount, plural, one {Acquisition Fee} other {Acquisitions Fees}}</target>
       </trans-unit>
       <trans-unit id="liquidationFee">
         <source>liquidationFee</source>
@@ -360,7 +360,7 @@
       </trans-unit>
       <trans-unit id="confirmDeleteTransactionBuyMsg">
         <source>confirmDeleteTransactionBuyMsg</source>
-        <target>Confirm deletion of the Shares Adquisition Transaction?</target>
+        <target>Confirm deletion of the Shares Acquisition Transaction?</target>
       </trans-unit>
       <trans-unit id="summary">
         <source>summary</source>
@@ -385,6 +385,14 @@
       <trans-unit id="operationsbatchimport">
         <source>operationsbatchimport</source>
         <target>Import stocks operations</target>
+      </trans-unit>
+      <trans-unit id="acquire">
+        <source>acquire</source>
+        <target>Acquire</target>
+      </trans-unit>
+      <trans-unit id="gainsLosses">
+        <source>gainsLosses</source>
+        <target>Gains/Losses</target>
       </trans-unit>
     </body>
   </file>

@@ -16,13 +16,13 @@ use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 use xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
-use xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine;
+use xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine;
 
 /**
@@ -31,8 +31,8 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  */
@@ -64,9 +64,9 @@ class StockOperateCommandTest extends TestCase
 
     public function testPurchaseCommandSucceeds(): void
     {
-        /** @var AdquisitionRepositoryDoctrine&Stub */
-        $repoAdquisition = $this->createStub(AdquisitionRepositoryDoctrine::class);
-        $repoAdquisition->method('assertNoTransWithSameAccountStockOnDateTime')->willReturn(true);
+        /** @var AcquisitionRepositoryDoctrine&Stub */
+        $repoAcquisition = $this->createStub(AcquisitionRepositoryDoctrine::class);
+        $repoAcquisition->method('assertNoTransWithSameAccountStockOnDateTime')->willReturn(true);
         /** @var StockRepositoryDoctrine&Stub */
         $repoStock = $this->createStub(StockRepositoryDoctrine::class);
         $repoStock->method('findByIdOrThrowException')->willReturn($this->stock);
@@ -77,16 +77,16 @@ class StockOperateCommandTest extends TestCase
             $this->returnValueMap([
                 [StockRepositoryInterface::class, $repoStock],
                 [AccountRepositoryInterface::class, $repoAccount],
-                [AdquisitionRepositoryInterface::class, $repoAdquisition]
+                [AcquisitionRepositoryInterface::class, $repoAcquisition]
             ])
         );
         /** @var StockOperateCommand&MockObject */
         $command = $this->getMockBuilder(StockOperateCommand::class)
         ->enableOriginalConstructor()
         ->setConstructorArgs([$this->repoLoader])
-        ->onlyMethods(['newAdquisition'])->getMock();
-        $command->method('newAdquisition')->willReturn($this->createStub(Adquisition::class));
-        $adquisition = $command->purchase(
+        ->onlyMethods(['newAcquisition'])->getMock();
+        $command->method('newAcquisition')->willReturn($this->createStub(Acquisition::class));
+        $acquisition = $command->purchase(
             'TEST',
             new DateTime('now', new DateTimeZone('UTC')),
             100,
@@ -94,21 +94,21 @@ class StockOperateCommandTest extends TestCase
             '5.34',
             'test@example.com'
         );
-        $this->assertInstanceOf(Adquisition::class, $adquisition);
+        $this->assertInstanceOf(Acquisition::class, $acquisition);
     }
 
     public function testRemovePurchaseCommandSucceeds(): void
     {
         $uuid = Uuid::v4();
-        /** @var Adquisition&MockObject */
-        $transaction = $this->createMock(Adquisition::class);
+        /** @var Acquisition&MockObject */
+        $transaction = $this->createMock(Acquisition::class);
         $transaction->expects($this->once())->method('persistRemove');
-        /** @var AdquisitionRepositoryDoctrine&Stub */
-        $repoTransaction = $this->createStub(AdquisitionRepositoryDoctrine::class);
+        /** @var AcquisitionRepositoryDoctrine&Stub */
+        $repoTransaction = $this->createStub(AcquisitionRepositoryDoctrine::class);
         $repoTransaction->method('findByIdOrThrowException')->willReturn($transaction);
         $this->repoLoader->method('load')->will(
             $this->returnValueMap([
-                [AdquisitionRepositoryInterface::class, $repoTransaction]
+                [AcquisitionRepositoryInterface::class, $repoTransaction]
             ])
         );
         $command = new StockOperateCommand($this->repoLoader);
@@ -205,7 +205,7 @@ class StockOperateCommandTest extends TestCase
     public static function validImportData(): array
     {
         return [
-            [['2023-03-22 10:12:44','adquisition','TEST','56.7665',100,'3.67'], AdquisitionRepositoryInterface::class, AdquisitionRepositoryDoctrine::class, 'newAdquisition'],
+            [['2023-03-22 10:12:44','acquisition','TEST','56.7665',100,'3.67'], AcquisitionRepositoryInterface::class, AcquisitionRepositoryDoctrine::class, 'newAcquisition'],
             [['2023-03-24 11:22:12','liquidation','TEST','61.2143',450,'6.99'], LiquidationRepositoryInterface::class, LiquidationRepositoryDoctrine::class, 'newLiquidation']
         ];
     }
@@ -215,8 +215,8 @@ class StockOperateCommandTest extends TestCase
      */
     public function testCreateBatchFromCSVCommandWithInvalidDataThrowException($line): void
     {
-        /** @var AdquisitionRepositoryDoctrine&Stub */
-        $repoTransaction = $this->createStub(AdquisitionRepositoryDoctrine::class);
+        /** @var AcquisitionRepositoryDoctrine&Stub */
+        $repoTransaction = $this->createStub(AcquisitionRepositoryDoctrine::class);
         $repoTransaction->method('assertNoTransWithSameAccountStockOnDateTime')->willReturn(true);
         $repoStock = $this->createStub(StockRepositoryDoctrine::class);
         /** @var AccountRepositoryDoctrine&Stub */
@@ -226,7 +226,7 @@ class StockOperateCommandTest extends TestCase
             $this->returnValueMap([
                 [StockRepositoryInterface::class, $repoStock],
                 [AccountRepositoryInterface::class, $repoAccount],
-                [AdquisitionRepositoryInterface::class, $repoTransaction]
+                [AcquisitionRepositoryInterface::class, $repoTransaction]
             ])
         );
         $command = new StockOperateCommand($this->repoLoader);
@@ -240,9 +240,9 @@ class StockOperateCommandTest extends TestCase
         $date = new DateTime('yesterday', new DateTimeZone('UTC'));
         return [
             [[$date->format('Y-m-d H:i:s'),'invalid','TEST','5.66',100,'3,67']], //Invalid transaction type
-            [[$date->format('Y-m-d'),'adquisition','TEST','5.66',100,'3.67']], //Invalid date
-            [[$date->format('Y-m-d H:i:s'),'adquisition','TEST','5,66',100,'3.67']], //Invalid price format
-            [[$date->format('Y-m-d H:i:s'),'adquisition','TEST','5.66',100,'3,67']], //Invalid expenses format
+            [[$date->format('Y-m-d'),'acquisition','TEST','5.66',100,'3.67']], //Invalid date
+            [[$date->format('Y-m-d H:i:s'),'acquisition','TEST','5,66',100,'3.67']], //Invalid price format
+            [[$date->format('Y-m-d H:i:s'),'acquisition','TEST','5.66',100,'3,67']], //Invalid expenses format
         ];
     }
 }

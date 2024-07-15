@@ -3,21 +3,21 @@
 namespace Tests\unit\Domain\Stock\Transaction;
 
 use PHPUnit\Framework\TestCase;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection;
 
 /**
- * @covers xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @covers xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @covers xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  */
 class TransactionsCollectionTest extends TestCase
 {
-    public function testAdquisitionCollection(): void
+    public function testAcquisitionCollection(): void
     {
-        $collection = new AdquisitionsCollection([]);
-        $this->assertSame(Adquisition::class, $collection->type());
+        $collection = new AcquisitionsCollection([]);
+        $this->assertSame(Acquisition::class, $collection->type());
     }
 
     public function testLiquidationCollection(): void

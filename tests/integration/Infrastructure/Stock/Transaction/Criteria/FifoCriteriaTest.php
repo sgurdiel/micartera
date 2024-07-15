@@ -9,12 +9,12 @@ use Tests\integration\IntegrationTestCase;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
-use xVer\MiCartera\Domain\Accounting\MovementRepositoryInterface;
-use xVer\MiCartera\Domain\Accounting\MovementsCollection;
+use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
@@ -23,24 +23,24 @@ use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
  * @covers xVer\MiCartera\Domain\Stock\Transaction\Criteria\FifoCriteria
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Domain\Account\Account
- * @uses xVer\MiCartera\Domain\Accounting\Movement
- * @uses xVer\MiCartera\Domain\Accounting\MovementsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Accounting\MovementRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine
  */
 class FifoCriteriaTest extends IntegrationTestCase
@@ -59,7 +59,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         $this->expenses = new MoneyVO('4.56', $this->account->getCurrency());
     }
 
-    public function testNoAdquistionBeforeDateThrowsException(): void
+    public function testNoAcquistionBeforeDateThrowsException(): void
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('transNotPassFifoSpec');
@@ -73,7 +73,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         );
     }
 
-    public function testNotEnoughAdquistionAmountOutstandingThrowsException(): void
+    public function testNotEnoughAcquistionAmountOutstandingThrowsException(): void
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('transNotPassFifoSpec');
@@ -87,7 +87,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         );
     }
 
-    public function testNotEnoughAdquistionAmountOutstandingAfterRearrangementThrowsException(): void
+    public function testNotEnoughAcquistionAmountOutstandingAfterRearrangementThrowsException(): void
     {
         parent::$loadFixtures = true;
         new Liquidation(
@@ -113,14 +113,14 @@ class FifoCriteriaTest extends IntegrationTestCase
     public function testFifo(): void
     {
         parent::$loadFixtures = true;
-        /** @var Adquisition[] */
-        $adquisitions = [];
+        /** @var Acquisition[] */
+        $acquisitions = [];
         /** @var Liquidation[] */
         $liquidations = [];
         $repoMovement = $this->repoLoader->load(MovementRepositoryInterface::class);
         $date = new DateTime('now', new DateTimeZone('UTC'));
-        // Test create adquisition generating no accounting movements
-        $adquisitions[0] = new Adquisition(
+        // Test create acquisition generating no accounting movements
+        $acquisitions[0] = new Acquisition(
             $this->repoLoader,
             $this->stock2, (clone $date)->sub(new DateInterval('PT60M')), 1000, $this->expenses, $this->account
         );
@@ -129,7 +129,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         $expectedAmountOutstanding = [
             0 => 1000
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
     
         // Test create liquidation requiring no accounting movements rearrangements
         $liquidations[0] = new Liquidation(
@@ -137,29 +137,29 @@ class FifoCriteriaTest extends IntegrationTestCase
             $this->stock2, (clone $date)->sub(new DateInterval('PT30M')), 500, $this->expenses, $this->account
         );
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
+            0 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 500
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
         
-        // Test create adquisition requiring accounting movement rearrangement
-        $adquisitions[1] = new Adquisition(
+        // Test create acquisition requiring accounting movement rearrangement
+        $acquisitions[1] = new Acquisition(
             $this->repoLoader,
             $this->stock2, (clone $date)->sub(new DateInterval('PT90M')), 200, $this->expenses, $this->account
         );
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[0], "amount" => 200],
-            1 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[0], "amount" => 300]
+            0 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[0], "amount" => 200],
+            1 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[0], "amount" => 300]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 700,
             1 => 0
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
      
         // Test create liquidation requiring accounting movement rearrangement
         $liquidations[1] = new Liquidation(
@@ -167,16 +167,16 @@ class FifoCriteriaTest extends IntegrationTestCase
             $this->stock2, (clone $date)->sub(new DateInterval('PT86M')), 100, $this->expenses, $this->account
         );
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[1], "amount" => 100],
-            1 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[0], "amount" => 100],
-            2 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[0], "amount" => 400]
+            0 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[1], "amount" => 100],
+            1 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[0], "amount" => 100],
+            2 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[0], "amount" => 400]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 600,
             1 => 0
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
    
         // Test create other liquidation requiring accounting movement rearrangement
         $liquidations[2] = new Liquidation(
@@ -184,47 +184,47 @@ class FifoCriteriaTest extends IntegrationTestCase
             $this->stock2, (clone $date)->sub(new DateInterval('PT31M')), 500, $this->expenses, $this->account
         );
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[1], "amount" => 100],
-            1 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[2], "amount" => 100],
-            2 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[2], "amount" => 400],
-            3 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
+            0 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[1], "amount" => 100],
+            1 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[2], "amount" => 100],
+            2 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[2], "amount" => 400],
+            3 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 100,
             1 => 0
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
     
         // Test remove liquidation requiring accounting movements rearrangement
         $liquidations[1]->persistRemove($this->repoLoader, new FiFoCriteria($this->repoLoader));
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[2], "amount" => 200],
-            1 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[2], "amount" => 300],
-            2 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
+            0 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[2], "amount" => 200],
+            1 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[2], "amount" => 300],
+            2 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[0], "amount" => 500]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 200,
             1 => 0
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
     
         // Test remove other liquidation not requiring accounting movements rearrangement
         $liquidations[0]->persistRemove($this->repoLoader, new FiFoCriteria($this->repoLoader));
         $expectedMovements = [
-            0 => ["adquisition" => $adquisitions[1], "liquidation" => $liquidations[2], "amount" => 200],
-            1 => ["adquisition" => $adquisitions[0], "liquidation" => $liquidations[2], "amount" => 300]
+            0 => ["acquisition" => $acquisitions[1], "liquidation" => $liquidations[2], "amount" => 200],
+            1 => ["acquisition" => $acquisitions[0], "liquidation" => $liquidations[2], "amount" => 300]
         ];
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
         $expectedAmountOutstanding = [
             0 => 700,
             1 => 0
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
     
-        // Test add adquisition not requiring rearrangement
-        $adquisitions[2] = new Adquisition(
+        // Test add acquisition not requiring rearrangement
+        $acquisitions[2] = new Acquisition(
             $this->repoLoader,
             $this->stock2, (clone $date)->sub(new DateInterval('PT20M')), 200, $this->expenses, $this->account
         );
@@ -234,7 +234,7 @@ class FifoCriteriaTest extends IntegrationTestCase
             1 => 0,
             2 => 200
         ];
-        $this->checkAdquisitionsAmountOutstanding($adquisitions, $expectedAmountOutstanding);
+        $this->checkAcquisitionsAmountOutstanding($acquisitions, $expectedAmountOutstanding);
     
         // Test adding liquidation with insufficient amount outstanding throws exception
         $exceptionsThrown = 0;
@@ -242,7 +242,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         try {
             new Liquidation(
                 $this->repoLoader,
-                $this->stock2, (clone $adquisitions[1]->getDateTimeUtc())->sub(new DateInterval('PT30S')), 1000, $this->expenses, $this->account
+                $this->stock2, (clone $acquisitions[1]->getDateTimeUtc())->sub(new DateInterval('PT30S')), 1000, $this->expenses, $this->account
             );
         } catch (DomainException $th) {
             $exceptionsThrown++;
@@ -274,7 +274,7 @@ class FifoCriteriaTest extends IntegrationTestCase
         $this->checkMovements($expectedMovements, $this->retrieveMovements($repoMovement));
 
         // Test adding liquidation requiring accounting movements rearrangement
-        // causes existing liquidation not find adquistions with enough
+        // causes existing liquidation not find acquistions with enough
         // amount outstanding
         new Liquidation(
             $this->repoLoader,
@@ -298,7 +298,7 @@ class FifoCriteriaTest extends IntegrationTestCase
     ): void {
         $this->assertSame(count($expectedMovements), $persistedMovements->count());
         foreach ($persistedMovements->toArray() as $key => $persistedAccountingMovement) {
-            $this->assertTrue($persistedAccountingMovement->getAdquisition()->sameId($expectedMovements[$key]['adquisition']));
+            $this->assertTrue($persistedAccountingMovement->getAcquisition()->sameId($expectedMovements[$key]['acquisition']));
             $this->assertTrue($persistedAccountingMovement->getLiquidation()->sameId($expectedMovements[$key]['liquidation']));
             $this->assertSame($persistedAccountingMovement->getAmount(), $expectedMovements[$key]['amount']);
         }
@@ -306,13 +306,13 @@ class FifoCriteriaTest extends IntegrationTestCase
 
     private function retrieveMovements(MovementRepositoryInterface $repoAccountingMovement): MovementsCollection
     {
-        return $repoAccountingMovement->findByAccountStockAdquisitionDateAfter($this->account, $this->stock2, new DateTime('30 days ago', new DateTimeZone('UTC')));
+        return $repoAccountingMovement->findByAccountStockAcquisitionDateAfter($this->account, $this->stock2, new DateTime('30 days ago', new DateTimeZone('UTC')));
     }
 
-    private function checkAdquisitionsAmountOutstanding(array $adquisitions,array $expectedAdquisitionsAmountOutstanding): void
+    private function checkAcquisitionsAmountOutstanding(array $acquisitions,array $expectedAcquisitionsAmountOutstanding): void
     {
-        foreach ($adquisitions as $key => $adquisition) {
-            $this->assertSame($adquisition->getAmountOutstanding(), $expectedAdquisitionsAmountOutstanding[$key]);
+        foreach ($acquisitions as $key => $acquisition) {
+            $this->assertSame($acquisition->getAmountOutstanding(), $expectedAcquisitionsAmountOutstanding[$key]);
         }
     }
 }

@@ -14,8 +14,8 @@ use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 
@@ -32,7 +32,7 @@ class StockOperateCommand extends AbstractApplication
         string $priceValue,
         string $expensesValue,
         string $accountIdentifier
-    ): Adquisition {
+    ): Acquisition {
         $account = $this->repoLoader->load(AccountRepositoryInterface::class)
         ->findByIdentifierOrThrowException($accountIdentifier);
         $stock = $this->repoLoader->load(StockRepositoryInterface::class)
@@ -43,7 +43,7 @@ class StockOperateCommand extends AbstractApplication
                 $account->getCurrency()
             )
         );
-        return $this->newAdquisition(
+        return $this->newAcquisition(
             $stock,
             $datetimeutc,
             $amount,
@@ -89,12 +89,12 @@ class StockOperateCommand extends AbstractApplication
         );
     }
 
-    public function removePurchase(string $adquisitionUuid): void
+    public function removePurchase(string $acquisitionUuid): void
     {
         $this->repoLoader->load(
-            AdquisitionRepositoryInterface::class
+            AcquisitionRepositoryInterface::class
         )->findByIdOrThrowException(
-            new UUid($adquisitionUuid)
+            new UUid($acquisitionUuid)
         )->persistRemove(
             $this->repoLoader
         );
@@ -120,7 +120,7 @@ class StockOperateCommand extends AbstractApplication
         ->findByIdentifierOrThrowException($accountIdentifier);
         $repoStock = $this->repoLoader->load(StockRepositoryInterface::class);
         try {
-            if (false === in_array($line[1], ['adquisition','liquidation'], true)) {
+            if (false === in_array($line[1], ['acquisition','liquidation'], true)) {
                 throw new DomainException(
                     new TranslationVO(
                         'invalidTransactionType',
@@ -166,8 +166,8 @@ class StockOperateCommand extends AbstractApplication
                     $account->getCurrency()
                 )
             );
-            if ($line[1] === 'adquisition') {
-                $this->newAdquisition(
+            if ($line[1] === 'acquisition') {
+                $this->newAcquisition(
                     $stock,
                     $dateTime,
                     $line[4],
@@ -202,14 +202,14 @@ class StockOperateCommand extends AbstractApplication
         }
     }
 
-    protected function newAdquisition(
+    protected function newAcquisition(
         Stock $stock,
         DateTime $dateTime,
         int $amount,
         MoneyVO $expenses,
         Account $account
-    ): Adquisition {
-        return new Adquisition(
+    ): Acquisition {
+        return new Acquisition(
             $this->repoLoader,
             $stock,
             $dateTime,

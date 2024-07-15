@@ -6,31 +6,31 @@ use DateTime;
 use DateTimeZone;
 use Tests\integration\IntegrationTestCase;
 use xVer\MiCartera\Application\Command\Stock\StockOperateCommand;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 
 /**
  * @covers xVer\MiCartera\Application\Command\Stock\StockOperateCommand
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Domain\Account\Account
- * @uses xVer\MiCartera\Domain\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Accounting\MovementRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine
  */
 class StockOperateCommandTest extends IntegrationTestCase
@@ -39,7 +39,7 @@ class StockOperateCommandTest extends IntegrationTestCase
     {
         self::$loadFixtures = true;
         $command = new StockOperateCommand($this->repoLoader);
-        $adquisition = $command->purchase(
+        $acquisition = $command->purchase(
             'CABK',
             new DateTime('yesterday', new DateTimeZone('UTC')),
             100,
@@ -47,7 +47,7 @@ class StockOperateCommandTest extends IntegrationTestCase
             '6.57',
             'test@example.com'
         );
-        $this->assertInstanceOf(Adquisition::class, $adquisition);
+        $this->assertInstanceOf(Acquisition::class, $acquisition);
     }
 
     public function testSellCommandSucceeds(): void

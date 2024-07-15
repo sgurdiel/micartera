@@ -8,42 +8,42 @@ use Symfony\Component\Routing\Route;
 use Tests\application\ApplicationTestCase;;
 
 /**
- * @covers xVer\MiCartera\Ui\Controller\AccountingController
- * @covers xVer\MiCartera\Ui\Controller\PortfolioController
+ * @covers xVer\MiCartera\Ui\Controller\StockAccountingController
+ * @covers xVer\MiCartera\Ui\Controller\StockPortfolioController
  * @covers xVer\MiCartera\Ui\Controller\StockController
  * @covers xVer\MiCartera\Ui\Controller\SecurityController
  * @covers xVer\MiCartera\Ui\Form\StockType
  * @covers xVer\MiCartera\Ui\Form\RegistrationFormType
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Application\Query\Account\AccountQuery
- * @uses xVer\MiCartera\Application\Query\Accounting\AccountingDTO
- * @uses xVer\MiCartera\Application\Query\Accounting\AccountingQuery
+ * @uses xVer\MiCartera\Application\Query\Stock\Accounting\AccountingDTO
+ * @uses xVer\MiCartera\Application\Query\Stock\Accounting\AccountingQuery
  * @uses xVer\MiCartera\Application\Query\Currency\CurrencyQuery
- * @uses xVer\MiCartera\Application\Query\Portfolio\PortfolioDTO
- * @uses xVer\MiCartera\Application\Query\Portfolio\PortfolioQuery
+ * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioDTO
+ * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery
  * @uses xVer\MiCartera\Application\Query\Stock\StockQuery
  * @uses xVer\MiCartera\Domain\Account\Account
- * @uses xVer\MiCartera\Domain\Accounting\Movement
- * @uses xVer\MiCartera\Domain\Accounting\MovementsCollection
- * @uses xVer\MiCartera\Domain\Accounting\SummaryVO
- * @uses xVer\MiCartera\Domain\Accounting\SummaryDTO
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryVO
+ * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryDTO
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\Currency\CurrenciesCollection
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
- * @uses xVer\MiCartera\Domain\Portfolio\SummaryVO
+ * @uses xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StocksCollection
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Adquisition
- * @uses xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Accounting\MovementRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
- * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AdquisitionRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Ui\Controller\StockOperateController
  * @uses xVer\MiCartera\Ui\Form\StockOperateImportType
  */
@@ -109,13 +109,13 @@ class BaseWebTest extends ApplicationTestCase
     {
         $this->client->loginUser(self::$user);
         $crawler = $this->client->request('GET', "/");
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
 
         $crawler = $this->client->request('GET', "/en_GB/login");
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
 
         $crawler = $this->client->request('GET', "/en_GB/register");
-        $this->assertResponseRedirects('/en_GB/portfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
     }
 
     public function testRedirectsToLoginIfNotAuthenticated(): void

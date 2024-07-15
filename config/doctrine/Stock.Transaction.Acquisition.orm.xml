@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity repository-class="xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine" name="xVer\MiCartera\Domain\Stock\Transaction\Acquisition" table="stockTransactionAcquisition" change-tracking-policy="DEFERRED_EXPLICIT">
+    <id name="id" type="uuid" column="id"/>
+    <field name="datetimeutc" type="datetime" column="datetimeutc" nullable="false"/>
+    <field name="amount" type="integer" column="amount" nullable="false">
+      <options>
+        <option name="unsigned">true</option>
+      </options>
+    </field>
+    <field name="amountOutstanding" type="integer" column="amount_outstanding" nullable="false">
+      <options>
+        <option name="unsigned">true</option>
+      </options>
+    </field>
+    <many-to-one field="currency" target-entity="xVer\MiCartera\Domain\Currency\Currency" fetch="LAZY">
+      <join-columns>
+        <join-column name="currency_iso3" referenced-column-name="iso3" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+    <field name="price" type="decimal" column="price" scale="4" precision="10" nullable="false">
+      <options>
+        <option name="unsigned">true</option>
+      </options>
+    </field>
+    <field name="expenses" type="decimal" column="expenses" scale="4" precision="10" nullable="false">
+      <options>
+        <option name="unsigned">true</option>
+      </options>
+    </field>
+    <field name="expensesUnaccountedFor" type="decimal" column="expenses_unaccounted_for" scale="4" precision="10" nullable="false">
+      <options>
+        <option name="unsigned">true</option>
+      </options>
+    </field>
+    <many-to-one field="stock" target-entity="xVer\MiCartera\Domain\Stock\Stock" fetch="LAZY">
+      <join-columns>
+        <join-column name="stock_code" referenced-column-name="code" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="account" target-entity="xVer\MiCartera\Domain\Account\Account" fetch="LAZY">
+      <join-columns>
+        <join-column name="account_id" referenced-column-name="id" nullable="false"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

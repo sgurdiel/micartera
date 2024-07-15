@@ -14,8 +14,8 @@ use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 
 /**
  * @covers xVer\MiCartera\Domain\Stock\Stock
@@ -32,8 +32,8 @@ class StockTest extends TestCase
     private StockPriceVO $stockPrice;
     /** @var StockRepositoryInterface&MockObject */
     private StockRepositoryInterface $repoStock;
-    /** @var AdquisitionRepositoryInterface&Stub */
-    private AdquisitionRepositoryInterface $repoAdquisition;
+    /** @var AcquisitionRepositoryInterface&Stub */
+    private AcquisitionRepositoryInterface $repoAcquisition;
     /** @var EntityObjectRepositoryLoaderInterface&Stub */
     private EntityObjectRepositoryLoaderInterface $repoLoader;
 
@@ -48,15 +48,15 @@ class StockTest extends TestCase
         $this->stockPrice->method('getValue')->willReturn('4.5614');
         /** @var StockRepositoryInterface&MockObject */
         $this->repoStock = $this->createMock(StockRepositoryInterface::class);
-        /** @var AdquisitionRepositoryInterface&Stub */
-        $this->repoAdquisition = $this->createStub(AdquisitionRepositoryInterface::class);
+        /** @var AcquisitionRepositoryInterface&Stub */
+        $this->repoAcquisition = $this->createStub(AcquisitionRepositoryInterface::class);
         /** @var EntityObjectRepositoryLoaderInterface&Stub */
         $this->repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
         $this->repoLoader->method('load')->will(
             $this->returnValueMap(
                 [
                     [StockRepositoryInterface::class, $this->repoStock],
-                    [AdquisitionRepositoryInterface::class, $this->repoAdquisition]
+                    [AcquisitionRepositoryInterface::class, $this->repoAcquisition]
                 ]
             )
         );
@@ -151,10 +151,10 @@ class StockTest extends TestCase
 
     public function testRemoveWhenHavingTransactionsWillThrowException(): void
     {
-        /** @var AdquisitionsCollection&Stub */
-        $adquisitionsColletion = $this->createStub(AdquisitionsCollection::class);
-        $adquisitionsColletion->method('count')->willReturn(1);
-        $this->repoAdquisition->method('findByStockId')->willReturn($adquisitionsColletion);
+        /** @var AcquisitionsCollection&Stub */
+        $acquisitionsColletion = $this->createStub(AcquisitionsCollection::class);
+        $acquisitionsColletion->method('count')->willReturn(1);
+        $this->repoAcquisition->method('findByStockId')->willReturn($acquisitionsColletion);
         /** @var Stock */
         $stock = $this->getMockBuilder(Stock::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $this->expectException(DomainException::class);
@@ -165,10 +165,10 @@ class StockTest extends TestCase
     public function testRemove(): void
     {
         $this->repoStock->expects($this->once())->method('remove');
-        /** @var AdquisitionsCollection&Stub */
-        $adquisitionsColletion = $this->createStub(AdquisitionsCollection::class);
-        $adquisitionsColletion->method('count')->willReturn(0);
-        $this->repoAdquisition->method('findByStockId')->willReturn($adquisitionsColletion);
+        /** @var AcquisitionsCollection&Stub */
+        $acquisitionsColletion = $this->createStub(AcquisitionsCollection::class);
+        $acquisitionsColletion->method('count')->willReturn(0);
+        $this->repoAcquisition->method('findByStockId')->willReturn($acquisitionsColletion);
         /** @var Stock */
         $stock = $this->getMockBuilder(Stock::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $stock->persistRemove($this->repoLoader);
@@ -178,10 +178,10 @@ class StockTest extends TestCase
     {
         $this->repoStock->expects($this->once())->method('persist');
         $this->repoStock->expects($this->once())->method('flush');
-        /** @var AdquisitionsCollection&Stub */
-        $adquisitionsColletion = $this->createStub(AdquisitionsCollection::class);
-        $adquisitionsColletion->method('count')->willReturn(0);
-        $this->repoAdquisition->method('findByStockId')->willReturn($adquisitionsColletion);
+        /** @var AcquisitionsCollection&Stub */
+        $acquisitionsColletion = $this->createStub(AcquisitionsCollection::class);
+        $acquisitionsColletion->method('count')->willReturn(0);
+        $this->repoAcquisition->method('findByStockId')->willReturn($acquisitionsColletion);
         /** @var Stock */
         $stock = $this->getMockBuilder(Stock::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $stock->persistUpdate($this->repoLoader);
@@ -210,10 +210,10 @@ class StockTest extends TestCase
         /** @var Stock */
         $stock = $this->getMockBuilder(Stock::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $this->repoStock->expects($this->once())->method('remove')->willThrowException(new Exception());
-        /** @var AdquisitionsCollection&Stub */    
-        $adquisitionsColletion = $this->createStub(AdquisitionsCollection::class);
-        $adquisitionsColletion->method('count')->willReturn(0);
-        $this->repoAdquisition->method('findByStockId')->willReturn($adquisitionsColletion); 
+        /** @var AcquisitionsCollection&Stub */    
+        $acquisitionsColletion = $this->createStub(AcquisitionsCollection::class);
+        $acquisitionsColletion->method('count')->willReturn(0);
+        $this->repoAcquisition->method('findByStockId')->willReturn($acquisitionsColletion); 
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('actionFailed');
         $stock->persistRemove($this->repoLoader);

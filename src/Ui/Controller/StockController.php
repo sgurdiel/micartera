@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use xVer\MiCartera\Application\Command\Stock\StockCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
+use xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery;
 use xVer\MiCartera\Application\Query\Stock\StockQuery;
 use xVer\MiCartera\Ui\Form\StockType;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
@@ -111,9 +112,19 @@ class StockController extends AbstractController
                 $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
         }
+
+        /** @psalm-suppress PossiblyNullReference */
+        $userIdentifier = $this->getUser()->getUserIdentifier();
+        $query = new PortfolioQuery(EntityObjectRepositoryLoader::doctrine($managerRegistry));
+        $summaryVO = $query->getStockPortfolioSummary(
+            $userIdentifier,
+            (string) $formData['code']
+        );
+
         return $this->render('stock/form.html.twig', [
             'form' => $form,
-            'title' => 'editStock'
+            'title' => $translator->trans('editStock'),
+            'summary' => $summaryVO
         ]);
     }
 

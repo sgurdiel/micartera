@@ -24,14 +24,14 @@ class SecurityController extends AbstractController
     #[Route("/", name: "main_index", methods: ["GET"])]
     public function index(): Response
     {
-        return $this->redirectToRoute('portfolio_index');
+        return $this->redirectToRoute('stockportfolio_index');
     }
 
     #[Route("/{_locale<%app.locales%>}/login", name: "app_login")]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('portfolio_index');
+            return $this->redirectToRoute('stockportfolio_index');
         }
 
         // get the login error if there is one
@@ -69,7 +69,7 @@ class SecurityController extends AbstractController
         UserPasswordHasherInterface $passwordHasher
     ): Response {
         if ($this->getUser()) {
-            return $this->redirectToRoute('portfolio_index');
+            return $this->redirectToRoute('stockportfolio_index');
         }
 
         $options = [

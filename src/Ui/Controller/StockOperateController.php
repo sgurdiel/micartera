@@ -79,7 +79,7 @@ class StockOperateController extends AbstractController
                 return
                     $form->get('refererPage')->getData()
                     ? $this->redirect((string) $form->get('refererPage')->getData(), Response::HTTP_SEE_OTHER)
-                    : $this->redirectToRoute('portfolio_index', [], Response::HTTP_SEE_OTHER);
+                    : $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
             } catch (\DomainException $de) {
                 $this->addFlash('error', $this->getTranslatedException($de, $translator)->getMessage());
             }
@@ -102,7 +102,7 @@ class StockOperateController extends AbstractController
         };
         /** @psalm-var string */
         $id = $request->request->get('id');
-        $route = $type === 0 ? 'portfolio_index' : 'accounting_index';
+        $route = $type === 0 ? 'stockportfolio_index' : 'stockaccounting_index';
         if (false === $this->isCsrfTokenValid('delete' . $id, (string) $request->request->get('_token'))) {
             $this->addFlash('error', $translator->trans('invalidFormToken', [], 'validators'));
         } else {

@@ -1,4 +1,6 @@
 @import 'mixins';
+@import 'fontawesome/fontawesome';
+@import 'fontawesome/solid';
 
 * {
     font-family: "Lucida Console", "Courier new", monospace;
@@ -17,7 +19,6 @@ div.pageContainer {
     flex-direction: column;
     div.body {
         flex: auto;
-        padding: 0 4px 4px 4px;
     }
     div.footer {
         margin-left: auto;
@@ -29,8 +30,7 @@ div.pageContainer {
 
 h2 {
     color: #903c99;
-    text-shadow: 1px 1px 1px #ac53b6;
-    padding-top: 12px;
+    padding: 16px 0;
     text-align: center;
     font-weight: 500;
 }
@@ -102,4 +102,10 @@ h2 {
     fill: currentColor;
     width: 15px;
     height: 15px;
+}
+
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
 }

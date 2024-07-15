@@ -7,44 +7,44 @@ use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Account\Account;
-use xVer\MiCartera\Domain\Accounting\Movement;
+use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\NumberOperation;
 use xVer\MiCartera\Domain\Stock\Stock;
-use xVer\MiCartera\Domain\Stock\Transaction\Adquisition;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionRepositoryInterface;
-use xVer\MiCartera\Domain\Stock\Transaction\AdquisitionsCollection;
+use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
+use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection;
 
 class FiFoCriteria
 {
-    private AdquisitionsCollection $adquisitionsCollection;
+    private AcquisitionsCollection $acquisitionsCollection;
 
     public function __construct(
         private readonly EntityObjectRepositoryLoaderInterface $repoLoader
     ) {
-        $this->adquisitionsCollection = new AdquisitionsCollection([]);
+        $this->acquisitionsCollection = new AcquisitionsCollection([]);
     }
 
-    public function onAdquisition(
-        Adquisition $adquisition
+    public function onAcquisition(
+        Acquisition $acquisition
     ): void {
-        $this->adquisitionsCollection = new AdquisitionsCollection([]);
+        $this->acquisitionsCollection = new AcquisitionsCollection([]);
 
-        $this->adquisitionsCollection->add($adquisition);
+        $this->acquisitionsCollection->add($acquisition);
 
         $liquidationsCollection = $this->repoLoader->load(
             LiquidationRepositoryInterface::class
         )->findByAccountStockAndDateAtOrAfter(
-            $adquisition->getAccount(),
-            $adquisition->getStock(),
-            $adquisition->getDateTimeUtc()
+            $acquisition->getAccount(),
+            $acquisition->getStock(),
+            $acquisition->getDateTimeUtc()
         );
 
         $this->traverseLiquidationsClearingMovements($liquidationsCollection);
 
-        $this->sortAdquisitionsByOldestFirst();
+        $this->sortAcquisitionsByOldestFirst();
 
         $this->traverseLiquidationsAccountingMovements($liquidationsCollection);
     }
@@ -52,7 +52,7 @@ class FiFoCriteria
     public function onLiquidation(
         Liquidation $liquidation
     ): void {
-        $this->adquisitionsCollection = new AdquisitionsCollection([]);
+        $this->acquisitionsCollection = new AcquisitionsCollection([]);
 
         $liquidationsCollection = $this->repoLoader->load(
             LiquidationRepositoryInterface::class
@@ -63,7 +63,7 @@ class FiFoCriteria
         );
 
         $lastLiquidation = $liquidationsCollection->last();
-        $this->includePersistedAdquisitionsWithAmountOutstanding(
+        $this->includePersistedAcquisitionsWithAmountOutstanding(
             $liquidation->getAccount(),
             $liquidation->getStock(),
             (
@@ -75,7 +75,7 @@ class FiFoCriteria
 
         $this->traverseLiquidationsClearingMovements($liquidationsCollection);
 
-        $this->sortAdquisitionsByOldestFirst();
+        $this->sortAcquisitionsByOldestFirst();
 
         $this->accountMovements($liquidation);
 
@@ -85,7 +85,7 @@ class FiFoCriteria
     public function onLiquidationRemoval(
         Liquidation $liquidation
     ): void {
-        $this->adquisitionsCollection = new AdquisitionsCollection([]);
+        $this->acquisitionsCollection = new AcquisitionsCollection([]);
 
         $liquidationsCollection = $this->repoLoader->load(
             LiquidationRepositoryInterface::class
@@ -97,7 +97,7 @@ class FiFoCriteria
 
         $this->traverseLiquidationsClearingMovements($liquidationsCollection);
 
-        $this->sortAdquisitionsByOldestFirst();
+        $this->sortAcquisitionsByOldestFirst();
 
         $liquidationsCollection->removeElement($liquidation);
 
@@ -108,41 +108,41 @@ class FiFoCriteria
         LiquidationsCollection $liquidationsCollection
     ): void {
         foreach ($liquidationsCollection->toArray() as $liquidation) {
-            $this->mergeAdquisitions(
+            $this->mergeAcquisitions(
                 $liquidation->clearMovementsCollection($this->repoLoader)
             );
         }
     }
 
-    private function includePersistedAdquisitionsWithAmountOutstanding(
+    private function includePersistedAcquisitionsWithAmountOutstanding(
         Account $account,
         Stock $stock,
         DateTime $dateLastLiquidation
     ): void {
-        $adquisitionsWithAmountOutstandingCollection = $this->repoLoader->load(
-            AdquisitionRepositoryInterface::class
+        $acquisitionsWithAmountOutstandingCollection = $this->repoLoader->load(
+            AcquisitionRepositoryInterface::class
         )->findByAccountStockWithAmountOutstandingAndDateAtOrBefore(
             $account,
             $stock,
             $dateLastLiquidation
         );
-        $this->mergeAdquisitions($adquisitionsWithAmountOutstandingCollection);
+        $this->mergeAcquisitions($acquisitionsWithAmountOutstandingCollection);
     }
 
-    private function mergeAdquisitions(AdquisitionsCollection $adquisitionsCollection): void
+    private function mergeAcquisitions(AcquisitionsCollection $acquisitionsCollection): void
     {
-        foreach ($adquisitionsCollection->toArray() as $adquisition) {
-            if (false === $this->adquisitionsCollection->contains($adquisition)) {
-                $this->adquisitionsCollection->add($adquisition);
+        foreach ($acquisitionsCollection->toArray() as $acquisition) {
+            if (false === $this->acquisitionsCollection->contains($acquisition)) {
+                $this->acquisitionsCollection->add($acquisition);
             }
         }
     }
 
-    private function sortAdquisitionsByOldestFirst(): void
+    private function sortAcquisitionsByOldestFirst(): void
     {
-        $adquisitionsArray = $this->adquisitionsCollection->toArray();
-        usort($adquisitionsArray, fn (Adquisition $a, Adquisition $b) => $a->getDateTimeUtc() <=> $b->getDateTimeUtc());
-        $this->adquisitionsCollection = new AdquisitionsCollection($adquisitionsArray);
+        $acquisitionsArray = $this->acquisitionsCollection->toArray();
+        usort($acquisitionsArray, fn (Acquisition $a, Acquisition $b) => $a->getDateTimeUtc() <=> $b->getDateTimeUtc());
+        $this->acquisitionsCollection = new AcquisitionsCollection($acquisitionsArray);
     }
 
     private function traverseLiquidationsAccountingMovements(LiquidationsCollection $liquidationsCollection): void
@@ -154,10 +154,10 @@ class FiFoCriteria
 
     private function accountMovements(Liquidation $liquidation): void
     {
-        foreach ($this->adquisitionsCollection->toArray() as $adquisition) {
-            if (0 < $adquisition->getAmountOutstanding()) {
+        foreach ($this->acquisitionsCollection->toArray() as $acquisition) {
+            if (0 < $acquisition->getAmountOutstanding()) {
                 try {
-                    new Movement($this->repoLoader, $adquisition, $liquidation);
+                    new Movement($this->repoLoader, $acquisition, $liquidation);
                 } catch (DomainException) {
                     throw new DomainException(
                         new TranslationVO('transNotPassFifoSpec', [], TranslationVO::DOMAIN_VALIDATORS)

@@ -1,10 +1,6 @@
 @import 'mixins';
 
-form.centeredForm {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+form {
     @include phoneDevice {
         position: initial;
         top: initial;
@@ -80,5 +76,12 @@ form.deleteForm {
             background-color: #f8d7d1;
         }
     }
+}
+
+form.centeredForm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 

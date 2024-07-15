@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="invalidTransactionType">
         <source>invalidTransactionType</source>
-        <target>Invalid transaction type. Expecting `adquisition` or `liquidation`.</target>
+        <target>Invalid transaction type. Expecting `acquisition` or `liquidation`.</target>
       </trans-unit>
       <trans-unit id="invalidCurrency">
         <source>invalidCurrency</source>

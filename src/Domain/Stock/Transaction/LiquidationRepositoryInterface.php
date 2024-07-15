@@ -2,7 +2,6 @@
 
 namespace xVer\MiCartera\Domain\Stock\Transaction;
 
-use Closure;
 use DateTime;
 use Symfony\Component\Uid\Uuid;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryInterface;
