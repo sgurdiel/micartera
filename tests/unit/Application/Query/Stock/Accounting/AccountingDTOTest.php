@@ -15,6 +15,7 @@ use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Stock\StockPriceVO;
 
 /**
  * @covers xVer\MiCartera\Application\Query\Stock\Accounting\AccountingDTO
@@ -50,6 +51,7 @@ class AccountingDTOTest extends KernelTestCase
         $accountingMovementsCollection = $this->createStub(MovementsCollection::class);
         $accountingMovementsCollection->method('offsetExists')->willReturn(true);
         $accountingMovementsCollection->method('offsetGet')->willReturn($this->createStub(Movement::class));
+        /** @var SummaryVO */
         $summary = $this->createStub(SummaryVO::class);
         $accountingDTO = new AccountingDTO(
             $this->account,
@@ -63,20 +65,22 @@ class AccountingDTOTest extends KernelTestCase
         $this->assertSame($displayedYear, $accountingDTO->getDisplayedYear());
         $this->assertSame($summary, $accountingDTO->getSummary());
         $this->assertInstanceOf(MoneyVO::class, $accountingDTO->getMovementAcquisitionExpense(0));
-        $this->assertInstanceOf(MoneyVO::class, $accountingDTO->getMovementAcquisitionPrice(0));
+        $this->assertInstanceOf(StockPriceVO::class, $accountingDTO->getMovementAcquisitionPrice(0));
         $this->assertInstanceOf(MoneyVO::class, $accountingDTO->getMovementLiquidationExpense(0));
-        $this->assertInstanceOf(MoneyVO::class, $accountingDTO->getMovementLiquidationPrice(0));
+        $this->assertInstanceOf(StockPriceVO::class, $accountingDTO->getMovementLiquidationPrice(0));
         $this->assertSame('', $accountingDTO->getMovementProfitPercentage(0));
         $this->assertInstanceOf(MoneyVO::class, $accountingDTO->getMovementProfitPrice(0));
     }
 
     public function testAccountingDTOWithNoAccountingMovements(): void
     {
+        /** @var SummaryVO */
+        $summaryVO = $this->createStub(SummaryVO::class);
         $accountingDTO = new AccountingDTO(
             $this->account,
             new MovementsCollection([]),
             (int) (new DateTime('now'))->format('Y'),
-            $this->createStub(SummaryVO::class)
+            $summaryVO
         );
         $this->assertInstanceOf(MovementsCollection::class, $accountingDTO->getCollection());
         $this->assertSame(0, $accountingDTO->getCollection()->count());
@@ -85,32 +89,38 @@ class AccountingDTOTest extends KernelTestCase
     public function testNonObjectAccountingMovementsArgumentThrowsExeption(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        /** @var SummaryVO */
+        $summaryVO = $this->createStub(SummaryVO::class);
         new AccountingDTO(
             $this->account,
             new MovementsCollection([1]),
             (int) (new DateTime('now'))->format('Y'),
-            $this->createStub(SummaryVO::class)
+            $summaryVO
         );
     }
 
     public function testInvalidAccountingMovementsArgumentThrowsExeption(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        /** @var SummaryVO */
+        $summaryVO = $this->createStub(SummaryVO::class);
         new AccountingDTO(
             $this->account,
             new MovementsCollection([new \stdClass]),
             (int) (new DateTime('now'))->format('Y'),
-            $this->createStub(SummaryVO::class)
+            $summaryVO
         );
     }
 
     public function testSetCollectionKeyWithInvalidOffsetThrowsException(): void
     {
+        /** @var SummaryVO */
+        $summaryVO = $this->createStub(SummaryVO::class);
         $accountingDTO = new AccountingDTO(
             $this->account,
             new MovementsCollection([]),
             (int) (new DateTime('now'))->format('Y'),
-            $this->createStub(SummaryVO::class)
+            $summaryVO
         );
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('collectionInvalidOffsetPosition');

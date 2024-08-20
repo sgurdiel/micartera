@@ -88,7 +88,8 @@ class PortfolioDTO extends EntityObjectsCollectionQueryResponse
     private function setCollectionKey(int $offset): void
     {
         if ($this->offset !== $offset) {
-            if (is_null($position = $this->getCollection()->offsetGet($offset))) {
+            $position = $this->getCollection()->offsetGet($offset);
+            if (is_null($position)) {
                 throw new DomainException(
                     new TranslationVO('collectionInvalidOffsetPosition')
                 );

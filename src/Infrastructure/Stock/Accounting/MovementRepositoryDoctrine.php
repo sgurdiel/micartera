@@ -41,8 +41,9 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
 
     public function findByIdOrThrowException(Uuid $acquisitionUuid, Uuid $liquidationUuid): Movement
     {
+        $object = $this->findOneBy(["acquisition" => $acquisitionUuid, "liquidation" => $liquidationUuid]);
         if (
-            null === ($object = $this->findOneBy(["acquisition" => $acquisitionUuid, "liquidation" => $liquidationUuid]))
+            null === ($object)
         ) {
             throw new DomainException(
                 new TranslationVO(

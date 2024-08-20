@@ -11,10 +11,10 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Account\Account;
+use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
-use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 
 class Liquidation extends TransactionAbstract implements EntityObjectInterface
@@ -132,17 +132,16 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
             $repoLiquidation->commit();
         } catch (Throwable $th) {
             $repoLiquidation->rollBack();
-            if (is_a($th, DomainException::class)) {
+            if(is_a($th, DomainException::class)) {
                 throw $th;
-            } else {
-                throw new DomainException(
-                    new TranslationVO(
-                        'actionFailed',
-                        [],
-                        TranslationVO::DOMAIN_MESSAGES
-                    )
-                );
             }
+            throw new DomainException(
+                new TranslationVO(
+                    'actionFailed',
+                    [],
+                    TranslationVO::DOMAIN_MESSAGES
+                )
+            );
         }
     }
 
@@ -158,17 +157,16 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
             $repoLiquidation->commit();
         } catch (Throwable $th) {
             $repoLiquidation->rollBack();
-            if (is_a($th, DomainException::class)) {
+            if(is_a($th, DomainException::class)) {
                 throw $th;
-            } else {
-                throw new DomainException(
-                    new TranslationVO(
-                        'actionFailed',
-                        [],
-                        TranslationVO::DOMAIN_MESSAGES
-                    )
-                );
             }
+            throw new DomainException(
+                new TranslationVO(
+                    'actionFailed',
+                    [],
+                    TranslationVO::DOMAIN_MESSAGES
+                )
+            );
         }
     }
 }

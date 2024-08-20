@@ -50,7 +50,8 @@ class AcquisitionRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
 
     public function findByIdOrThrowException(Uuid $id): Acquisition
     {
-        if (null === ($object = $this->findById($id))) {
+        $object = $this->findById($id);
+        if (null === ($object)) {
             throw new DomainException(
                 new TranslationVO(
                     'expectedPersistedObjectNotFound',
@@ -147,14 +148,14 @@ class AcquisitionRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
         ];
         $parameters = new ArrayCollection([]);
         $parameters->add(new Parameter('account_id', $account->getId(), 'uuid'));
-        if (is_null($stock) === false ) {
+        if (is_null($stock) === false) {
             $and[] = 's.code = :stock_code';
             $parameters->add(new Parameter('stock_code', $stock->getId(), 'string'));
         }
         $qb = $this->createQueryBuilder('t')
             ->select(
                 '
-            COALESCE(SUM(t.amountOutstanding * t.price),0) acquisitionPrice, 
+            COALESCE(SUM(t.amountOutstanding * t.price),0) acquisitionPrice,
             COALESCE(SUM(t.amountOutstanding * s.price),0) marketPrice,
             COALESCE(SUM(t.expensesUnaccountedFor), 0) acquisitionFee
             '

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery;
 
-#[Route('/{_locale<%app.locales%>}/stockportfolio')]
+#[Route('/{_locale<%app.locales%>}/portfolio/stock')]
 class StockPortfolioController extends AbstractController
 {
     #[Route('', name: 'stockportfolio_index', methods: ['GET'])]

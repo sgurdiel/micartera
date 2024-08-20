@@ -166,23 +166,23 @@ class StockOperateCommand extends AbstractApplication
                     $account->getCurrency()
                 )
             );
-            if ($line[1] === 'acquisition') {
+            $line[1] === 'acquisition' ?
                 $this->newAcquisition(
                     $stock,
                     $dateTime,
                     $line[4],
                     $expenses,
                     $account
-                );
-            } else {
+                )
+            :
                 $this->newLiquidation(
                     $stock,
                     $dateTime,
                     $line[4],
                     $expenses,
                     $account
-                );
-            }
+                )
+            ;
         } catch (DomainException $th) {
             throw new DomainException(
                 new TranslationVO(

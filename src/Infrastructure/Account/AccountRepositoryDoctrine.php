@@ -47,7 +47,8 @@ class AccountRepositoryDoctrine extends EntityObjectRepositoryDoctrine implement
 
     public function findByIdentifierOrThrowException(string $identifier): Account
     {
-        if (null === ($object = $this->findByIdentifier($identifier))) {
+        $object = $this->findByIdentifier($identifier);
+        if (null === ($object)) {
             throw new DomainException(
                 new TranslationVO(
                     'expectedPersistedObjectNotFound',

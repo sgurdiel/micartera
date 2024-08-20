@@ -46,7 +46,8 @@ class LiquidationRepositoryDoctrine extends EntityObjectRepositoryDoctrine imple
 
     public function findByIdOrThrowException(Uuid $id): Liquidation
     {
-        if (null === ($object = $this->findById($id))) {
+        $object = $this->findById($id);
+        if (null === ($object)) {
             throw new DomainException(
                 new TranslationVO(
                     'expectedPersistedObjectNotFound',

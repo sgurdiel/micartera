@@ -9,6 +9,7 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\NumberOperation;
+use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 
@@ -113,7 +114,6 @@ class Movement implements EntityObjectInterface
         ->multiply(
             (string) $this->getAmount()
         )
-        ->toMoney()
         ->getValue();
     }
 
@@ -123,7 +123,6 @@ class Movement implements EntityObjectInterface
         ->multiply(
             (string) $this->getAmount()
         )
-        ->toMoney()
         ->getValue();
     }
 
@@ -161,14 +160,14 @@ class Movement implements EntityObjectInterface
         );
     }
 
-    public function getAcquisitionPrice(): MoneyVO
+    public function getAcquisitionPrice(): StockPriceVO
     {
-        return new MoneyVO($this->acquisitionPrice, $this->getAcquisition()->getCurrency());
+        return new StockPriceVO($this->acquisitionPrice, $this->getAcquisition()->getCurrency());
     }
 
-    public function getLiquidationPrice(): MoneyVO
+    public function getLiquidationPrice(): StockPriceVO
     {
-        return new MoneyVO($this->liquidationPrice, $this->getAcquisition()->getCurrency());
+        return new StockPriceVO($this->liquidationPrice, $this->getAcquisition()->getCurrency());
     }
 
     public function getAcquisitionExpenses(): MoneyVO

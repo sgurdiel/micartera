@@ -17,13 +17,13 @@ class SummaryVO
         private readonly SummaryDTO $summaryAllTimeDTO,
         private readonly SummaryDTO $summaryDisplayedYearDTO
     ) {
-        if (false === is_null($dateTimeFirstLiquidationUtc)) {
+        false === is_null($dateTimeFirstLiquidationUtc) ?
             $this->yearOfFirstLiquidation = (int) $dateTimeFirstLiquidationUtc->setTimezone($this->account->getTimeZone())
-            ->format('Y');
-        } else {
+            ->format('Y')
+        :
             $this->yearOfFirstLiquidation = (int) (new DateTime('now', $this->account->getTimeZone()))
-            ->format('Y');
-        }
+            ->format('Y')
+        ;
     }
 
     public function getYearFirstLiquidation(): int

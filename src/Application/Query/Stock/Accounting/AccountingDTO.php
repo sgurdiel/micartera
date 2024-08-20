@@ -11,6 +11,7 @@ use xVer\MiCartera\Domain\Stock\Accounting\SummaryVO;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Stock\StockPriceVO;
 
 /**
  * @template-extends EntityObjectsCollectionQueryResponse<Movement>
@@ -52,13 +53,13 @@ class AccountingDTO extends EntityObjectsCollectionQueryResponse
         return $this->displayYear;
     }
 
-    public function getMovementAcquisitionPrice(int $offset): MoneyVO
+    public function getMovementAcquisitionPrice(int $offset): StockPriceVO
     {
         $this->setCollectionKey($offset);
         return $this->movement->getAcquisitionPrice();
     }
 
-    public function getMovementLiquidationPrice(int $offset): MoneyVO
+    public function getMovementLiquidationPrice(int $offset): StockPriceVO
     {
         $this->setCollectionKey($offset);
         return $this->movement->getLiquidationPrice();
@@ -78,8 +79,8 @@ class AccountingDTO extends EntityObjectsCollectionQueryResponse
 
     public function getMovementProfitPrice(int $offset): MoneyVO
     {
-        return $this->getMovementLiquidationPrice($offset)->subtract(
-            $this->getMovementAcquisitionPrice($offset)->add(
+        return $this->getMovementLiquidationPrice($offset)->toMoney()->subtract(
+            $this->getMovementAcquisitionPrice($offset)->toMoney()->add(
                 $this->getMovementAcquisitionExpense($offset)->add(
                     $this->getMovementLiquidationExpense($offset)
                 )
@@ -89,8 +90,8 @@ class AccountingDTO extends EntityObjectsCollectionQueryResponse
 
     public function getMovementProfitPercentage(int $offset): string
     {
-        return $this->getMovementAcquisitionPrice($offset)->percentageDifference(
-            $this->getMovementLiquidationPrice($offset)->subtract(
+        return $this->getMovementAcquisitionPrice($offset)->toMoney()->percentageDifference(
+            $this->getMovementLiquidationPrice($offset)->toMoney()->subtract(
                 $this->getMovementAcquisitionExpense($offset)->add(
                     $this->getMovementLiquidationExpense($offset)
                 )
@@ -101,7 +102,8 @@ class AccountingDTO extends EntityObjectsCollectionQueryResponse
     private function setCollectionKey(int $offset): void
     {
         if ($this->offset !== $offset) {
-            if (is_null($movement = $this->getCollection()->offsetGet($offset))) {
+            $movement = $this->getCollection()->offsetGet($offset);
+            if (is_null($movement)) {
                 throw new DomainException(
                     new TranslationVO('collectionInvalidOffsetPosition')
                 );

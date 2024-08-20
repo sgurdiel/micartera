@@ -347,7 +347,9 @@ class LiquidationTest extends TestCase
 
     public function testDomainExceptionWhileInCreateTransactionThrowsDomainException(): void
     {
-        $this->repoTransaction->expects($this->once())->method('persist')->willThrowException($this->createStub(DomainException::class));
+        /** @var DomainException */
+        $domainException = $this->createStub(DomainException::class);
+        $this->repoTransaction->expects($this->once())->method('persist')->willThrowException($domainException);
         $this->expectException(DomainException::class);
         /** @var Liquidation&MockObject */
         $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
@@ -361,7 +363,9 @@ class LiquidationTest extends TestCase
         $transaction = $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
             [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
-        $transaction->expects($this->once())->method('fiFoCriteriaInstance')->willThrowException($this->createStub(DomainException::class));
+        /** @var DomainException */
+        $domainException = $this->createStub(DomainException::class);
+        $transaction->expects($this->once())->method('fiFoCriteriaInstance')->willThrowException($domainException);
         $this->expectException(DomainException::class);
         $transaction->persistRemove($this->repoLoader);
     }

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Stock\Accounting\AccountingQuery;
 
-#[Route('/{_locale<%app.locales%>}/stockaccounting')]
+#[Route('/{_locale<%app.locales%>}/accounting/stock')]
 class StockAccountingController extends AbstractController
 {
     #[Route('', name: 'stockaccounting_index', methods: ['GET'])]

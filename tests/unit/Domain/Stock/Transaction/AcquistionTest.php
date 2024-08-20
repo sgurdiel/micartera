@@ -345,7 +345,9 @@ class AcquistionTest extends TestCase
 
     public function testDomainExceptionWhileInCreateTransactionThrowsDomainException(): void
     {
-        $this->repoTransaction->expects($this->once())->method('persist')->willThrowException($this->createStub(DomainException::class));
+        /** @var DomainException */
+        $domainException = $this->createStub(DomainException::class);
+        $this->repoTransaction->expects($this->once())->method('persist')->willThrowException($domainException);
         $this->expectException(DomainException::class);
         /** @var Acquisition&MockObject */
         $this->getMockBuilder(Acquisition::class)->enableOriginalConstructor()->setConstructorArgs(

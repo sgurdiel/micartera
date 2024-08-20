@@ -48,11 +48,11 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
 
     private function setAmountOutstanding(int $delta, bool $subtract): void
     {
-        if ($subtract) {
-            $this->amountOutstanding -= $delta;
-        } else {
-            $this->amountOutstanding += $delta;
-        }
+        $subtract === true ?
+            $this->amountOutstanding -= $delta
+        :
+            $this->amountOutstanding += $delta
+        ;
 
         if (
             0 > $this->amountOutstanding
@@ -125,17 +125,16 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
             $repoAcquisition->commit();
         } catch (Throwable $th) {
             $repoAcquisition->rollBack();
-            if (is_a($th, DomainException::class)) {
+            if(is_a($th, DomainException::class)) {
                 throw $th;
-            } else {
-                throw new DomainException(
-                    new TranslationVO(
-                        'actionFailed',
-                        [],
-                        TranslationVO::DOMAIN_MESSAGES
-                    )
-                );
             }
+            throw new DomainException(
+                new TranslationVO(
+                    'actionFailed',
+                    [],
+                    TranslationVO::DOMAIN_MESSAGES
+                )
+            );
         }
     }
 

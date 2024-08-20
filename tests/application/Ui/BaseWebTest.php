@@ -109,13 +109,13 @@ class BaseWebTest extends ApplicationTestCase
     {
         $this->client->loginUser(self::$user);
         $crawler = $this->client->request('GET', "/");
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_FOUND);
 
         $crawler = $this->client->request('GET', "/en_GB/login");
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_FOUND);
 
         $crawler = $this->client->request('GET', "/en_GB/register");
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_FOUND);
     }
 
     public function testRedirectsToLoginIfNotAuthenticated(): void

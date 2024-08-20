@@ -77,7 +77,7 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // test new
         $this->client->submit($form, $formFields);
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -113,13 +113,13 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // test new
         $this->client->submit($form, $formFields);
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
         // test new with referer
         $formFields[$formName.'[datetime]'] = (new DateTime('29 minutes ago', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $referer = 'http://localhost/en_GB/stockportfolio?page=3';
+        $referer = 'http://localhost/en_GB/portfolio/stock?page=3';
         $formFields[$formName.'[refererPage]'] = $referer;
         $this->client->submit($form, $formFields);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);
@@ -138,7 +138,7 @@ class StockOperateControllerTest extends ApplicationTestCase
     public function testDeleteAcquisitionThrowsDomainError(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
+        $crawler = $this->client->request('GET', '/en_GB/portfolio/stock');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_1');
@@ -149,7 +149,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('transBuyCannotBeRemovedWithoutFullAmountOutstanding', [], 'validators'));
     }
@@ -158,7 +158,7 @@ class StockOperateControllerTest extends ApplicationTestCase
     public function testDeleteLiquidation(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/stockaccounting');
+        $crawler = $this->client->request('GET', '/en_GB/accounting/stock');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_0');
@@ -169,7 +169,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/accounting/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -178,7 +178,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_0');
         $form = $buttonCrawlerNode->form();
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/accounting/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -186,7 +186,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $values = $form->getValues();
         $values['_token'] = 'BADTOKEN';
         $form->setValues($values);
-        $referer = 'http://localhost/en_GB/stockaccounting?year='.(new DateTime('now', new DateTimeZone('UTC')))->format('Y');
+        $referer = 'http://localhost/en_GB/accounting/stock?year='.(new DateTime('now', new DateTimeZone('UTC')))->format('Y');
         $this->client->setServerParameter('HTTP_REFERER', $referer);
         $crawler = $this->client->submit($form);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);
@@ -199,7 +199,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $form->setValues($values);
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockaccounting', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/accounting/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidFormToken', [], 'validators'));
     }
@@ -208,7 +208,7 @@ class StockOperateControllerTest extends ApplicationTestCase
     public function testDeleteAcquisition(): void
     {
         $this->client->loginUser(self::$user);
-        $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
+        $crawler = $this->client->request('GET', '/en_GB/portfolio/stock');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('cmdDelete_1');
@@ -219,7 +219,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         // submit the Form object
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully', [], 'messages'));
 
@@ -229,7 +229,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $form->setValues($values);
         $this->client->setServerParameter('HTTP_REFERER', '');
         $crawler = $this->client->submit($form);
-        $this->assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        $this->assertResponseRedirects('/en_GB/portfolio/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidFormToken', [], 'validators'));
     }

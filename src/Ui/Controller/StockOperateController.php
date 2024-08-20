@@ -35,11 +35,11 @@ class StockOperateController extends AbstractController
             },
             'stock' => $request->attributes->get('stock')
         ];
-        if ($request->isMethod('GET')) {
-            $formData['refererPage'] = $request->headers->get('referer');
-        } else {
-            $formData['refererPage'] = (string) $request->request->all('stock_operate')['refererPage'];
-        }
+        $request->isMethod('GET') ?
+            $formData['refererPage'] = $request->headers->get('referer')
+        :
+            $formData['refererPage'] = (string) $request->request->all('stock_operate')['refererPage']
+        ;
         $form = $this->createForm(StockOperateType::class, $formData);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -56,7 +56,7 @@ class StockOperateController extends AbstractController
                 $dateTime = $form->get('datetime')->getData();
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
-                if ($formData['type'] === 0) {
+                $formData['type'] === 0 ?
                     $command->purchase(
                         (string) $request->attributes->get('stock'),
                         $dateTime,
@@ -64,8 +64,8 @@ class StockOperateController extends AbstractController
                         $price,
                         $expenses,
                         $userIdentifier
-                    );
-                } else {
+                    )
+                :
                     $command->sell(
                         (string) $request->attributes->get('stock'),
                         $dateTime,
@@ -73,8 +73,8 @@ class StockOperateController extends AbstractController
                         $price,
                         $expenses,
                         $userIdentifier
-                    );
-                }
+                    )
+                ;
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return
                     $form->get('refererPage')->getData()
@@ -110,11 +110,11 @@ class StockOperateController extends AbstractController
                 $command = new StockOperateCommand(
                     EntityObjectRepositoryLoader::doctrine($managerRegistry)
                 );
-                if ($type === 0) {
-                    $command->removePurchase($id);
-                } else {
-                    $command->removeSell($id);
-                }
+                $type === 0 ?
+                    $command->removePurchase($id)
+                :
+                    $command->removeSell($id)
+                ;
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
                 return $this->redirectToRoute($route, [], Response::HTTP_SEE_OTHER);
             } catch (\DomainException $de) {

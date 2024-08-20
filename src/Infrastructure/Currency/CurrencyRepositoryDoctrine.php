@@ -37,7 +37,8 @@ class CurrencyRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
 
     public function findByIdOrThrowException(string $iso3): Currency
     {
-        if (null === ($object = $this->findById($iso3))) {
+        $object = $this->findById($iso3);
+        if (null === ($object)) {
             throw new DomainException(
                 new TranslationVO(
                     'expectedPersistedObjectNotFound',

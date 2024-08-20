@@ -49,9 +49,19 @@ class MovementTest extends TestCase
         $this->stock->method('sameId')->willReturn(true);
     }
 
-    /** @dataProvider createValues */
-    public function testIsCreated(
-        int $liquidationAmountRemaining, int $movementAmount, string $acquisitionPrice, string $liquidationPrice, string $acquisitionExpenses, string $liquidationExpenses
+    /** @dataProvider createValues2 */
+    public function testIsCreated2(
+        int $acquisitionAmountOutstanding,
+        string $acquisitionPrice,
+        string $acquisitionExpenses,
+        int $liquidationAmountRemaining,
+        string $liquidationPrice,
+        string $liquidationExpenses,
+        int $movementAmount,
+        string $movementAcquisitionPrice,
+        string $movementAcquisitionExpenses,
+        string $movementLiquidationPrice,
+        string $movementLiquidationExpenses,
     ): void {
         $this->repoMovement->expects($this->once())->method('persist');
         /** @var Currency&MockObject */
@@ -63,10 +73,10 @@ class MovementTest extends TestCase
         $acquisition->method('getStock')->willReturn($this->stock);
         $acquisition->method('getDateTimeUtc')->willReturn(new DateTime('30 minutes ago'));
         $acquisition->method('sameId')->willReturn(true);
-        $acquisition->method('getAmountOutstanding')->willReturn(100);
-        $acquisition->method('getPrice')->willReturn(new StockPriceVO('5.78', $currency));
+        $acquisition->method('getAmountOutstanding')->willReturn($acquisitionAmountOutstanding);
+        $acquisition->method('getPrice')->willReturn(new StockPriceVO($acquisitionPrice, $currency));
         $acquisition->method('getCurrency')->willReturn($currency);
-        $acquisition->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO('4.93', $currency));
+        $acquisition->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO($acquisitionExpenses, $currency));
 
         /** @var Liquidation&Stub */
         $liquidation = $this->createStub(Liquidation::class);
@@ -74,27 +84,29 @@ class MovementTest extends TestCase
         $liquidation->method('getDateTimeUtc')->willReturn(new DateTime('20 minutes ago'));
         $liquidation->method('sameId')->willReturn(true);
         $liquidation->method('getAmountRemaining')->willReturn($liquidationAmountRemaining);
-        $liquidation->method('getPrice')->willReturn(new StockPriceVO('8.53', $currency));
+        $liquidation->method('getPrice')->willReturn(new StockPriceVO($liquidationPrice, $currency));
         $liquidation->method('getCurrency')->willReturn($currency);
-        $liquidation->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO('3.51', $currency));
+        $liquidation->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO($liquidationExpenses, $currency));
 
         $accountingMovement = new Movement($this->repoLoader, $acquisition, $liquidation);
         $this->assertSame($acquisition, $accountingMovement->getAcquisition());
         $this->assertSame($liquidation, $accountingMovement->getLiquidation());
         $this->assertTrue($accountingMovement->sameId($accountingMovement));
         $this->assertSame($movementAmount, $accountingMovement->getAmount());
-        $this->assertSame($acquisitionPrice, $accountingMovement->getAcquisitionPrice()->getValue());
-        $this->assertSame($liquidationPrice, $accountingMovement->getLiquidationPrice()->getValue());
-        $this->assertSame($acquisitionExpenses, $accountingMovement->getAcquisitionExpenses()->getValue());
-        $this->assertSame($liquidationExpenses, $accountingMovement->getLiquidationExpenses()->getValue());
+        $this->assertSame($movementAcquisitionPrice, $accountingMovement->getAcquisitionPrice()->getValue());
+        $this->assertSame($movementLiquidationPrice, $accountingMovement->getLiquidationPrice()->getValue());
+        $this->assertSame($movementAcquisitionExpenses, $accountingMovement->getAcquisitionExpenses()->getValue());
+        $this->assertSame($movementLiquidationExpenses, $accountingMovement->getLiquidationExpenses()->getValue());
     }
 
-    public static function createValues(): array
+    public static function createValues2(): array
     {
         return [
-            [10, 10, '57.80', '85.30', '0.49', '3.51'],
-            [100, 100, '578.00', '853.00', '4.93', '3.51'],
-            [200, 100, '578.00', '853.00', '4.93', '1.75']
+            [10, '57.8000', '23.54', 10, '60.8000', '15.66', 10, '578.0000', '23.54', '608.0000', '15.66'],
+            [100, '578.0000', '23.54', 100, '608.0000', '15.66', 100, '57800.0000', '23.54', '60800.0000', '15.66'],
+            [200, '1.1234', '10.55', 100, '1.5678', '5.45', 100, '112.3400', '5.27', '156.7800', '5.45'],
+            [95, '61.6634', '10.55', 95, '61.6634', '10.55', 95, '5858.0230', '10.55', '5858.0230', '10.55'],
+            [10, '5.7800', '4.93', 100, '8.5300', '3.51', 10, '57.8000', '4.93', '85.3000', '0.35']
         ];
     }
 

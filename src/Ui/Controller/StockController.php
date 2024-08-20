@@ -82,17 +82,17 @@ class StockController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry
     ): Response|RedirectResponse {
-        if ($request->isMethod('GET')) {
+        $request->isMethod('GET') ?
             $formData = [
                 'code' => $request->attributes->get('id'),
                 'refererPage' => $request->headers->get('referer')
-            ];
-        } else {
+            ]
+        :
             $formData = [
                 'code' => $request->attributes->get('id'),
                 'refererPage' => $request->request->all('stock')['refererPage']
-            ];
-        }
+            ]
+        ;
         $form = $this->createForm(StockType::class, $formData);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

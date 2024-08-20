@@ -6,9 +6,11 @@
     {{ encore_entry_link_tags('table') }}
 {% endblock %}
 
-{% block title %}{{ 'accounting'|trans }}{% endblock %}
+{% block title %}{{ 'stockaccounting'|trans|capitalize }}{% endblock %}
 
 {% block body %}
+    <h1>{{ 'stockaccounting'|trans|capitalize }}</h1>
+
     {% set timezone =  accounting.getAccount().getTimeZone() %}
     {% set currencysymbol = accounting.getAccount().getCurrency().getSymbol() %}
     {% set yearProfitPrice = accounting.getSummary().getDisplayedYearProfitPrice().getValue() %}
@@ -57,13 +59,13 @@
         <tbody>
             <tr>
                 <td>{{ 'allTime' | trans }}</td>
-                <td class="number">{{ accounting.getSummary().getAllTimeAcquisitionsPrice().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getAllTimeLiquidationsPrice().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getAllTimeAcquisitionsExpenses().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getAllTimeLiquidationsExpenses().getValue() }}</td>
-                <td class="number {{ totalValueStyle }}">{{ totalValueSign }}{{ totalProfitPrice }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeAcquisitionsPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeLiquidationsPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeAcquisitionsExpenses().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeLiquidationsExpenses().getValue()}) }}</td>
+                <td class="number {{ totalValueStyle }}">{{ totalValueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: totalProfitPrice}) }}</td>
                 <td class="number {{ totalPercentStyle }}">
-                    {{ accounting.getSummary().getAllTimeProfitPercentage() }}
+                    {{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeProfitPercentage()}) }}
                     <svg focusable="false" viewBox="0 0 24 16">
                         <path d="{{ totalPercentArrow }}"></path>
                     </svg>
@@ -78,13 +80,13 @@
                         {% endfor%}
                     </select>
                 </td>
-                <td class="number">{{ accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getDisplayedYearLiquidationsPrice().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getDisplayedYearAcquisitionsExpenses().getValue() }}</td>
-                <td class="number">{{ accounting.getSummary().getDisplayedYearLiquidationsExpenses().getValue() }}</td>
-                <td class="number {{ yearValueStyle }}">{{ yearValueSign }}{{ yearProfitPrice }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsExpenses().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsExpenses().getValue()}) }}</td>
+                <td class="number {{ yearValueStyle }}">{{ yearValueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: yearProfitPrice}) }}</td>
                 <td class="number {{ yearPercentStyle }}">
-                    {{ accounting.getSummary().getDisplayedYearProfitPercentage() }}
+                    {{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearProfitPercentage()}) }}
                     <svg focusable="false" viewBox="0 0 24 16">
                         <path d="{{ yearPercentArrow }}"></path>
                     </svg>
@@ -107,9 +109,7 @@
     <table>
         <thead>
             <tr>
-                <th colspan="2" scope="colgroup">{{ 'acquisitionDateTime' | trans }} ({{ timezone.getName() }})</th>
-                <th colspan="2" scope="colgroup">{{ 'liquidationDateTime' | trans }} ({{ timezone.getName() }})</th>
-                <td colspan="2" class="noBg">&nbsp;</td>
+                <td colspan="4" class="noBg">&nbsp;</td>
                 <th colspan="2" scope="colgroup">{{ 'unitshareprice'| trans }} {{ currencysymbol }}</th>
                 <th colspan="2" scope="colgroup">{{ 'totalsharesprice'| trans }} {{ currencysymbol }}</th>
                 <th colspan="2" scope="colgroup">{{ 'expenses'| trans({'amount': 2}) }} {{ currencysymbol }}</th>
@@ -117,10 +117,8 @@
                 <td class="noBg">&nbsp;</td>
             </tr>
             <tr>
-                <th scope="col">{{ 'date'| trans }}</th>
-                <th scope="col">{{ 'time'| trans }}</th>
-                <th scope="col">{{ 'date'| trans }}</th>
-                <th scope="col">{{ 'time'| trans }}</th>
+                <th scope="col">{{ 'acquisitionDateTime' | trans }} ({{ timezone.getName() }})</th>
+                <th scope="col">{{ 'liquidationDateTime' | trans }} ({{ timezone.getName() }})</th>
                 <th scope="col">{{ 'symbol'| trans }}</th>
                 <th scope="col">{{ 'shares'| trans }}</th>
                 <th scope="col">{{ 'acquisition' | trans({'amount': 1}) }}</th>
@@ -148,23 +146,21 @@
                     {% set valueSign = "" %}
                     {% set percentArrow = "M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" %}
                 {% endif %}
-                <td>{{ accountingMovement.getAcquisition().datetimeutc | date('M d, Y', timezone) }}</td>
-                <td>{{ accountingMovement.getAcquisition().datetimeutc | date('H:i:s', timezone) }}</td>
-                <td>{{ accountingMovement.getLiquidation().datetimeutc | date('M d, Y', timezone) }}</td>
-                <td>{{ accountingMovement.getLiquidation().datetimeutc | date('H:i:s', timezone) }}</td>
+                <td>{{ accountingMovement.getAcquisition().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
+                <td>{{ accountingMovement.getLiquidation().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
                 <td>{{ accountingMovement.getLiquidation().getStock().getId() }}</td>
-                <td class="number">{{ accountingMovement.getAmount() }}</td>
-                <td class="number">{{ accountingMovement.getAcquisition().getPrice().getValue() }}</td>
-                <td class="number">{{ accountingMovement.getLiquidation().getPrice().getValue() }}</td>
-                <td class="number">{{ accounting.getMovementAcquisitionPrice(loop.index0).getValue() }}</td>
-                <td class="number">{{ accounting.getMovementLiquidationPrice(loop.index0).getValue() }}</td>
-                <td class="number">{{ accounting.getMovementAcquisitionExpense(loop.index0).getValue() }}</td>
-                <td class="number">{{ accounting.getMovementLiquidationExpense(loop.index0).getValue() }}</td>
+                <td class="number">{{ include('reusables/format_number/integer.html.twig', {number: accountingMovement.getAmount()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getAcquisition().getPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getLiquidation().getPrice().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementAcquisitionPrice(loop.index0).getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementLiquidationPrice(loop.index0).getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementAcquisitionExpense(loop.index0).getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementLiquidationExpense(loop.index0).getValue()}) }}</td>
                 <td class="number {{ valueStyle }}">
-                    {{ valueSign }}{{ accounting.getMovementProfitPrice(loop.index0).getValue() }}
+                    {{ valueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementProfitPrice(loop.index0).getValue()}) }}
                 </td>
                 <td class="number {{ percentStyle }}">
-                    {{ accounting.getMovementProfitPercentage(loop.index0) }}
+                    {{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementProfitPercentage(loop.index0)}) }}
                     <svg focusable="false" viewBox="0 0 24 16">
                         <path d="{{ percentArrow }}"></path>
                     </svg>
@@ -175,7 +171,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="15">{{ 'noRecordsFound'|trans }}</td>
+                <td colspan="13">{{ 'noRecordsFound'|trans }}</td>
             </tr>
         {% endfor %}
         </tbody>

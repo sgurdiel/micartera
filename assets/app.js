@@ -4,24 +4,30 @@
  * We recommend including the built version of this JavaScript file
  * (and its CSS file) in your base layout (base.html.twig).
  */
-const navBars = document.querySelector(".navBars");
+
+const navMenuOpen = document.querySelector(".navMenuOpen");
+const navMenuClose = document.querySelector(".navMenuClose");
 const navMenu = document.querySelector(".navMenu");
 const navMenuBg = document.querySelector(".navMenuBg");
-
-navBars.addEventListener("click",()=>{
-    navMenuClick();
-});
-
-navMenuBg.addEventListener("click",()=>{
-    navMenuClick();
-});
-
-function navMenuClick() {
-    navBars.classList.toggle("fa-bars");
-    navBars.classList.toggle("fa-close");
-    navMenu.classList.toggle("active");
-    navMenuBg.classList.toggle("active");
+var navMenuIsOpen = false;
+function navMenuShow(event) {
+    navMenuOpen.classList.toggle("hide");
+    navMenuClose.classList.toggle("hide");
+    navMenu.classList.toggle("hide");
+    navMenuBg.classList.toggle("hide");
+    navMenuIsOpen = !navMenuIsOpen;
 }
+if (navMenuOpen != null) {
+    navMenuOpen.addEventListener("click", (event) => { navMenuShow(event); });
+    navMenuClose.addEventListener("click", (event) => { navMenuShow(event); });
+    navMenuBg.addEventListener("mouseover", (event) => { navMenuShow(event); });
+}
+const beforeUnloadHandler = (event) => {
+    if (navMenuIsOpen) {
+        navMenuShow(event);
+    }
+};
+window.addEventListener("beforeunload", beforeUnloadHandler);
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';

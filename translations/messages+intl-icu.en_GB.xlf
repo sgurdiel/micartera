@@ -21,6 +21,10 @@
         <source>priceWithCurrencySymbol</source>
         <target>Price ({symbol})</target>
       </trans-unit>
+      <trans-unit id="payoutWithCurrencySymbol">
+        <source>payoutWithCurrencySymbol</source>
+        <target>Payout ({symbol})</target>
+      </trans-unit>
       <trans-unit id="value">
         <source>value</source>
         <target>Value</target>
@@ -220,7 +224,11 @@
       <trans-unit id="portfolio">
         <source>portfolio</source>
         <target>Portfolio</target>
-      </trans-unit>      
+      </trans-unit>
+      <trans-unit id="stockportfolio">
+        <source>stockportfolio</source>
+        <target>stock portfolio</target>
+      </trans-unit>
       <trans-unit id="portfolioCurrentPrice">
         <source>portfolioCurrentPrice</source>
         <target>Portfolio current price</target>
@@ -260,6 +268,10 @@
       <trans-unit id="gainpercent">
         <source>gainpercent</source>
         <target>Gain percentage</target>
+      </trans-unit>
+      <trans-unit id="stockaccounting">
+        <source>stockaccounting</source>
+        <target>stock accounting</target>
       </trans-unit>
       <trans-unit id="accounting">
         <source>accounting</source>
@@ -393,6 +405,10 @@
       <trans-unit id="gainsLosses">
         <source>gainsLosses</source>
         <target>Gains/Losses</target>
+      </trans-unit>
+      <trans-unit id="stockinvestments">
+        <source>stockinvestments</source>
+        <target>stock investments</target>
       </trans-unit>
     </body>
   </file>

@@ -29,12 +29,12 @@
     </thead>
     <tbody>
         <tr>
-            <td class="number">{{ summary.getTotalAcquisitionsPrice().getValue() }}</td>
-            <td class="number">{{ summary.getTotalAcquisitionsExpenses().getValue() }}</td>
-            <td class="number">{{ summary.getTotalMarketsPrice().getValue() }}</td>
-            <td class="number {{ totalValueStyle }}">{{ totalValueSign }}{{ portfolioProfitPrice.getValue() }}</td>
+            <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: summary.getTotalAcquisitionsPrice().getValue()}) }}</td>
+            <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: summary.getTotalAcquisitionsExpenses().getValue()}) }}</td>
+            <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: summary.getTotalMarketsPrice().getValue()}) }}</td>
+            <td class="number {{ totalValueStyle }}">{{ totalValueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: portfolioProfitPrice.getValue()}) }}</td>
             <td class="number {{ totalPercentStyle }}">
-                {{ summary.getTotalProfitForecastPercentage() }}
+                {{ include('reusables/format_number/decimal.html.twig', {number: summary.getTotalProfitForecastPercentage()}) }}
                 <svg focusable="false" viewBox="0 0 24 16">
                     <path d="{{ totalPercentArrow }}"></path>
                 </svg>

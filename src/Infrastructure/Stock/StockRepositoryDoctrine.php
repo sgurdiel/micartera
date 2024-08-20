@@ -43,7 +43,8 @@ class StockRepositoryDoctrine extends EntityObjectRepositoryDoctrine implements 
 
     public function findByIdOrThrowException(string $id): Stock
     {
-        if (null === ($object = $this->findById($id))) {
+        $object = $this->findById($id);
+        if (null === ($object)) {
             throw new DomainException(
                 new TranslationVO(
                     'expectedPersistedObjectNotFound',
