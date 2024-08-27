@@ -10,7 +10,7 @@
             "composer/package-versions-deprecated": true,
             "symfony/flex": true,
             "symfony/runtime": true,
-            "infection/extension-installer": true
+            "php-http/discovery": true
         },
         "optimize-autoloader": true,
         "preferred-install": {
@@ -32,8 +32,15 @@
         "php": "^8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-opentelemetry": "*",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.2",
+        "nyholm/psr7": "^1.8",
+        "open-telemetry/api": "^1.0",
+        "open-telemetry/exporter-otlp": "^1.0",
+        "open-telemetry/opentelemetry-auto-pdo": "^0.0.15",
+        "open-telemetry/opentelemetry-auto-symfony": "^1.0@beta",
+        "open-telemetry/sem-conv": "^1.24",
         "phpdocumentor/reflection-docblock": "^5.3",
         "symfony/asset": "7.1.*",
         "symfony/console": "7.1.*",
@@ -44,6 +51,7 @@
         "symfony/form": "7.1.*",
         "symfony/framework-bundle": "7.1.*",
         "symfony/http-client": "7.1.*",
+        "symfony/http-client-contracts": "^3.5",
         "symfony/intl": "7.1.*",
         "symfony/mime": "7.1.*",
         "symfony/monolog-bundle": "^3.10",
