@@ -45,14 +45,22 @@ jobs:
       SYMFONY_DEPRECATIONS_HELPER: disabled=1
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Setup PHP Action
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: ctype, iconv, opentelemetry
+        coverage: xdebug
+        tools: composer
+
+    - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}
@@ -76,7 +84,7 @@ jobs:
       run: npm run build
 
     - name: Run all test suites
-      run: vendor/bin/phpunit --testsuite=all --coverage-text
+      run: vendor/bin/phpunit --testsuite=all
        
     - name: Psalm static code analysis
       run: vendor/bin/psalm

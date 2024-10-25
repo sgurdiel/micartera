@@ -1,6 +1,6 @@
-@import 'mixins';
-@import 'fontawesome/fontawesome';
-@import 'fontawesome/solid';
+@use 'mixins';
+@use 'fontawesome/fontawesome';
+@use 'fontawesome/solid';
 
 * {
     font-family: "Lucida Console", "Courier new", monospace;

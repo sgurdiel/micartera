@@ -1,7 +1,7 @@
-@import 'mixins';
+@use 'mixins';
 
 form {
-    @include phoneDevice {
+    @include mixins.phoneDevice {
         position: initial;
         top: initial;
         left: initial;
