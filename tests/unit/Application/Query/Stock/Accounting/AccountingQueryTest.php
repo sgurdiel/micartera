@@ -3,11 +3,13 @@
 namespace Tests\unit\Application\Query\Stock\Accounting;
 
 use DateTime;
+use DateTimeZone;
 use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\MiCartera\Application\Query\Stock\Accounting\AccountingQuery;
 use xVer\MiCartera\Application\Query\Stock\Accounting\AccountingDTO;
+use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
@@ -28,7 +30,10 @@ class AccountingQueryTest extends KernelTestCase
      */
     public function testByAccountYearCommandSucceeds($displayedYear): void
     {
+        $account = $this->createStub(Account::class);
+        $account->method('getTimeZone')->willReturn((new DateTime('now', new DateTimeZone('UTC')))->getTimezone());
         $repoAccount = $this->createStub(AccountRepositoryDoctrine::class);
+        $repoAccount->method('findByIdentifierOrThrowException')->willReturn($account);
         /** @var MovementRepositoryDoctrine&Stub */
         $repoAccountingMovement = $this->createStub(MovementRepositoryDoctrine::class);
         $repoAccountingMovement->method('findByAccountAndYear')->willReturn(

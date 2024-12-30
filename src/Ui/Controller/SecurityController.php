@@ -13,6 +13,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use xVer\MiCartera\Application\Command\Account\AccountCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
+use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Ui\Form\RegistrationFormType;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Entity\AuthUser;
@@ -86,7 +87,9 @@ class SecurityController extends AbstractController
         ];
         $form = $this->createForm(RegistrationFormType::class, [], $options);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        /* @var non-empty-string */
+        $identifier = (string) $form->get('email')->getData();
+        if ($form->isSubmitted() && $form->isValid() && !empty($identifier)) {
             try {
                 $command = new AccountCommand(
                     EntityObjectRepositoryLoader::doctrine($managerRegistry)
@@ -94,7 +97,7 @@ class SecurityController extends AbstractController
                 $roles = ['ROLE_USER'];
                 $hashedPassword = $passwordHasher->hashPassword(
                     new AuthUser(
-                        (string) $form->get('email')->getData(),
+                        $identifier,
                         $roles,
                         ''
                     ),
