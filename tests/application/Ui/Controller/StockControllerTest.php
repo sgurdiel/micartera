@@ -12,9 +12,12 @@ use xVer\MiCartera\Domain\Stock\StockPriceVO;
  * @uses xVer\MiCartera\Application\Command\Stock\StockCommand
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Application\Query\Account\AccountQuery
+ * @uses xVer\MiCartera\Application\Query\Exchange\ExchangeQuery
  * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery
  * @uses xVer\MiCartera\Application\Query\Stock\StockQuery
  * @uses xVer\MiCartera\Domain\Account\Account
+ * @uses xVer\MiCartera\Domain\Exchange\Exchange
+ * @uses xVer\MiCartera\Domain\Exchange\ExchangesCollection
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
@@ -25,6 +28,7 @@ use xVer\MiCartera\Domain\Stock\StockPriceVO;
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  */
@@ -46,7 +50,8 @@ class StockControllerTest extends ApplicationTestCase
         $formFields = [
             $formName.'[code]' => 'ABCD',
             $formName.'[name]' => 'ABCD Name',
-            $formName.'[price]' => '6.5467'
+            $formName.'[price]' => '6.5467',
+            $formName.'[exchange]' => 'MCE'
         ];
 
         // test new

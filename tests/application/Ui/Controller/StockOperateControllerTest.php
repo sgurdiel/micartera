@@ -23,13 +23,14 @@ use xVer\MiCartera\Domain\Stock\Stock;
  * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioDTO
  * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery
  * @uses xVer\MiCartera\Domain\Account\Account
+ * @uses xVer\MiCartera\Domain\Exchange\Exchange
+ * @uses xVer\MiCartera\Domain\Currency\Currency
+ * @uses xVer\MiCartera\Domain\MoneyVO
+ * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryVO
  * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryDTO
- * @uses xVer\MiCartera\Domain\Currency\Currency
- * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StocksCollection
@@ -43,6 +44,7 @@ use xVer\MiCartera\Domain\Stock\Stock;
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine

@@ -11,6 +11,7 @@ use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
+use xVer\MiCartera\Domain\Exchange\Exchange;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
@@ -36,6 +37,8 @@ class StockTest extends TestCase
     private AcquisitionRepositoryInterface $repoAcquisition;
     /** @var EntityObjectRepositoryLoaderInterface&Stub */
     private EntityObjectRepositoryLoaderInterface $repoLoader;
+    /** @var Exchange&Stub */
+    private Exchange $exchange;
 
     public function setUp(): void
     {
@@ -60,27 +63,30 @@ class StockTest extends TestCase
                 ]
             )
         );
+        $this->exchange = $this->createStub(Exchange::class);
     }
 
     public function testStockObjectIsCreated(): void
     {
         $this->currency->method('sameId')->willReturn(true);
         $name = 'ABCD Name';
-        $stock = new Stock($this->repoLoader, 'ABCD', $name, $this->stockPrice);
+        $stock = new Stock($this->repoLoader, 'ABCD', $name, $this->stockPrice, $this->exchange);
         $this->assertInstanceOf(Stock::class, $stock);
         $this->assertTrue($stock->sameId($stock));
         $this->assertSame($name, $stock->getName());
         $this->assertSame('4.5614', $stock->getPrice()->getValue());
         $this->assertSame($this->currency, $stock->getCurrency());
         $this->assertSame('ABCD', $stock->getId());
+        $this->assertSame($this->exchange, $stock->getExchange());
     }
 
     public function testDuplicateStockCodeThrowsException(): void
     {
-        $this->repoStock->method('findById')->willReturn($this->createStub(Stock::class));
+        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
+        $this->repoStock->method('findById')->willReturn($stock);
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('stockExists');
-        new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice);
+        new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
     }
 
     /**
@@ -90,7 +96,7 @@ class StockTest extends TestCase
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('stringLength');
-        new Stock($this->repoLoader, $code, 'ABCD Name', $this->createStub(StockPriceVO::class));
+        new Stock($this->repoLoader, $code, 'ABCD Name', $this->stockPrice, $this->exchange);
     }
 
     public static function invalidCodes(): array
@@ -107,7 +113,7 @@ class StockTest extends TestCase
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('stringLength');
-        new Stock($this->repoLoader, 'ABCD', $name, $this->createStub(StockPriceVO::class));
+        new Stock($this->repoLoader, 'ABCD', $name, $this->stockPrice, $this->exchange);
     }
 
     public static function invalidNames(): array
@@ -124,15 +130,15 @@ class StockTest extends TestCase
     public function testUpdateStockPriceWithInvalidCurrencyThrowsException(): void
     {
         $this->currency->method('sameId')->willReturn(false);
-        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice);
+        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('otherCurrencyExpected');
-        $stock->setPrice($this->createStub(StockPriceVO::class));
+        $stock->setPrice($this->stockPrice);
     }
 
     public function testSameIdWithInvalidEntityThrowsException(): void
     {
-        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice);
+        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
         $entity = new class implements EntityObjectInterface { public function sameId(EntityObjectInterface $otherEntity): bool { return true; }};
         $this->expectException(InvalidArgumentException::class);
         $stock->sameId($entity);
@@ -141,7 +147,7 @@ class StockTest extends TestCase
     public function testSetPrice(): void
     {
         $this->currency->method('sameId')->willReturn(true);
-        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice);
+        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
         /** @var StockPriceVO&Stub */
         $newStockPrice = $this->createStub(StockPriceVO::class);
         $newStockPrice->method('getValue')->willReturn('6.7824');
@@ -192,7 +198,7 @@ class StockTest extends TestCase
         $this->repoStock->expects($this->once())->method('persist')->willThrowException(new Exception());        
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('actionFailed');
-        new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice);
+        new Stock($this->repoLoader, 'ABCD', 'ABCD Name', $this->stockPrice, $this->exchange);
     }
 
     public function testExceptionIsThrownOnUpdateCommitFail(): void

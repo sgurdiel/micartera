@@ -10,11 +10,13 @@ use xVer\MiCartera\Application\Command\Stock\StockCommand;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
+use xVer\MiCartera\Domain\Exchange\ExchangeRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 use xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine;
+use xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine;
@@ -60,14 +62,16 @@ class StockCommandTest extends TestCase
         $repoAccount = $this->createStub(AccountRepositoryDoctrine::class);
         $repoAccount->method('findByIdentifierOrThrowException')->willReturn($account);
         $repoStock = $this->createStub(StockRepositoryDoctrine::class);
+        $repoExchange = $this->createStub(ExchangeRepositoryDoctrine::class);
         $this->repoLoader->method('load')->will(
             $this->returnValueMap([
                 [StockRepositoryInterface::class, $repoStock],
-                [AccountRepositoryInterface::class, $repoAccount]
+                [AccountRepositoryInterface::class, $repoAccount],
+                [ExchangeRepositoryInterface::class, $repoExchange]
             ])
         );
         $command = new StockCommand($this->repoLoader);
-        $stock = $command->create('TEST', 'Test', '5.44', 'test@example.com');
+        $stock = $command->create('TEST', 'Test', '5.44', 'test@example.com', 'BME');
         $this->assertInstanceOf(Stock::class, $stock);
     }
 

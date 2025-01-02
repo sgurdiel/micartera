@@ -11,7 +11,6 @@
          executionOrder="depends,defects"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
          failOnRisky="true"
          failOnWarning="true"
          defaultTestSuite="unit"

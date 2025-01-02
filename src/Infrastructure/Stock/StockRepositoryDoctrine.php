@@ -2,7 +2,6 @@
 
 namespace xVer\MiCartera\Infrastructure\Stock;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;

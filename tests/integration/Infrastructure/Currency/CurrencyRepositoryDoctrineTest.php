@@ -14,6 +14,7 @@ use xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine;
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\Currency\CurrenciesCollection
+ * @uses xVer\MiCartera\Domain\Exchange\Exchange
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
@@ -24,6 +25,7 @@ use xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine

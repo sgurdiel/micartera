@@ -410,6 +410,10 @@
         <source>stockinvestments</source>
         <target>stock investments</target>
       </trans-unit>
+      <trans-unit id="exchange">
+        <source>exchange</source>
+        <target>Exchange</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

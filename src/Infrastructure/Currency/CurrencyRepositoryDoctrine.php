@@ -4,7 +4,6 @@ namespace xVer\MiCartera\Infrastructure\Currency;
 
 use Doctrine\Persistence\ManagerRegistry;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
-use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Currency\CurrenciesCollection;

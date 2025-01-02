@@ -5,9 +5,11 @@ namespace Tests\integration\Infrastructure\Stock;
 use Tests\integration\IntegrationTestCase;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\Currency\Currency;
+use xVer\MiCartera\Domain\Exchange\Exchange;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine;
+use xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine;
 use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
 
 /**
@@ -15,6 +17,7 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Application\EntityObjectRepositoryLoader
  * @uses xVer\MiCartera\Domain\Account\Account
  * @uses xVer\MiCartera\Domain\Currency\Currency
+ * @uses xVer\MiCartera\Domain\Exchange\Exchange
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
@@ -27,6 +30,7 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
+ * @uses xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine
  */
@@ -35,6 +39,7 @@ class StockRepositoryDoctrineTest extends IntegrationTestCase
     private StockRepositoryDoctrine $repoStock;
     private Currency $currencyEuro;
     private Currency $currencyDollar;
+    private Exchange $exchange;
 
     protected function resetEntityManager(): void
     {
@@ -43,11 +48,13 @@ class StockRepositoryDoctrineTest extends IntegrationTestCase
         $repoCurrency = new CurrencyRepositoryDoctrine(self::$registry);
         $this->currencyEuro = $repoCurrency->findById('EUR');
         $this->currencyDollar = $repoCurrency->findById('USD');
+        $repoExchange = new ExchangeRepositoryDoctrine(self::$registry);
+        $this->exchange = $repoExchange->findById('MCE');
     }
 
     public function testStockIsAddedUpdatedAndRemoved(): void
     {
-        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', new StockPriceVO('2.6632', $this->currencyEuro));
+        $stock = new Stock($this->repoLoader, 'ABCD', 'ABCD Name', new StockPriceVO('2.6632', $this->currencyEuro), $this->exchange);
         $this->assertInstanceOf(Stock::class, $stock);
         parent::detachEntity($stock);
         $stock = $this->repoStock->findById($stock->getId());
@@ -85,9 +92,9 @@ class StockRepositoryDoctrineTest extends IntegrationTestCase
     {
         parent::$loadFixtures = true;
         $expected = [
-            new Stock($this->repoLoader, 'EFGH', 'EFGGH Name', new StockPriceVO('4.2300', $this->currencyDollar)),
-            new Stock($this->repoLoader, 'IJKL', 'IJKL Name', new StockPriceVO('5.2300', $this->currencyDollar)),
-            new Stock($this->repoLoader, 'MNOP', 'MNOP Name', new StockPriceVO('4.2301', $this->currencyDollar))
+            new Stock($this->repoLoader, 'EFGH', 'EFGGH Name', new StockPriceVO('4.2300', $this->currencyDollar), $this->exchange),
+            new Stock($this->repoLoader, 'IJKL', 'IJKL Name', new StockPriceVO('5.2300', $this->currencyDollar), $this->exchange),
+            new Stock($this->repoLoader, 'MNOP', 'MNOP Name', new StockPriceVO('4.2301', $this->currencyDollar), $this->exchange),
         ];
         $amount = count($expected);
         $stocks = $this->repoStock->findByCurrency($this->currencyDollar, 10, 0, 'code', 'ASC');

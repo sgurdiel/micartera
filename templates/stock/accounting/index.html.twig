@@ -148,7 +148,7 @@
                 {% endif %}
                 <td>{{ accountingMovement.getAcquisition().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
                 <td>{{ accountingMovement.getLiquidation().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
-                <td>{{ accountingMovement.getLiquidation().getStock().getId() }}</td>
+                <td><a href="{{ path('stock_update', {'id': accountingMovement.getLiquidation().getStock().getId()}) }}" class="actionItem">{{ accountingMovement.getLiquidation().getStock().getId() }} - {{ accountingMovement.getLiquidation().getStock().getExchange.getCode() }}</a></td>
                 <td class="number">{{ include('reusables/format_number/integer.html.twig', {number: accountingMovement.getAmount()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getAcquisition().getPrice().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getLiquidation().getPrice().getValue()}) }}</td>

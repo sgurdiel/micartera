@@ -30,6 +30,7 @@
         <thead>
             <tr>
                 <th scope="col">{{ 'code' | trans }}</th>
+                <th scope="col">{{ 'exchange' | trans }}</th>
                 <th scope="col">{{ 'name' | trans }}</th>
                 <th scope="col">{{ 'price' | trans }} {{ currencySymbol }}</th>
                 <th scope="col">{{ 'actions' | trans }}</th>
@@ -39,6 +40,7 @@
         {% for stock in stocks.getCollection().toArray() %}
             <tr>
                 <td><a href="{{ path('stock_update', {'id': stock.getId()}) }}" class="actionItem">{{ stock.getId() }}</a></td>
+                <td>{{ stock.getExchange.getCode() }} - {{ stock.getExchange.getName() }}</td>
                 <td>{{ stock.name }}</td>
                 <td class="number">{{ stock.price.value }}</td>
                 <td>

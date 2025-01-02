@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Currency\Currency;
+use xVer\MiCartera\Domain\Exchange\Exchange;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
@@ -44,12 +45,13 @@ class BaseDataFixtures extends Fixture
             new DateTimeZone("America/Chicago"),
             ['ROLE_USER']
         );
+        $exchange = new Exchange($this->repoLoader, 'MCE', 'Mercado Continuo Español');
         $price = new StockPriceVO('2.5620', $currencyEuro);
-        $stock = new Stock($this->repoLoader, 'CABK', 'Caixabank', $price);
+        $stock = new Stock($this->repoLoader, 'CABK', 'Caixabank', $price, $exchange);
         $price2 = new StockPriceVO('3.5620', $currencyEuro);
-        new Stock($this->repoLoader, 'SAN', 'Santander', $price2);
+        new Stock($this->repoLoader, 'SAN', 'Santander', $price2, $exchange);
         $price3 = new StockPriceVO('5.9620', $currencyEuro);
-        new Stock($this->repoLoader, 'ROVI', 'Laboratorios Rovi', $price3);
+        new Stock($this->repoLoader, 'ROVI', 'Laboratorios Rovi', $price3, $exchange);
         $expenses = new MoneyVO('10.23', $currencyEuro);
         new Acquisition(
             $this->repoLoader,

@@ -15,5 +15,10 @@
         <option name="unsigned">true</option>
       </options>
     </field>
+    <many-to-one field="exchange" target-entity="xVer\MiCartera\Domain\Exchange\Exchange" fetch="LAZY">
+      <join-columns>
+        <join-column name="exchange" referenced-column-name="code" nullable="false"/>
+      </join-columns>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

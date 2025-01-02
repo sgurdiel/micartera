@@ -13,6 +13,7 @@ use xVer\MiCartera\Application\Command\Stock\StockCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery;
 use xVer\MiCartera\Application\Query\Stock\StockQuery;
+use xVer\MiCartera\Domain\Exchange\Exchange;
 use xVer\MiCartera\Ui\Form\StockType;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
 
@@ -58,11 +59,14 @@ class StockController extends AbstractController
                 $price = $form->get('price')->getData();
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
+                /** @psalm-var Exchange */
+                $exchange = $form->get('exchange')->getData();
                 $command->create(
                     (string) $form->get('code')->getData(),
                     (string) $form->get('name')->getData(),
                     $price,
-                    $userIdentifier
+                    $userIdentifier,
+                    $exchange->getCode()
                 );
                 $this->addFlash('success', $translator->trans("actionCompletedSuccessfully"));
                 return $this->redirectToRoute('stock_list', [], Response::HTTP_SEE_OTHER);

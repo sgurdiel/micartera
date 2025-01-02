@@ -6,6 +6,8 @@ use xVer\Bundle\DomainBundle\Application\AbstractApplication;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
+use xVer\MiCartera\Domain\Exchange\Exchange;
+use xVer\MiCartera\Domain\Exchange\ExchangeRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
 
 class StockCommand extends AbstractApplication
@@ -13,7 +15,7 @@ class StockCommand extends AbstractApplication
     /**
      * @psalm-param numeric-string $price
      */
-    public function create(string $code, string $name, string $price, string $accountIdentifier): Stock
+    public function create(string $code, string $name, string $price, string $accountIdentifier, string $exchange): Stock
     {
         return new Stock(
             $this->repoLoader,
@@ -24,7 +26,9 @@ class StockCommand extends AbstractApplication
                 $this->repoLoader->load(AccountRepositoryInterface::class)
                 ->findByIdentifierOrThrowException($accountIdentifier)
                 ->getCurrency()
-            )
+            ),
+            $this->repoLoader->load(ExchangeRepositoryInterface::class)
+            ->findByIdOrThrowException($exchange)
         );
     }
 

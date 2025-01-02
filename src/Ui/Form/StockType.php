@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use NumberFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -17,7 +18,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Traversable;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
 use xVer\MiCartera\Application\Query\Account\AccountQuery;
+use xVer\MiCartera\Application\Query\Exchange\ExchangeQuery;
 use xVer\MiCartera\Application\Query\Stock\StockQuery;
+use xVer\MiCartera\Domain\Exchange\Exchange;
 
 class StockType extends AbstractType implements DataMapperInterface
 {
@@ -35,13 +38,28 @@ class StockType extends AbstractType implements DataMapperInterface
     {
         if (array_key_exists('data', $options)) { //When editting stock, code is readonly
             $builder
+                ->add('exchange', null, [
+                    'disabled' => true,
+                    'label' => 'exchange',
+                ])
                 ->add('code', null, [
                     'disabled' => true,
                     'label' => 'code',
                 ]);
             $submitLabel = 'update';
         } else {
+            $exchangesQuery = new ExchangeQuery(
+                EntityObjectRepositoryLoader::doctrine($this->managerRegistry)
+            );
+            $exchanges = $exchangesQuery->all()->getCollection()->toArray();
             $builder
+                ->add('exchange', ChoiceType::class, [
+                    'choices' => $exchanges,
+                    'label' => 'exchange',
+                    'choice_value' => 'code',
+                    'choice_label' => 'code',
+                    'choice_translation_domain' => false,
+                ])
                 ->add('code', null, [
                     'label' => 'code',
                 ]);
@@ -92,6 +110,7 @@ class StockType extends AbstractType implements DataMapperInterface
         if (!isset($viewData['updatePost'])) {
             $query = new StockQuery(EntityObjectRepositoryLoader::doctrine($this->managerRegistry));
             $stock = $query->byCode((string) $viewData['code']);
+            $forms['exchange']->setData($stock->getExchange()->getCode());
             $forms['name']->setData($stock->getName());
             $forms['price']->setData($stock->getPrice()->getValue());
             $forms['refererPage']->setData($viewData['refererPage']);
