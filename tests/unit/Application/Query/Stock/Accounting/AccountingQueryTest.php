@@ -21,7 +21,7 @@ use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
  * @covers xVer\MiCartera\Application\Query\Stock\Accounting\AccountingQuery
  * @uses xVer\MiCartera\Application\Query\Stock\Accounting\AccountingDTO
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  */
 class AccountingQueryTest extends KernelTestCase
 {

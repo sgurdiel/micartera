@@ -19,13 +19,15 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\Exchange\Exchange
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\StocksCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
- * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FifoCriteria
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
@@ -50,6 +52,11 @@ class StockRepositoryDoctrineTest extends IntegrationTestCase
         $this->currencyDollar = $repoCurrency->findById('USD');
         $repoExchange = new ExchangeRepositoryDoctrine(self::$registry);
         $this->exchange = $repoExchange->findById('MCE');
+    }
+
+    public function testTest(): void
+    {
+        $this->assertSame(true, true);
     }
 
     public function testStockIsAddedUpdatedAndRemoved(): void

@@ -12,34 +12,34 @@ use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
-use xVer\MiCartera\Domain\NumberOperation;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria;
 
 abstract class TransactionAbstract
 {
-    protected const EXPENSES_MAX = '99999.9999';
-
     protected Uuid $id;
     protected readonly Currency $currency;
-    /** @psalm-var numeric-string */
+    /** @var numeric-string */
     protected readonly string $price;
-    /** @psalm-var numeric-string */
+    /** @var numeric-string */
     protected string $expenses;
-    /** @psalm-var numeric-string */
+    /** @var numeric-string */
     protected string $expensesUnaccountedFor = '0';
+    /** @var numeric-string */
+    protected readonly string $amount;
 
     public function __construct(
         protected readonly Stock $stock,
         protected readonly DateTime $datetimeutc,
-        protected readonly int $amount,
+        TransactionAmountVO $amount,
         MoneyVO $expenses,
         protected readonly Account $account
     ) {
+        $this->amount = $amount->getValue();
         $this->constraintNoTransactionDateInFuture();
-        $this->constraintTransactionAmount();
         $this->generateId();
         $this->currency = $this->getStock()->getPrice()->getCurrency();
         $this->price = $this->stock->getPrice()->getValue();
@@ -56,20 +56,6 @@ abstract class TransactionAbstract
                     TranslationVO::DOMAIN_VALIDATORS
                 ),
                 ''
-            );
-        }
-    }
-
-    private function constraintTransactionAmount(): void
-    {
-        if (0 >= $this->amount || Stock::MAX_TRANSACTION_AMOUNT < $this->amount) {
-            throw new DomainException(
-                new TranslationVO(
-                    'numberBetween',
-                    ['minimum' => '1', 'maximum' => Stock::MAX_TRANSACTION_AMOUNT],
-                    TranslationVO::DOMAIN_VALIDATORS
-                ),
-                'amount'
             );
         }
     }
@@ -96,9 +82,9 @@ abstract class TransactionAbstract
         return new DateTime($this->datetimeutc->format('Y-m-d H:i:s'), new DateTimeZone('UTC'));
     }
 
-    public function getAmount(): int
+    public function getAmount(): TransactionAmountVO
     {
-        return $this->amount;
+        return new TransactionAmountVO($this->amount);
     }
 
     public function getCurrency(): Currency
@@ -135,15 +121,17 @@ abstract class TransactionAbstract
             );
         }
 
+        $highestExpenseAllowed = (new MoneyVO('0', $expenses->getCurrency()))->getHighestValue();
+
         if (
-            1 === NumberOperation::compare($expenses->getCurrency()->getDecimals(), '0', $expenses->getValue())
+            $expenses->smaller(new MoneyVO('0', $expenses->getCurrency()))
             ||
-            1 === NumberOperation::compare($expenses->getCurrency()->getDecimals(), $expenses->getValue(), self::EXPENSES_MAX)
+            $expenses->greater(new MoneyVO($highestExpenseAllowed, $expenses->getCurrency()))
         ) {
             throw new DomainException(
                 new TranslationVO(
-                    'numberBetween',
-                    ['minimum' => '0', 'maximum' => self::EXPENSES_MAX],
+                    'enterNumberBetween',
+                    ['minimum' => '0', 'maximum' => $highestExpenseAllowed],
                     TranslationVO::DOMAIN_VALIDATORS
                 ),
                 'price'
@@ -169,17 +157,9 @@ abstract class TransactionAbstract
             )->getValue()
         );
         if (
-            1 === NumberOperation::compare(
-                $this->getExpensesUnaccountedFor()->getCurrency()->getDecimals(),
-                '0',
-                $this->getExpensesUnaccountedFor()->getValue()
-            )
+            $this->getExpensesUnaccountedFor()->smaller(new MoneyVO('0', $this->getExpensesUnaccountedFor()->getCurrency()))
             ||
-            1 === NumberOperation::compare(
-                $this->getExpensesUnaccountedFor()->getCurrency()->getDecimals(),
-                $this->getExpensesUnaccountedFor()->getValue(),
-                $this->getExpenses()->getValue()
-            )
+            $this->getExpensesUnaccountedFor()->greater($this->getExpenses())
         ) {
             throw new DomainException(
                 new TranslationVO(

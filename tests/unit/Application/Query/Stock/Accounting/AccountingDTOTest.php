@@ -24,7 +24,7 @@ use xVer\MiCartera\Domain\Stock\StockPriceVO;
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  */
 class AccountingDTOTest extends KernelTestCase
 {  

@@ -11,6 +11,7 @@ use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
@@ -30,8 +31,10 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
@@ -39,6 +42,7 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
@@ -71,7 +75,7 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
     {
         $transaction = new Liquidation(
             $this->repoLoader,
-            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), 99, $this->expenses, $this->account
+            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), new TransactionAmountVO('99'), $this->expenses, $this->account
         );
         $this->assertInstanceOf(Liquidation::class, $transaction);
         $transactionId = $transaction->getId();
@@ -88,7 +92,7 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction = new Liquidation(
             $this->repoLoader,
-            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), 10, $this->expenses, $this->account
+            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), new TransactionAmountVO('10'), $this->expenses, $this->account
         );
         $transactionId = $transaction->getId();
         parent::detachEntity($transaction);
@@ -102,7 +106,7 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction = new Liquidation(
             $this->repoLoader,
-            $this->stock, new DateTime('30 minutes ago', new DateTimeZone('UTC')), 14, $this->expenses, $this->account
+            $this->stock, new DateTime('30 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('14'), $this->expenses, $this->account
         );
         $transactionId = $transaction->getId();
         parent::detachEntity($transaction);
@@ -124,15 +128,15 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         $this->assertSame(0, $transactionsCollection->count());
         new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('30 minutes ago', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
+            $this->stock2, new DateTime('30 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('654'), $this->expenses, $this->account
         );
         new Liquidation(
             $this->repoLoader,
-            $this->stock2, new DateTime('25 minutes ago', new DateTimeZone('UTC')), 200, $this->expenses, $this->account
+            $this->stock2, new DateTime('25 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('200'), $this->expenses, $this->account
         );
         new Liquidation(
             $this->repoLoader,
-            $this->stock2, new DateTime('24 minutes ago', new DateTimeZone('UTC')), 400, $this->expenses, $this->account
+            $this->stock2, new DateTime('24 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('400'), $this->expenses, $this->account
         );
         $transactionsCollection = $this->repo->findByStockId($this->stock2, 20, 0);
         $this->assertSame(2, $transactionsCollection->count());
@@ -159,7 +163,7 @@ class LiquidationRepositoryDoctrineTest extends IntegrationTestCase
         $this->expectExceptionMessage('transNotPassFifoSpec');
         new Liquidation(
             $this->repoLoader,
-            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), 999, $this->expenses, $this->account
+            $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), new TransactionAmountVO('999'), $this->expenses, $this->account
         );
     }    
 }

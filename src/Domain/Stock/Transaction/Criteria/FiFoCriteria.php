@@ -8,7 +8,6 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
-use xVer\MiCartera\Domain\NumberOperation;
 use xVer\MiCartera\Domain\Stock\Stock;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
@@ -16,6 +15,7 @@ use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO;
 
 class FiFoCriteria
 {
@@ -155,7 +155,7 @@ class FiFoCriteria
     private function accountMovements(Liquidation $liquidation): void
     {
         foreach ($this->acquisitionsCollection->toArray() as $acquisition) {
-            if (0 < $acquisition->getAmountOutstanding()) {
+            if ($acquisition->getAmountOutstanding()->greater(new TransactionAmountOutstandingVO('0'))) {
                 try {
                     new Movement($this->repoLoader, $acquisition, $liquidation);
                 } catch (DomainException) {
@@ -163,19 +163,15 @@ class FiFoCriteria
                         new TranslationVO('transNotPassFifoSpec', [], TranslationVO::DOMAIN_VALIDATORS)
                     );
                 }
-                if (0 === $liquidation->getAmountRemaining()) {
+                if ($liquidation->getAmountRemaining()->same(new TransactionAmountOutstandingVO('0'))) {
                     break;
                 }
             }
         }
         if (
-            0 !== $liquidation->getAmountRemaining()
+            $liquidation->getAmountRemaining()->different(new TransactionAmountOutstandingVO('0'))
             ||
-            0 !== NumberOperation::compare(
-                $liquidation->getExpensesUnaccountedFor()->getCurrency()->getDecimals(),
-                $liquidation->getExpensesUnaccountedFor()->getValue(),
-                '0'
-            )
+            $liquidation->getExpensesUnaccountedFor()->different(new TransactionAmountOutstandingVO('0'))
         ) {
             throw new DomainException(
                 new TranslationVO('transNotPassFifoSpec', [], TranslationVO::DOMAIN_VALIDATORS)

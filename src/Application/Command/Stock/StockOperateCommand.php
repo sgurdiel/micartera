@@ -13,6 +13,7 @@ use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
@@ -22,13 +23,14 @@ use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
 class StockOperateCommand extends AbstractApplication
 {
     /**
+     * @psalm-param numeric-string $amount
      * @psalm-param numeric-string $priceValue
      * @psalm-param numeric-string $expensesValue
      */
     public function purchase(
         string $stockCode,
         DateTime $datetimeutc,
-        int $amount,
+        string $amount,
         string $priceValue,
         string $expensesValue,
         string $accountIdentifier
@@ -46,7 +48,7 @@ class StockOperateCommand extends AbstractApplication
         return $this->newAcquisition(
             $stock,
             $datetimeutc,
-            $amount,
+            new TransactionAmountVO($amount),
             new MoneyVO(
                 $expensesValue,
                 $account->getCurrency()
@@ -56,13 +58,14 @@ class StockOperateCommand extends AbstractApplication
     }
 
     /**
+     * @psalm-param numeric-string $amount
      * @psalm-param numeric-string $priceValue
      * @psalm-param numeric-string $expensesValue
      */
     public function sell(
         string $stockCode,
         DateTime $datetimeutc,
-        int $amount,
+        string $amount,
         string $priceValue,
         string $expensesValue,
         string $accountIdentifier
@@ -80,7 +83,7 @@ class StockOperateCommand extends AbstractApplication
         return $this->newLiquidation(
             $stock,
             $datetimeutc,
-            $amount,
+            new TransactionAmountVO($amount),
             new MoneyVO(
                 $expensesValue,
                 $account->getCurrency()
@@ -112,7 +115,7 @@ class StockOperateCommand extends AbstractApplication
     }
 
     /**
-     * @psalm-param array{0: string,1: string,2: string,3: numeric-string,4: int,5: numeric-string} $line date<'Y-m-d H:i:s T'>,type,stock,price,amount,expenses
+     * @psalm-param array{0: string,1: string,2: string,3: numeric-string,4: numeric-string,5: numeric-string} $line date<'Y-m-d H:i:s T'>,type,stock,price,amount,expenses
      */
     public function import(int $lineNumber, array $line, string $accountIdentifier): void
     {
@@ -170,7 +173,7 @@ class StockOperateCommand extends AbstractApplication
                 $this->newAcquisition(
                     $stock,
                     $dateTime,
-                    $line[4],
+                    new TransactionAmountVO($line[4]),
                     $expenses,
                     $account
                 )
@@ -178,7 +181,7 @@ class StockOperateCommand extends AbstractApplication
                 $this->newLiquidation(
                     $stock,
                     $dateTime,
-                    $line[4],
+                    new TransactionAmountVO($line[4]),
                     $expenses,
                     $account
                 )
@@ -205,7 +208,7 @@ class StockOperateCommand extends AbstractApplication
     protected function newAcquisition(
         Stock $stock,
         DateTime $dateTime,
-        int $amount,
+        TransactionAmountVO $amount,
         MoneyVO $expenses,
         Account $account
     ): Acquisition {
@@ -222,7 +225,7 @@ class StockOperateCommand extends AbstractApplication
     protected function newLiquidation(
         Stock $stock,
         DateTime $dateTime,
-        int $amount,
+        TransactionAmountVO $amount,
         MoneyVO $expenses,
         Account $account
     ): Liquidation {

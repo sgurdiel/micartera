@@ -7,22 +7,22 @@ use PHPUnit\Framework\TestCase;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Number\Number;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 
 /**
  * @covers xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Currency\Currency
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\MoneyVO
   */
 class StockPriceVOTest extends TestCase
 {
-    /** @var Currency&Stub */
-    private Currency $currency;
+    private Currency&Stub $currency;
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('getDecimals')->willReturn(2);
     }
@@ -36,9 +36,9 @@ class StockPriceVOTest extends TestCase
     public function testMultiply(): void
     {
         $price = new StockPriceVO('643.4566', $this->currency);
-        $priceTotal = $price->multiply('100');
+        $priceTotal = $price->multiply(new Number('100'));
         $this->assertInstanceOf(StockPriceVO::class, $priceTotal);
-        $this->assertSame('64345.6600', $priceTotal->getValue());
+        $this->assertSame('64345.66', $priceTotal->getValue());
         $this->assertSame($this->currency, $priceTotal->getCurrency());
     }
 
@@ -49,7 +49,7 @@ class StockPriceVOTest extends TestCase
     {
         if ($exception) {
             $this->expectException(DomainException::class);
-            $this->expectExceptionMessage('stockPriceFormat');
+            $this->expectExceptionMessage('enterNumberBetween');
         }
         $price = new StockPriceVO($testPrice, $this->currency);
         if (false === $exception) {
@@ -62,8 +62,9 @@ class StockPriceVOTest extends TestCase
         return [
             ['0.1234', '0.1234', false],
             ['99999.9999', '99999.9999', false],
-            ['0.12', '0.1200', false],
-            ['1', '1.0000', false],
+            ['0.12', '0.12', false],
+            ['0.1200', '0.12', false],
+            ['1', '1', false],
             ['-1', '', true],
             ['1000000', '', true],
         ];

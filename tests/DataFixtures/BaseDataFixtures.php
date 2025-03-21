@@ -13,6 +13,7 @@ use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Exchange\Exchange;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 
@@ -57,7 +58,7 @@ class BaseDataFixtures extends Fixture
             $this->repoLoader,
             $stock,
             new DateTime('last week', new DateTimeZone('UTC')),
-            200,
+            new TransactionAmountVO('200'),
             $expenses,
             $account
         );

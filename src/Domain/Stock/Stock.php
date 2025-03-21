@@ -14,7 +14,6 @@ use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 
 class Stock implements EntityObjectInterface
 {
-    final public const MAX_TRANSACTION_AMOUNT = 999999;
     final public const MAX_CODE_LENGTH = 4;
     final public const MIN_CODE_LENGTH = 1;
     final public const MAX_NAME_LENGTH = 255;

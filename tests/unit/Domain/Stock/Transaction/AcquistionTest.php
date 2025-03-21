@@ -18,7 +18,9 @@ use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Number\Number;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
@@ -28,31 +30,32 @@ use xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria;
  * @covers xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @covers xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  */
 class AcquistionTest extends TestCase
 {
-    private Currency $currency;
+    private Currency&Stub $currency;
     private StockPriceVO $price;
-    private Stock $stock;
+    private Stock&Stub $stock;
     private static DateTime $dateTimeUtc;
-    private static int $amount;
+    private static TransactionAmountVO $amount;
     private MoneyVO $expenses;
-    private Account $account;
-    private EntityObjectRepositoryLoader $repoLoader;
-    /** @var AcquisitionRepositoryInterface&MockObject */
-    private AcquisitionRepositoryInterface $repoTransaction;
+    private Account&Stub $account;
+    private EntityObjectRepositoryLoader&Stub $repoLoader;
+    private AcquisitionRepositoryInterface&MockObject $repoTransaction;
 
     public static function setUpBeforeClass(): void
     {
         self::$dateTimeUtc = new DateTime('yesterday', new DateTimeZone('UTC'));
-        self::$amount = 100;
+        self::$amount = new TransactionAmountVO('100');
     }
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('sameId')->willReturn(true);
         $this->currency->method('getDecimals')->willReturn(2);
@@ -87,14 +90,14 @@ class AcquistionTest extends TestCase
         $this->assertInstanceOf(Acquisition::class, $transaction);
         $this->assertSame($this->stock, $transaction->getStock());
         $this->assertEquals(self::$dateTimeUtc->format('Y-m-d H:i:s'), $transaction->getDateTimeUtc()->format('Y-m-d H:i:s'));
-        $this->assertSame(self::$amount, $transaction->getAmount());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmount()->getValue());
         $this->assertEquals($this->price, $transaction->getPrice());
         $this->assertEquals($this->expenses, $transaction->getExpenses());
         $this->assertSame($this->account, $transaction->getAccount());
         $this->assertInstanceOf(Uuid::class, $transaction->getId());
         $this->assertSame($this->currency, $transaction->getCurrency());
         $this->assertTrue($transaction->sameId($transaction));
-        $this->assertSame(self::$amount, $transaction->getAmountOutstanding());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmountOutstanding()->getValue());
         $this->assertEquals($this->expenses, $transaction->getExpensesUnaccountedFor());
     }
 
@@ -145,17 +148,18 @@ class AcquistionTest extends TestCase
     public function testInvalidAmountFormatThrowsException($transAmount): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('numberBetween');
+        $this->expectExceptionMessage('enterNumberBetween');
         $this->getMockBuilder(Acquisition::class)->enableOriginalConstructor()->setConstructorArgs(
-            [$this->repoLoader, $this->stock, self::$dateTimeUtc, $transAmount, $this->expenses, $this->account]
+            [$this->repoLoader, $this->stock, self::$dateTimeUtc, new TransactionAmountVO($transAmount), $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
     }
 
     public static function invalidAmount(): array
     {
         return [
-            [1000000],
-            [-1]
+            ['1000000000'],
+            ['-1'],
+            ['0']
         ];
     }
 
@@ -199,17 +203,20 @@ class AcquistionTest extends TestCase
     public function testInvalidExpensesValueFormatThrowsException($expense): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('numberBetween');
+        $this->expectExceptionMessage('enterNumberBetween');
         /** @var Acquisition&MockObject */
         $this->getMockBuilder(Acquisition::class)->enableOriginalConstructor()->setConstructorArgs(
-            [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, new MoneyVO($expense, $this->currency), $this->account]
+            [
+            $this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount,
+            new MoneyVO($expense, $this->currency),
+            $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
     }
 
     public static function invalidExpenses(): array
     {
         return [
-            ['100000'],
+            ['1000000000000'],
             ['-1.5']
         ];
     }
@@ -239,10 +246,10 @@ class AcquistionTest extends TestCase
         $movement->expects($this->exactly(2))->method('getAmount')->willReturn(self::$amount);
         $movement->expects($this->exactly(2))->method('getAcquisitionExpenses')->willReturn($this->expenses);
         $this->assertSame($transaction, $transaction->accountMovement($this->repoLoader, $movement));
-        $this->assertSame(0, $transaction->getAmountOutstanding());
+        $this->assertSame('0', $transaction->getAmountOutstanding()->getValue());
         $this->assertEquals(new MoneyVO('0.00', $this->currency), $transaction->getExpensesUnaccountedFor());
         $transaction->unaccountMovement($this->repoLoader, $movement);
-        $this->assertSame(self::$amount, $transaction->getAmountOutstanding());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmountOutstanding()->getValue());
         $this->assertEquals($this->expenses, $transaction->getExpensesUnaccountedFor());
     }
 
@@ -255,6 +262,7 @@ class AcquistionTest extends TestCase
         $transaction->expects($this->once())->method('sameId')->willReturn(true);
         /** @var Movement&MockObject */
         $movement = $this->createMock(Movement::class);
+        $movement->expects($this->once())->method('getAmount')->willReturn(new TransactionAmountVO('14'));
         $movement->expects($this->once())->method('getAcquisitionExpenses')->willReturn($this->expenses->add(new MoneyVO('1', $this->currency)));
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('InvalidMovementExpensesAmount');
@@ -270,7 +278,9 @@ class AcquistionTest extends TestCase
         $transaction->expects($this->once())->method('sameId')->willReturn(true);
         /** @var Movement&MockObject */
         $movement = $this->createMock(Movement::class);
-        $movement->expects($this->once())->method('getAmount')->willReturn(self::$amount+1);
+        $movement->expects($this->once())->method('getAmount')->willReturn(
+            new TransactionAmountVO(bcadd(self::$amount->getValue(),'1'))
+        );
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('MovementAmountNotWithinAllowedLimits');
         $transaction->accountMovement($this->repoLoader, $movement);

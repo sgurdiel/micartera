@@ -24,7 +24,8 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
 /**
  * @covers xVer\MiCartera\Application\Command\Stock\StockCommand
  * @uses xVer\MiCartera\Domain\Currency\Currency
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine
@@ -32,24 +33,18 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
  */
 class StockCommandTest extends TestCase
 {
-    private Currency $currency;
-    /** @var Stock&MockObject */
-    private Stock $stock;
-    private StockRepositoryDoctrine $repoStock;
-    /** @var EntityObjectRepositoryLoaderInterface|MockObject */
-    private EntityObjectRepositoryLoaderInterface $repoLoader;
+    private Currency&Stub $currency;
+    private Stock&MockObject $stock;
+    private StockRepositoryDoctrine&MockObject $repoStock;
+    private EntityObjectRepositoryLoaderInterface&MockObject $repoLoader;
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('sameId')->willReturn(true);
-        /** @var Stock&MockObject */
         $this->stock = $this->createMock(Stock::class);
         $this->stock->method('getCurrency')->willReturn($this->currency);
-        /** @var StockRepositoryDoctrine&MockObject */
         $this->repoStock = $this->createMock(StockRepositoryDoctrine::class);
-        /** @var EntityObjectRepositoryLoaderInterface|Stub */
         $this->repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
     }
 

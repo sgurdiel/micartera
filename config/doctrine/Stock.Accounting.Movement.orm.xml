@@ -13,7 +13,7 @@
         <join-column referenced-column-name="id" on-delete="RESTRICT"/>
       </join-columns>
     </many-to-one>
-    <field name="amount" type="integer" column="amount" nullable="false">
+    <field name="amount" type="decimal" column="amount" scale="9" precision="18" nullable="false">
       <options>
         <option name="unsigned">true</option>
       </options>

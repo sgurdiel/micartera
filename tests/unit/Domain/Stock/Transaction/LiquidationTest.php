@@ -19,7 +19,9 @@ use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Number\Number;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
@@ -31,35 +33,35 @@ use xVer\MiCartera\Domain\Stock\Transaction\LiquidationRepositoryInterface;
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  */
 
 class LiquidationTest extends TestCase
 {
-    private Currency $currency;
+    private Currency&Stub $currency;
     private StockPriceVO $price;
-    private Stock $stock;
+    private Stock&Stub $stock;
     private static DateTime $dateTimeUtc;
-    private static int $amount;
+    private static TransactionAmountVO $amount;
     private MoneyVO $expenses;
-    private Account $account;
-    /** @var EntityObjectRepositoryLoader&Stub */
-    private EntityObjectRepositoryLoader $repoLoader;
-    /** @var LiquidationRepositoryInterface&MockObject */
-    private LiquidationRepositoryInterface $repoTransaction;
+    private Account&Stub $account;
+    private EntityObjectRepositoryLoader&Stub $repoLoader;
+    private LiquidationRepositoryInterface&MockObject $repoTransaction;   
 
     public static function setUpBeforeClass(): void
     {
         self::$dateTimeUtc = new DateTime('yesterday', new DateTimeZone('UTC'));
-        self::$amount = 100;
+        self::$amount = new TransactionAmountVO('100');
     }
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('sameId')->willReturn(true);
         $this->currency->method('getDecimals')->willReturn(2);
@@ -67,12 +69,10 @@ class LiquidationTest extends TestCase
         $this->account = $this->createStub(Account::class);
         $this->price = new StockPriceVO('4.5600', $this->currency);
         $this->expenses = new MoneyVO('23.34', $this->currency);
-        /** @var Stock&Stub */
         $this->stock = $this->createStub(Stock::class);        
         $this->stock->method('getCurrency')->willReturn($this->currency);
         $this->stock->method('getPrice')->willReturn($this->price);
         $this->stock->method('sameId')->willReturn(true);
-        /** @var LiquidationRepositoryInterface&MockObject */
         $this->repoTransaction = $this->createMock(LiquidationRepositoryInterface::class);
         $this->repoTransaction->method('assertNoTransWithSameAccountStockOnDateTime')->willReturn(true);
         /** @var EntityObjectRepositoryLoader&Stub */
@@ -97,14 +97,14 @@ class LiquidationTest extends TestCase
         $this->assertInstanceOf(Liquidation::class, $transaction);
         $this->assertSame($this->stock, $transaction->getStock());
         $this->assertEquals(self::$dateTimeUtc->format('Y-m-d H:i:s'), $transaction->getDateTimeUtc()->format('Y-m-d H:i:s'));
-        $this->assertSame(self::$amount, $transaction->getAmount());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmount()->getValue());
         $this->assertEquals($this->price, $transaction->getPrice());
         $this->assertEquals($this->expenses, $transaction->getExpenses());
         $this->assertSame($this->account, $transaction->getAccount());
         $this->assertInstanceOf(Uuid::class, $transaction->getId());
         $this->assertSame($this->currency, $transaction->getCurrency());
         $this->assertTrue($transaction->sameId($transaction));
-        $this->assertSame(self::$amount, $transaction->getAmountRemaining());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmountRemaining()->getValue());
         $this->assertEquals($this->expenses, $transaction->getExpensesUnaccountedFor());
     }
 
@@ -142,17 +142,18 @@ class LiquidationTest extends TestCase
     public function testInvalidAmountFormatThrowsException($transAmount): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('numberBetween');
+        $this->expectExceptionMessage('enterNumberBetween');
         $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
-            [$this->repoLoader, $this->stock, self::$dateTimeUtc, $transAmount, $this->expenses, $this->account]
+            [$this->repoLoader, $this->stock, self::$dateTimeUtc, new TransactionAmountVO($transAmount), $this->expenses, $this->account]
         )->onlyMethods(['fiFoCriteriaInstance'])->getMock();
     }
 
     public static function invalidAmount(): array
     {
         return [
-            [1000000],
-            [-1]
+            ['1000000000'],
+            ['-1'],
+            ['0']
         ];
     }
 
@@ -179,7 +180,7 @@ class LiquidationTest extends TestCase
     public function testInvalidExpensesValueFormatThrowsException($expense): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('numberBetween');
+        $this->expectExceptionMessage('enterNumberBetween');
         /** @var Liquidation&MockObject */
         $this->getMockBuilder(Liquidation::class)->enableOriginalConstructor()->setConstructorArgs(
             [$this->repoLoader, $this->stock, self::$dateTimeUtc, self::$amount, new MoneyVO($expense, $this->currency), $this->account]
@@ -189,7 +190,7 @@ class LiquidationTest extends TestCase
     public static function invalidExpenses(): array
     {
         return [
-            ['100000'],
+            ['1000000000000'],
             ['-1.5']
         ];
     }
@@ -242,11 +243,11 @@ class LiquidationTest extends TestCase
         $movement->expects($this->once())->method('getAmount')->willReturn(self::$amount);
         $movement->expects($this->exactly(2))->method('getLiquidationExpenses')->willReturn($this->expenses);
         $this->assertSame($transaction, $transaction->accountMovement($repoLoader, $movement));
-        $this->assertSame(0, $transaction->getAmountRemaining());
+        $this->assertSame('0', $transaction->getAmountRemaining()->getValue());
         $this->assertEquals(new MoneyVO('0.00', $this->currency), $transaction->getExpensesUnaccountedFor());
         $acquisitionsCollection = $transaction->clearMovementsCollection($repoLoader);
         $this->assertInstanceOf(AcquisitionsCollection::class, $acquisitionsCollection);
-        $this->assertSame(self::$amount, $transaction->getAmountRemaining());
+        $this->assertSame(self::$amount->getValue(), $transaction->getAmountRemaining()->getValue());
         $this->assertEquals($this->expenses, $transaction->getExpensesUnaccountedFor());  
     }
 
@@ -274,7 +275,9 @@ class LiquidationTest extends TestCase
         $transaction->expects($this->once())->method('sameId')->willReturn(true);
         /** @var Movement&MockObject */
         $movement = $this->createMock(Movement::class);
-        $movement->expects($this->once())->method('getAmount')->willReturn(self::$amount+1);
+        $movement->expects($this->once())->method('getAmount')->willReturn(
+            new TransactionAmountVO(bcadd(self::$amount->getValue(),'1'))
+        );
         $movement->expects($this->once())->method('getLiquidationExpenses')->willReturn(new MoneyVO('4.56', $this->currency));
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('MovementAmountNotWithinAllowedLimits');

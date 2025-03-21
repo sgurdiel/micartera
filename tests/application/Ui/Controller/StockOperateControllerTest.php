@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 
 /**
  * @covers xVer\MiCartera\Ui\Controller\StockOperateController
@@ -26,7 +27,8 @@ use xVer\MiCartera\Domain\Stock\Stock;
  * @uses xVer\MiCartera\Domain\Exchange\Exchange
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection
  * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryVO
@@ -41,6 +43,8 @@ use xVer\MiCartera\Domain\Stock\Stock;
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
@@ -88,7 +92,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('stockoperate_new');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('numberBetween', ['minimum' => '1', 'maximum' => Stock::MAX_TRANSACTION_AMOUNT], TranslationVO::DOMAIN_VALIDATORS));
+        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('numberBetween', ['minimum' => TransactionAmountVO::LOWEST_AMOUNT, 'maximum' => TransactionAmountVO::HIGHEST_AMOUNT], TranslationVO::DOMAIN_VALIDATORS));
     }
 
     /** @depends testAcquisition */
@@ -133,7 +137,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('stockoperate_new');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('numberBetween', ['minimum' => '1', 'maximum' => Stock::MAX_TRANSACTION_AMOUNT], TranslationVO::DOMAIN_VALIDATORS));
+        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('numberBetween', ['minimum' => TransactionAmountVO::LOWEST_AMOUNT, 'maximum' => TransactionAmountVO::HIGHEST_AMOUNT], TranslationVO::DOMAIN_VALIDATORS));
     }
 
     /** @depends testLiquidation */

@@ -27,7 +27,7 @@ class PortfolioDTO extends EntityObjectsCollectionQueryResponse
         AcquisitionsCollection $outstandingPositionsCollection,
         private readonly SummaryVO $summary,
         int $limit = 0,
-        private readonly int $page = 0
+        readonly int $page = 0
     ) {
         parent::__construct($outstandingPositionsCollection, $limit, $page);
     }
@@ -46,7 +46,7 @@ class PortfolioDTO extends EntityObjectsCollectionQueryResponse
     {
         $this->setCollectionKey($offset);
         return $this->position->getPrice()->multiply(
-            (string) $this->position->getAmountOutstanding()
+            $this->position->getAmountOutstanding()
         );
     }
 
@@ -54,7 +54,7 @@ class PortfolioDTO extends EntityObjectsCollectionQueryResponse
     {
         $this->setCollectionKey($offset);
         return $this->position->getStock()->getPrice()->multiply(
-            (string) $this->position->getAmountOutstanding()
+            $this->position->getAmountOutstanding()
         );
     }
 

@@ -15,23 +15,26 @@ use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO;
 
 /**
  * @covers xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
  */
 class MovementTest extends TestCase
 {
-    private EntityObjectRepositoryLoader $repoLoader;
-    /** @var Stock&Stub */
-    private Stock $stock;
-    /** @var MovementRepositoryInterface&MockObject */
-    private MovementRepositoryInterface $repoMovement;
+    private EntityObjectRepositoryLoader&Stub $repoLoader;
+    private Stock&Stub $stock;
+    private MovementRepositoryInterface&MockObject $repoMovement;
 
     public function setUp(): void
     {
@@ -51,13 +54,13 @@ class MovementTest extends TestCase
 
     /** @dataProvider createValues2 */
     public function testIsCreated2(
-        int $acquisitionAmountOutstanding,
+        string $acquisitionAmountOutstanding,
         string $acquisitionPrice,
         string $acquisitionExpenses,
-        int $liquidationAmountRemaining,
+        string $liquidationAmountRemaining,
         string $liquidationPrice,
         string $liquidationExpenses,
-        int $movementAmount,
+        string $movementAmount,
         string $movementAcquisitionPrice,
         string $movementAcquisitionExpenses,
         string $movementLiquidationPrice,
@@ -73,7 +76,7 @@ class MovementTest extends TestCase
         $acquisition->method('getStock')->willReturn($this->stock);
         $acquisition->method('getDateTimeUtc')->willReturn(new DateTime('30 minutes ago'));
         $acquisition->method('sameId')->willReturn(true);
-        $acquisition->method('getAmountOutstanding')->willReturn($acquisitionAmountOutstanding);
+        $acquisition->method('getAmountOutstanding')->willReturn(new TransactionAmountOutstandingVO($acquisitionAmountOutstanding));
         $acquisition->method('getPrice')->willReturn(new StockPriceVO($acquisitionPrice, $currency));
         $acquisition->method('getCurrency')->willReturn($currency);
         $acquisition->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO($acquisitionExpenses, $currency));
@@ -83,7 +86,7 @@ class MovementTest extends TestCase
         $liquidation->method('getStock')->willReturn($this->stock);
         $liquidation->method('getDateTimeUtc')->willReturn(new DateTime('20 minutes ago'));
         $liquidation->method('sameId')->willReturn(true);
-        $liquidation->method('getAmountRemaining')->willReturn($liquidationAmountRemaining);
+        $liquidation->method('getAmountRemaining')->willReturn(new TransactionAmountOutstandingVO($liquidationAmountRemaining));
         $liquidation->method('getPrice')->willReturn(new StockPriceVO($liquidationPrice, $currency));
         $liquidation->method('getCurrency')->willReturn($currency);
         $liquidation->method('getExpensesUnaccountedFor')->willReturn(new MoneyVO($liquidationExpenses, $currency));
@@ -92,7 +95,7 @@ class MovementTest extends TestCase
         $this->assertSame($acquisition, $accountingMovement->getAcquisition());
         $this->assertSame($liquidation, $accountingMovement->getLiquidation());
         $this->assertTrue($accountingMovement->sameId($accountingMovement));
-        $this->assertSame($movementAmount, $accountingMovement->getAmount());
+        $this->assertSame((new TransactionAmountVO($movementAmount))->getValue(), $accountingMovement->getAmount()->getValue());
         $this->assertSame($movementAcquisitionPrice, $accountingMovement->getAcquisitionPrice()->getValue());
         $this->assertSame($movementLiquidationPrice, $accountingMovement->getLiquidationPrice()->getValue());
         $this->assertSame($movementAcquisitionExpenses, $accountingMovement->getAcquisitionExpenses()->getValue());
@@ -102,11 +105,11 @@ class MovementTest extends TestCase
     public static function createValues2(): array
     {
         return [
-            [10, '57.8000', '23.54', 10, '60.8000', '15.66', 10, '578.0000', '23.54', '608.0000', '15.66'],
-            [100, '578.0000', '23.54', 100, '608.0000', '15.66', 100, '57800.0000', '23.54', '60800.0000', '15.66'],
-            [200, '1.1234', '10.55', 100, '1.5678', '5.45', 100, '112.3400', '5.27', '156.7800', '5.45'],
-            [95, '61.6634', '10.55', 95, '61.6634', '10.55', 95, '5858.0230', '10.55', '5858.0230', '10.55'],
-            [10, '5.7800', '4.93', 100, '8.5300', '3.51', 10, '57.8000', '4.93', '85.3000', '0.35']
+            ['10', '57.8000', '23.54', '10', '60.8000', '15.66', '10', '578', '23.54', '608', '15.66'],
+            ['100', '578.0000', '23.54', '100', '608.0000', '15.66', '100', '57800', '23.54', '60800', '15.66'],
+            ['200', '1.1234', '10.55', '100', '1.5678', '5.45', '100', '112.34', '5.27', '156.78', '5.45'],
+            ['95', '61.6634', '10.55', '95', '61.6634', '10.55', '95', '5858.023', '10.55', '5858.023', '10.55'],
+            ['10', '5.7800', '4.93', '100', '8.5300', '3.51', '10', '57.8', '4.93', '85.3', '0.35']
         ];
     }
 
@@ -156,7 +159,7 @@ class MovementTest extends TestCase
         $acquisition = $this->createStub(Acquisition::class);
         $acquisition->method('getStock')->willReturn($this->stock);
         $acquisition->method('getDateTimeUtc')->willReturn(new DateTime('30 minutes ago'));
-        $acquisition->method('getAmountOutstanding')->willReturn(0);
+        $acquisition->method('getAmountOutstanding')->willReturn(new TransactionAmountOutstandingVO('0'));
         /** @var Liquidation&Stub */
         $liquidation = $this->createStub(Liquidation::class);
         $liquidation->method('getStock')->willReturn($this->stock);     

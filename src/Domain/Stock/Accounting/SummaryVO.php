@@ -12,7 +12,6 @@ class SummaryVO
 
     public function __construct(
         private readonly Account $account,
-        private readonly int $displayedYear,
         readonly ?DateTime $dateTimeFirstLiquidationUtc,
         private readonly SummaryDTO $summaryAllTimeDTO,
         private readonly SummaryDTO $summaryDisplayedYearDTO

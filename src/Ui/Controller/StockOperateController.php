@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use xVer\MiCartera\Application\Command\Stock\StockOperateCommand;
 use xVer\MiCartera\Application\EntityObjectRepositoryLoader;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Ui\Form\StockOperateImportType;
 use xVer\MiCartera\Ui\Form\StockOperateType;
 use xVer\Symfony\Bundle\BaseAppBundle\Ui\Controller\ExceptionTranslatorTrait;
@@ -56,11 +57,13 @@ class StockOperateController extends AbstractController
                 $dateTime = $form->get('datetime')->getData();
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
+                /** @psalm-var numeric-string */
+                $amount = $form->get('amount')->getData();
                 $formData['type'] === 0 ?
                     $command->purchase(
                         (string) $request->attributes->get('stock'),
                         $dateTime,
-                        (int) $form->get('amount')->getData(),
+                        $amount,
                         $price,
                         $expenses,
                         $userIdentifier
@@ -69,7 +72,7 @@ class StockOperateController extends AbstractController
                     $command->sell(
                         (string) $request->attributes->get('stock'),
                         $dateTime,
-                        (int) $form->get('amount')->getData(),
+                        $amount,
                         $price,
                         $expenses,
                         $userIdentifier
@@ -173,7 +176,7 @@ class StockOperateController extends AbstractController
                         }
                         /**
                          * @psalm-var array{
-                         *  0: string,1: string,2: string,3: numeric-string,4: int,5: numeric-string
+                         *  0: string,1: string,2: string,3: numeric-string,4: numeric-string,5: numeric-string
                          * } $line
                          */
                         $command->import($lineNumber, $line, $userIdentifier);

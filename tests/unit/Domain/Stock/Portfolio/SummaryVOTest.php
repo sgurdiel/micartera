@@ -11,7 +11,8 @@ use xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO;
 /**
  * @covers xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  */
 class SummaryVOTest extends TestCase
 {

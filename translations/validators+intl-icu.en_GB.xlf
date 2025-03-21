@@ -34,9 +34,13 @@
         <source>numberPrecision</source>
         <target>Enter a number with a maximu of {precision} decimal places.</target>
       </trans-unit>
-      <trans-unit id="stockPriceFormat">
-        <source>stockPriceFormat</source>
+      <trans-unit id="enterNumberBetween">
+        <source>enterNumberBetween</source>
         <target>Enter a number between {minimum} and {maximum}.</target>
+      </trans-unit>
+      <trans-unit id="maxValueIsSmallerThanMinValue">
+        <source>maxValueIsSmallerThanMinValue</source>
+        <target>Minimum value cannot be greater than maximum value</target>
       </trans-unit>
       <trans-unit id="positiveNumberRequired">
         <source>positiveNumberRequired</source>

@@ -14,6 +14,7 @@ use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\Stock\Accounting\SummaryVO;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 use xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine;
@@ -31,7 +32,8 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Stock\Accounting\SummaryDTO
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
@@ -39,6 +41,8 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine
@@ -68,8 +72,8 @@ class MovementRepositoryDoctrineTest extends IntegrationTestCase
     public function testFindByIdOrThowException(): void
     {
         self::$loadFixtures = true;
-        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
-        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
+        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
+        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
         $movement = $this->repo->findByIdOrThrowException($acquisition->getId(), $liquidation->getId());
         $this->assertInstanceOf(Movement::class, $movement);
         $this->assertSame($acquisition, $movement->getAcquisition());
@@ -89,8 +93,8 @@ class MovementRepositoryDoctrineTest extends IntegrationTestCase
         $movementCollection = $this->repo->findByAccountAndYear($this->account, (int) (new DateTime('now', new DateTimeZone('UTC')))->format('Y'));
         $this->assertInstanceOf(MovementsCollection::class, $movementCollection);
         $this->assertSame(0, $movementCollection->count());
-        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
-        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
+        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
+        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
         $movementCollection = $this->repo->findByAccountAndYear($this->account, (int) (new DateTime('now', new DateTimeZone('UTC')))->format('Y'));
         $this->assertSame(1, $movementCollection->count());
         $this->assertTrue($acquisition->sameId($movementCollection->offsetGet(0)->getAcquisition()));
@@ -103,8 +107,8 @@ class MovementRepositoryDoctrineTest extends IntegrationTestCase
         $movementCollection = $this->repo->findByAccountStockAcquisitionDateAfter($this->account, $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')));
         $this->assertInstanceOf(MovementsCollection::class, $movementCollection);
         $this->assertSame(0, $movementCollection->count());
-        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('48 hours ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
-        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('47 hours ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
+        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('48 hours ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
+        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('47 hours ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
         $movementCollection = $this->repo->findByAccountStockAcquisitionDateAfter($this->account, $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')));
         $this->assertSame(0, $movementCollection->count());
         $movementCollection = $this->repo->findByAccountStockAcquisitionDateAfter($this->account, $this->stock, new DateTime('3 days ago', new DateTimeZone('UTC')));
@@ -122,8 +126,8 @@ class MovementRepositoryDoctrineTest extends IntegrationTestCase
     public function testRemoveDoesNotWriteToDatabase(): void
     {
         self::$loadFixtures = true;
-        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
-        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), 100, $this->expenses, $this->account);
+        $acquisition = new Acquisition($this->repoLoader, $this->stock, new DateTime('30 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
+        $liquidation = new Liquidation($this->repoLoader, $this->stock, new DateTime('20 mins ago', new DateTimeZone('UTC')), new TransactionAmountVO('100'), $this->expenses, $this->account);
         $movement = $this->repo->findByIdOrThrowException($acquisition->getId(), $liquidation->getId());
         $this->repo->remove($movement);
         parent::detachEntity($movement);

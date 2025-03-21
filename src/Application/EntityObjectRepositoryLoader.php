@@ -11,17 +11,14 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 
 class EntityObjectRepositoryLoader implements EntityObjectRepositoryLoaderInterface
 {
-    final public const REPO_DOCTRINE = 1;
-
     private function __construct(
-        private readonly int $repoType,
         private readonly ?ManagerRegistry $managerRegistry = null
     ) {
     }
 
     public static function doctrine(ManagerRegistry $managerRegistry = null): self
     {
-        return new self(self::REPO_DOCTRINE, $managerRegistry);
+        return new self($managerRegistry);
     }
 
     /**

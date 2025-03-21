@@ -28,7 +28,7 @@ class AccountingDTO extends EntityObjectsCollectionQueryResponse
         private readonly int $displayYear,
         private readonly SummaryVO $summary,
         int $limit = 0,
-        private readonly int $page = 0
+        readonly int $page = 0
     ) {
         parent::__construct($accountingMovementsCollection, $limit, $page);
     }

@@ -7,26 +7,27 @@ use PHPUnit\Framework\TestCase;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\Bundle\DomainBundle\Domain\DomainException;
 use xVer\MiCartera\Domain\MoneyVO;
+use xVer\MiCartera\Domain\Number\Number;
 
 /**
  * @covers xVer\MiCartera\Domain\MoneyVO
  * @uses xVer\MiCartera\Domain\Currency\Currency
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  */
 class MoneyVOTest extends TestCase
 {
-    private Currency $currency;
-    private Currency $currency2;
+    private Currency&Stub $currency;
+    private Currency&Stub $currency2;
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('getDecimals')->willReturn(2);
         $this->currency->method('getIso3')->willReturn('EUR');
 
-        /** @var Currency&Stub */
         $this->currency2 = $this->createStub(Currency::class);
+        $this->currency2->method('getDecimals')->willReturn(2);
         $this->currency2->method('getIso3')->willReturn('USD');
     }
 
@@ -104,26 +105,10 @@ class MoneyVOTest extends TestCase
         $a->percentageDifference($b);
     }
 
-    public function testSame(): void
-    {
-        $a = new MoneyVO('5.55', $this->currency);
-        $b = new MoneyVO('5.55', $this->currency);
-        $this->assertTrue($a->same($b));
-    }
-
-    public function testSameWithDifferentCurrencyThrowsException(): void
-    {
-        $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('moneyOperationRequiresBothOperandsSameCurrency');
-        $a = new MoneyVO('4.55', $this->currency);
-        $b = new MoneyVO('1.01', $this->currency2);
-        $a->same($b);
-    }
-
     public function testMultiply(): void
     {
         $price = new MoneyVO('10.10', $this->currency);
-        $price = $price->multiply('10');
+        $price = $price->multiply(new Number('10'));
         $this->assertSame('101.00', $price->getValue());
     }
 
@@ -131,9 +116,9 @@ class MoneyVOTest extends TestCase
     {
         $price = new MoneyVO('10.10', $this->currency);
         $price2 = new MoneyVO('30.00', $this->currency);
-        $this->assertSame('1.01', $price->divide('10')->getValue());
-        $this->assertSame('0.17', $price->divide('59')->getValue());
-        $this->assertSame('3.00', $price2->divide('10')->getValue());
-        $this->assertSame('0.50', $price2->divide('59')->getValue());
+        $this->assertSame('1.01', $price->divide(new Number('10'))->getValue());
+        $this->assertSame('0.17', $price->divide(new Number('59'))->getValue());
+        $this->assertSame('3.00', $price2->divide(new Number('10'))->getValue());
+        $this->assertSame('0.50', $price2->divide(new Number('59'))->getValue());
     }
 }

@@ -13,21 +13,24 @@ use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 
 class Acquisition extends TransactionAbstract implements EntityObjectInterface
 {
-    private int $amountOutstanding = 0;
+    /** @var numeric-string */
+    private string $amountOutstanding;
 
     public function __construct(
         EntityObjectRepositoryLoaderInterface $repoLoader,
         Stock $stock,
         DateTime $datetimeutc,
-        int $amount,
+        TransactionAmountVO $amount,
         MoneyVO $expenses,
         Account $account
     ) {
         parent::__construct($stock, $datetimeutc, $amount, $expenses, $account);
-        $this->setAmountOutstanding($this->amount, false);
+        $this->amountOutstanding = (new TransactionAmountOutstandingVO('0'))->getValue();
+        $this->setAmountOutstanding(new TransactionAmountOutstandingVO($amount->getValue()), false);
         $this->persistCreate($repoLoader);
     }
 
@@ -41,22 +44,27 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
         );
     }
 
-    public function getAmountOutstanding(): int
+    public function getAmountOutstanding(): TransactionAmountOutstandingVO
     {
-        return $this->amountOutstanding;
+        return new TransactionAmountOutstandingVO($this->amountOutstanding);
     }
 
-    private function setAmountOutstanding(int $delta, bool $subtract): void
+    private function setAmountOutstanding(TransactionAmountOutstandingVO $delta, bool $subtract): void
     {
-        $subtract === true ?
-            $this->amountOutstanding -= $delta
-        :
-            $this->amountOutstanding += $delta
-        ;
-
         if (
-            0 > $this->amountOutstanding
-            || $this->amount < $this->amountOutstanding
+            (
+                $subtract
+                &&
+                $this->getAmountOutstanding()->smaller($delta)
+            )
+            ||
+            (
+                !$subtract
+                &&
+                $this->getAmount()->smaller(
+                    $this->getAmountOutstanding()->add($delta)
+                )
+            )
         ) {
             throw new DomainException(
                 new TranslationVO(
@@ -67,6 +75,13 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
                 ''
             );
         }
+
+        $subtract === true
+        ?
+            $this->amountOutstanding = $this->getAmountOutstanding()->subtract($delta)->getValue()
+        :
+            $this->amountOutstanding = $this->getAmountOutstanding()->add($delta)->getValue()
+        ;
     }
 
     public function accountMovement(
@@ -76,7 +91,7 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
         if (false === $this->sameId($movement->getAcquisition())) {
             throw new InvalidArgumentException();
         }
-        $this->setAmountOutstanding($movement->getAmount(), true);
+        $this->setAmountOutstanding(new TransactionAmountOutstandingVO($movement->getAmount()->getValue()), true);
         $this->setExpensesUnaccountedFor($movement->getAcquisitionExpenses(), true);
         $repoLoader->load(AcquisitionRepositoryInterface::class)->persist($this);
 
@@ -90,7 +105,7 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
         if (false === $this->sameId($movement->getAcquisition())) {
             throw new InvalidArgumentException();
         }
-        $this->setAmountOutstanding($movement->getAmount(), false);
+        $this->setAmountOutstanding(new TransactionAmountOutstandingVO($movement->getAmount()->getValue()), false);
         $this->setExpensesUnaccountedFor($movement->getAcquisitionExpenses(), false);
         $repoLoader->load(AcquisitionRepositoryInterface::class)->persist($this);
 
@@ -141,7 +156,7 @@ class Acquisition extends TransactionAbstract implements EntityObjectInterface
     public function persistRemove(
         EntityObjectRepositoryLoaderInterface $repoLoader
     ): void {
-        if ($this->getAmount() !== $this->getAmountOutstanding()) {
+        if ($this->getAmount()->different($this->getAmountOutstanding())) {
             throw new DomainException(
                 new TranslationVO(
                     'transBuyCannotBeRemovedWithoutFullAmountOutstanding',

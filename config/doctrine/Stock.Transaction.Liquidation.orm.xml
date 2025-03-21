@@ -3,7 +3,7 @@
   <entity repository-class="xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrine" name="xVer\MiCartera\Domain\Stock\Transaction\Liquidation" table="stockTransactionLiquidation" change-tracking-policy="DEFERRED_EXPLICIT">
     <id name="id" type="uuid" column="id"/>
     <field name="datetimeutc" type="datetime" column="datetimeutc" nullable="false"/>
-    <field name="amount" type="integer" column="amount" nullable="false">
+    <field name="amount" type="decimal" column="amount" scale="9" precision="18" nullable="false">
       <options>
         <option name="unsigned">true</option>
       </options>

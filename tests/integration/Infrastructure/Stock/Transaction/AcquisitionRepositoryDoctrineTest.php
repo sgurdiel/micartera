@@ -12,6 +12,7 @@ use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\MoneyVO;
 use xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
@@ -30,7 +31,8 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrin
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Portfolio\SummaryVO
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
@@ -38,6 +40,8 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\AcquisitionRepositoryDoctrin
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FifoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
@@ -72,13 +76,13 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
 
     public function testIsCreatedAndRemoved(): void
     {
-        $amount = 399;
+        $amount = new TransactionAmountVO('399');
         $transaction = new Acquisition(
             $this->repoLoader,
             $this->stock, new DateTime('yesterday', new DateTimeZone('UTC')), $amount, $this->expenses, $this->account);
         $this->assertInstanceOf(Acquisition::class, $transaction);
         $this->assertEquals($this->stock->getPrice(), $transaction->getPrice());
-        $this->assertSame($amount, $transaction->getAmount());
+        $this->assertSame($amount->getValue(), $transaction->getAmount()->getValue());
         $transactionId = $transaction->getId();
         parent::detachEntity($transaction);
         $transaction = $this->repo->findByIdOrThrowException($transactionId);
@@ -94,7 +98,7 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction = new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('yesterday', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
+            $this->stock2, new DateTime('yesterday', new DateTimeZone('UTC')), new TransactionAmountVO('654'), $this->expenses, $this->account
         );
         $transactionId = $transaction->getId();
         parent::detachEntity($transaction);
@@ -112,7 +116,7 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction = new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('30 minutes ago', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
+            $this->stock2, new DateTime('30 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('654'), $this->expenses, $this->account
         );
         $transactionId = $transaction->getId();
         parent::detachEntity($transaction);
@@ -134,11 +138,11 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         $this->assertSame(0, $transactionsCollection->count());
         new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('2 hours ago', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
+            $this->stock2, new DateTime('2 hours ago', new DateTimeZone('UTC')), new TransactionAmountVO('654'), $this->expenses, $this->account
         );
         new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('1 hour ago', new DateTimeZone('UTC')), 654, $this->expenses, $this->account
+            $this->stock2, new DateTime('1 hour ago', new DateTimeZone('UTC')), new TransactionAmountVO('654'), $this->expenses, $this->account
         );
         $transactionsCollection = $this->repo->findByStockId($this->stock2, 20, 0);
         $this->assertSame(2, $transactionsCollection->count());
@@ -165,13 +169,13 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         $date = new DateTime('5 hours ago', new DateTimeZone('UTC'));
         new Acquisition(
             $this->repoLoader,
-            $this->stock, $date, 544, $this->expenses, $this->account
+            $this->stock, $date, new TransactionAmountVO('544'), $this->expenses, $this->account
         );
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('transExistsOnDateTime');
         new Acquisition(
             $this->repoLoader,
-            $this->stock, $date, 544, $this->expenses, $this->account
+            $this->stock, $date, new TransactionAmountVO('544'), $this->expenses, $this->account
         );
     }
 
@@ -180,10 +184,10 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction = new Acquisition(
             $this->repoLoader,
-            $this->stock3, new DateTime('90 minutes ago', new DateTimeZone('UTC')), 1500, $this->expenses, $this->account);
+            $this->stock3, new DateTime('90 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('1500'), $this->expenses, $this->account);
         new Liquidation(       
             $this->repoLoader,
-            $this->stock3, new DateTime('89 minutes ago', new DateTimeZone('UTC')), 420, $this->expenses, $this->account);
+            $this->stock3, new DateTime('89 minutes ago', new DateTimeZone('UTC')), new TransactionAmountVO('420'), $this->expenses, $this->account);
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('transBuyCannotBeRemovedWithoutFullAmountOutstanding');
         $transaction->persistRemove($this->repoLoader);
@@ -194,10 +198,10 @@ class AcquisitionRepositoryDoctrineTest extends IntegrationTestCase
         parent::$loadFixtures = true;
         $transaction1 = new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('2021-09-21 09:44:12', new DateTimeZone('UTC')), 440, $this->expenses, $this->account2);
+            $this->stock2, new DateTime('2021-09-21 09:44:12', new DateTimeZone('UTC')), new TransactionAmountVO('440'), $this->expenses, $this->account2);
         $transaction2 = new Acquisition(
             $this->repoLoader,
-            $this->stock2, new DateTime('2021-09-23 10:51:21s', new DateTimeZone('UTC')), 600, $this->expenses, $this->account2);
+            $this->stock2, new DateTime('2021-09-23 10:51:21s', new DateTimeZone('UTC')), new TransactionAmountVO('600'), $this->expenses, $this->account2);
         $transactionsCollection = $this->repo->findByAccountWithAmountOutstanding($this->account2, 'ASC', 'datetimeutc', 0, 0);
         $this->assertSame(2, $transactionsCollection->count());
         $this->assertInstanceOf(Acquisition::class, $transactionsCollection->offsetGet(0));

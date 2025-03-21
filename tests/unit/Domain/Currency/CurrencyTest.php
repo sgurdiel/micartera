@@ -19,15 +19,12 @@ use xVer\MiCartera\Domain\Currency\CurrencyRepositoryInterface;
  */
 class CurrencyTest extends TestCase
 {
-    /** @var EntityObjectRepositoryLoaderInterface&MockObject */
-    private EntityObjectRepositoryLoaderInterface $repoLoader;
-    /** @var CurrencyRepositoryInterface&MockObject */
-    private CurrencyRepositoryInterface $repoCurrency;
+    private EntityObjectRepositoryLoaderInterface&MockObject $repoLoader;
+    private CurrencyRepositoryInterface&MockObject $repoCurrency;
 
     public function setUp(): void
     {
         $this->repoCurrency = $this->createMock(CurrencyRepositoryInterface::class);
-        /** @var EntityObjectRepositoryLoaderInterface&Stub */
         $this->repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
         $this->repoLoader->method('load')->willReturn($this->repoCurrency);
     }
@@ -90,7 +87,7 @@ class CurrencyTest extends TestCase
     public function testInvalidPrecisionThrowExceptions($testPrecision): void
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('numberBetween');
+        $this->expectExceptionMessage('enterNumberBetween');
         new Currency($this->repoLoader, 'ABC', '€', $testPrecision);
     }
 

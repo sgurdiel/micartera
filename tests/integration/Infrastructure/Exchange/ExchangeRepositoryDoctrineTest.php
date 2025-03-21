@@ -16,13 +16,16 @@ use xVer\MiCartera\Infrastructure\Exchange\ExchangeRepositoryDoctrine;
  * @uses xVer\MiCartera\Domain\Exchange\Exchange
  * @uses xVer\MiCartera\Domain\Exchange\ExchangesCollection
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine

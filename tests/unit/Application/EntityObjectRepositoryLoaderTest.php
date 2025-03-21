@@ -18,11 +18,12 @@ class EntityObjectRepositoryLoaderTest extends TestCase
     public function testCannotBeInstantiated(): void
     {
         $this->expectException(\Error::class);
-        new EntityObjectRepositoryLoader(EntityObjectRepositoryLoader::REPO_DOCTRINE, null);
+        new EntityObjectRepositoryLoader(null);
     }
 
     public function testNonExistentRepoInterfaceThrowsException(): void
     {
+        /** @var ManagerRegistry&Stub */
         $managerRegistry = $this->createStub(ManagerRegistry::class);
         $repoLoader = EntityObjectRepositoryLoader::doctrine($managerRegistry);
         $this->expectException(InvalidArgumentException::class);
@@ -32,6 +33,7 @@ class EntityObjectRepositoryLoaderTest extends TestCase
 
     public function testNonExistentConcreteRepoThrowsException(): void
     {
+        /** @var ManagerRegistry&Stub */
         $managerRegistry = $this->createStub(ManagerRegistry::class);
         $repoLoader = EntityObjectRepositoryLoader::doctrine($managerRegistry);
         $this->expectException(InvalidArgumentException::class);
@@ -41,6 +43,7 @@ class EntityObjectRepositoryLoaderTest extends TestCase
 
     public function testRepositoryFactory(): void
     {
+        /** @var ManagerRegistry&Stub */
         $managerRegistry = $this->createStub(ManagerRegistry::class);
         $repoLoader = EntityObjectRepositoryLoader::doctrine($managerRegistry);
         $repo = $repoLoader->load(AccountRepositoryInterface::class);

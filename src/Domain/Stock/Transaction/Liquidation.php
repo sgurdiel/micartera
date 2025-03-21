@@ -16,18 +16,20 @@ use xVer\MiCartera\Domain\Stock\Accounting\Movement;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Accounting\MovementsCollection;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 
 class Liquidation extends TransactionAbstract implements EntityObjectInterface
 {
     /** @var MovementsCollection */
     private Collection $movementsCollection;
-    private int $amountRemaining;
+    /** @var numeric-string */
+    private string $amountRemaining;
 
     public function __construct(
         EntityObjectRepositoryLoaderInterface $repoLoader,
         Stock $stock,
         DateTime $datetimeutc,
-        int $amount,
+        TransactionAmountVO $amount,
         MoneyVO $expenses,
         Account $account
     ) {
@@ -45,15 +47,14 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
         return parent::getId()->equals($otherEntityObject->getId());
     }
 
-    public function getAmountRemaining(): int
+    public function getAmountRemaining(): TransactionAmountOutstandingVO
     {
-        return $this->amountRemaining;
+        return new TransactionAmountOutstandingVO($this->amountRemaining);
     }
 
-    private function decreaseAmountRemaining(int $delta): void
+    private function decreaseAmountRemaining(TransactionAmountOutstandingVO $delta): void
     {
-        $this->amountRemaining -= $delta;
-        if (0 > $this->amountRemaining) {
+        if ($this->getAmountRemaining()->smaller($delta)) {
             throw new DomainException(
                 new TranslationVO(
                     'MovementAmountNotWithinAllowedLimits',
@@ -63,6 +64,7 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
                 ''
             );
         }
+        $this->amountRemaining = $this->getAmountRemaining()->subtract($delta)->getValue();
     }
 
     public function clearMovementsCollection(
@@ -84,7 +86,7 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
             parent::setExpensesUnaccountedFor($movement->getLiquidationExpenses(), false);
         }
         $this->movementsCollection->clear();
-        $this->amountRemaining = $this->amount;
+        $this->amountRemaining = (new TransactionAmountOutstandingVO($this->amount))->getValue();
         $repoLoader->load(LiquidationRepositoryInterface::class)->persist($this);
 
         return $updatedAcquisitionsCollection;
@@ -98,7 +100,7 @@ class Liquidation extends TransactionAbstract implements EntityObjectInterface
             throw new InvalidArgumentException();
         }
         parent::setExpensesUnaccountedFor($movement->getLiquidationExpenses(), true);
-        $this->decreaseAmountRemaining($movement->getAmount());
+        $this->decreaseAmountRemaining(new TransactionAmountOutstandingVO($movement->getAmount()->getValue()));
         $this->movementsCollection->add($movement);
         $repoLoader->load(LiquidationRepositoryInterface::class)->persist($this);
 

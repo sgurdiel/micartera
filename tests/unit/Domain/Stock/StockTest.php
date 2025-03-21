@@ -22,38 +22,28 @@ use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection;
  * @covers xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Account\Account
  * @uses xVer\MiCartera\Domain\Currency\Currency
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  */
 class StockTest extends TestCase
 {
-    /** @var Currency&Stub */
-    private Currency $currency;
-    /** @var StockPriceVO&Stub */
-    private StockPriceVO $stockPrice;
-    /** @var StockRepositoryInterface&MockObject */
-    private StockRepositoryInterface $repoStock;
-    /** @var AcquisitionRepositoryInterface&Stub */
-    private AcquisitionRepositoryInterface $repoAcquisition;
-    /** @var EntityObjectRepositoryLoaderInterface&Stub */
-    private EntityObjectRepositoryLoaderInterface $repoLoader;
-    /** @var Exchange&Stub */
-    private Exchange $exchange;
+    private Currency&Stub $currency;
+    private StockPriceVO&Stub $stockPrice;
+    private StockRepositoryInterface&MockObject $repoStock;
+    private AcquisitionRepositoryInterface&Stub $repoAcquisition;
+    private EntityObjectRepositoryLoaderInterface&Stub $repoLoader;
+    private Exchange&Stub $exchange;
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('getDecimals')->willReturn(2);
-        /** @var StockPriceVO&Stub */
         $this->stockPrice = $this->createStub(StockPriceVO::class);
         $this->stockPrice->method('getCurrency')->willReturn($this->currency);
         $this->stockPrice->method('getValue')->willReturn('4.5614');
-        /** @var StockRepositoryInterface&MockObject */
         $this->repoStock = $this->createMock(StockRepositoryInterface::class);
-        /** @var AcquisitionRepositoryInterface&Stub */
         $this->repoAcquisition = $this->createStub(AcquisitionRepositoryInterface::class);
-        /** @var EntityObjectRepositoryLoaderInterface&Stub */
         $this->repoLoader = $this->createStub(EntityObjectRepositoryLoaderInterface::class);
         $this->repoLoader->method('load')->will(
             $this->returnValueMap(

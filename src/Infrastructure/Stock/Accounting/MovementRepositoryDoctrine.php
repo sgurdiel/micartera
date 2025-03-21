@@ -23,6 +23,8 @@ use xVer\MiCartera\Infrastructure\EntityObjectRepositoryDoctrine;
  */
 class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implements MovementRepositoryInterface
 {
+    final public const DATE_FORMAT = 'Y-m-d H:i:s';
+
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Movement::class);
@@ -75,8 +77,8 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
             ->andWhere('t2.datetimeutc >= :date_from')
             ->andWhere('t2.datetimeutc < :date_to')
             ->setParameter('account_id', $account->getId(), 'uuid')
-            ->setParameter('date_from', $dateFrom->format('Y-m-d H:i:s'))
-            ->setParameter('date_to', $dateTo->format('Y-m-d H:i:s'))
+            ->setParameter('date_from', $dateFrom->format(self::DATE_FORMAT))
+            ->setParameter('date_to', $dateTo->format(self::DATE_FORMAT))
             ->orderBy('t3.datetimeutc', 'ASC')
             ->addOrderBy('t2.datetimeutc', 'ASC')
             ->setFirstResult($offset)
@@ -129,13 +131,13 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
                 'date_from',
                 (new DateTime($displayedYear.'-01-01 00:00:00', $account->getTimeZone()))
                 ->setTimezone(new DateTimeZone('UTC'))
-                ->format('Y-m-d H:i:s')
+                ->format(self::DATE_FORMAT)
             )
             ->setParameter(
                 'date_to',
                 (new DateTime(($displayedYear+1).'-01-01 00:00:00', $account->getTimeZone()))
                 ->setTimezone(new DateTimeZone('UTC'))
-                ->format('Y-m-d H:i:s')
+                ->format(self::DATE_FORMAT)
             );
         /** @var non-empty-array<string,string,string,string> */
         $displayedYearResult = $qb->getQuery()->getSingleResult(Query::HYDRATE_OBJECT);
@@ -148,8 +150,7 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
 
         return new SummaryVO(
             $account,
-            $displayedYear,
-            $allTimeresult['firstDateTimeUtc'] ? DateTime::createFromFormat('Y-m-d H:i:s', $allTimeresult['firstDateTimeUtc'], new DateTimeZone('UTC')) : null,
+            $allTimeresult['firstDateTimeUtc'] ? DateTime::createFromFormat(self::DATE_FORMAT, $allTimeresult['firstDateTimeUtc'], new DateTimeZone('UTC')) : null,
             $summaryAllTimeDTO,
             $summaryDisplayedYearDTO
         );
@@ -170,7 +171,7 @@ class MovementRepositoryDoctrine extends EntityObjectRepositoryDoctrine implemen
             ->andWhere('t3.datetimeutc > :date')
             ->setParameter('account_id', $account->getId(), 'uuid')
             ->setParameter('stock_id', $stock->getId())
-            ->setParameter('date', $dateTime->format('Y-m-d H:i:s'))
+            ->setParameter('date', $dateTime->format(self::DATE_FORMAT))
             ->addOrderBy('t3.datetimeutc', 'ASC')
             ->addOrderBy('t2.datetimeutc', 'ASC');
         return new MovementsCollection(

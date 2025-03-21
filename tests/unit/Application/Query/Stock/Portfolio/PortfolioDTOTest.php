@@ -29,6 +29,7 @@ class PortfolioDTOTest extends KernelTestCase
         $outstandingPositionsCollection->method('offsetGet')->willReturn(
             $this->createStub(Acquisition::class)
         );
+        /** @var SummaryVO&Stub */
         $summary = $this->createStub(SummaryVO::class);
         $portfolio = new PortfolioDTO(
             $account,
@@ -52,6 +53,7 @@ class PortfolioDTOTest extends KernelTestCase
         $account = $this->createStub(Account::class);
         $account->method('getCurrency')->willReturn($currency);
         $outstandingPositionsCollection = new AcquisitionsCollection([]);
+        /** @var SummaryVO&Stub */
         $summary = $this->createStub(SummaryVO::class);
         $portfolio = new PortfolioDTO(
             $account,

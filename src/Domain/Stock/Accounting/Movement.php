@@ -8,14 +8,16 @@ use xVer\Bundle\DomainBundle\Domain\EntityObjectInterface;
 use xVer\Bundle\DomainBundle\Domain\EntityObjectRepositoryLoaderInterface;
 use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\MoneyVO;
-use xVer\MiCartera\Domain\NumberOperation;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockPriceVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO;
 
 class Movement implements EntityObjectInterface
 {
-    private int $amount;
+    /** @var numeric-string */
+    private string $amount;
     /** @var numeric-string */
     private string $acquisitionPrice;
     /** @var numeric-string */
@@ -80,17 +82,17 @@ class Movement implements EntityObjectInterface
         return $this->liquidation;
     }
 
-    public function getAmount(): int
+    public function getAmount(): TransactionAmountVO
     {
-        return $this->amount;
+        return new TransactionAmountVO($this->amount);
     }
 
     private function setAmount(): void
     {
         if (
-            0 >= $this->acquisition->getAmountOutstanding()
+            $this->acquisition->getAmountOutstanding()->same(new TransactionAmountOutstandingVO('0'))
             ||
-            0 >= $this->liquidation->getAmountRemaining()
+            $this->liquidation->getAmountRemaining()->same(new TransactionAmountOutstandingVO('0'))
         ) {
             throw new DomainException(
                 new TranslationVO(
@@ -101,18 +103,20 @@ class Movement implements EntityObjectInterface
                 ''
             );
         }
-        $this->amount = (
-            $this->liquidation->getAmountRemaining() >= $this->acquisition->getAmountOutstanding()
-            ? $this->acquisition->getAmountOutstanding()
-            : $this->liquidation->getAmountRemaining()
-        );
+        $this->amount =
+            $this->acquisition->getAmountOutstanding()->smaller($this->liquidation->getAmountRemaining())
+            ?
+            $this->acquisition->getAmountOutstanding()->getValue()
+            :
+            $this->liquidation->getAmountRemaining()->getValue()
+        ;
     }
 
     private function setAcquisitionPrice(): void
     {
         $this->acquisitionPrice = $this->acquisition->getPrice()
         ->multiply(
-            (string) $this->getAmount()
+            $this->getAmount()
         )
         ->getValue();
     }
@@ -121,7 +125,7 @@ class Movement implements EntityObjectInterface
     {
         $this->liquidationPrice = $this->liquidation->getPrice()
         ->multiply(
-            (string) $this->getAmount()
+            $this->getAmount()
         )
         ->getValue();
     }
@@ -129,15 +133,13 @@ class Movement implements EntityObjectInterface
     private function setAcquisitionExpenses(): void
     {
         $this->acquisitionExpenses = (
-            $this->getAmount() === $this->acquisition->getAmountOutstanding()
+            $this->getAmount()->same($this->acquisition->getAmountOutstanding())
             ?
             $this->acquisition->getExpensesUnaccountedFor()->getValue()
             :
             $this->acquisition->getExpensesUnaccountedFor()->multiply(
-                NumberOperation::divide(
-                    $this->acquisition->getExpensesUnaccountedFor()->getCurrency()->getDecimals(),
-                    (string) $this->getAmount(),
-                    (string) $this->acquisition->getAmountOutstanding()
+                $this->getAmount()->divide(
+                    $this->acquisition->getAmountOutstanding()
                 )
             )->getValue()
         );
@@ -146,15 +148,13 @@ class Movement implements EntityObjectInterface
     private function setLiquidationExpenses(): void
     {
         $this->liquidationExpenses = (
-            $this->getAmount() === $this->liquidation->getAmountRemaining()
+            $this->getAmount()->same($this->liquidation->getAmountRemaining())
             ?
             $this->liquidation->getExpensesUnaccountedFor()->getValue()
             :
             $this->liquidation->getExpensesUnaccountedFor()->multiply(
-                NumberOperation::divide(
-                    $this->liquidation->getExpensesUnaccountedFor()->getCurrency()->getDecimals(),
-                    (string) $this->getAmount(),
-                    (string) $this->liquidation->getAmountRemaining()
+                $this->getAmount()->divide(
+                    $this->liquidation->getAmountRemaining()
                 )
             )->getValue()
         );

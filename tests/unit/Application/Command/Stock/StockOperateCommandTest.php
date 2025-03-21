@@ -15,6 +15,7 @@ use xVer\MiCartera\Domain\Account\Account;
 use xVer\MiCartera\Domain\Account\AccountRepositoryInterface;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\Stock\Stock;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\StockRepositoryInterface;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\AcquisitionRepositoryInterface;
@@ -28,37 +29,33 @@ use xVer\MiCartera\Infrastructure\Stock\Transaction\LiquidationRepositoryDoctrin
 /**
  * @covers xVer\MiCartera\Application\Command\Stock\StockOperateCommand
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Criteria\FiFoCriteria
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  */
 class StockOperateCommandTest extends TestCase
 {
-    private Currency $currency;
-    private Account $account;
-    /** @var Stock&MockObject */
-    private Stock $stock;
-    /** @var EntityObjectRepositoryLoader&Stub */
-    private EntityObjectRepositoryLoader $repoLoader;
+    private Currency&Stub $currency;
+    private Account&Stub $account;
+    private Stock&Stub $stock;
+    private EntityObjectRepositoryLoader&Stub $repoLoader;
 
     public function setUp(): void
     {
-        /** @var Currency&Stub */
         $this->currency = $this->createStub(Currency::class);
         $this->currency->method('sameId')->willReturn(true);
         $this->currency->method('getDecimals')->willReturn(2);
-        /** @var Account&Stub */
         $this->account = $this->createStub(Account::class);
         $this->account->method('getCurrency')->willReturn($this->currency);
         $this->account->method('getTimeZone')->willReturn(new DateTimeZone('Europe/Madrid'));
-        /** @var Stock&Stub */
         $this->stock = $this->createStub(Stock::class);
         $this->stock->method('getCurrency')->willReturn($this->currency);
-        /** @var EntityObjectRepositoryLoader&Stub */
         $this->repoLoader = $this->createStub(EntityObjectRepositoryLoader::class);
     }
 
@@ -89,7 +86,7 @@ class StockOperateCommandTest extends TestCase
         $acquisition = $command->purchase(
             'TEST',
             new DateTime('now', new DateTimeZone('UTC')),
-            100,
+            '100',
             '6.5443',
             '5.34',
             'test@example.com'
@@ -142,7 +139,7 @@ class StockOperateCommandTest extends TestCase
         $liquidation = $command->sell(
             'TEST',
             new DateTime('now', new DateTimeZone('UTC')),
-            100,
+            '100',
             '6.5443',
             '5.34',
             'test@example.com'

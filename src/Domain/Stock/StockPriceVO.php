@@ -2,35 +2,25 @@
 
 namespace xVer\MiCartera\Domain\Stock;
 
-use xVer\Bundle\DomainBundle\Domain\DomainException;
-use xVer\Bundle\DomainBundle\Domain\TranslationVO;
 use xVer\MiCartera\Domain\Currency\Currency;
 use xVer\MiCartera\Domain\MoneyVO;
-use xVer\MiCartera\Domain\NumberOperation;
+use xVer\MiCartera\Domain\Number\Number;
+use xVer\MiCartera\Domain\Number\NumberInterface;
+use xVer\MiCartera\Domain\Number\NumberOperation;
 
-class StockPriceVO
+class StockPriceVO extends Number
 {
-    final public const DECIMALS = 4;
+    final public const LOWEST_PRICE = '0';
     final public const HIGHEST_PRICE = '999999.9999';
+    private NumberOperation $numberOperation;
 
     /**
      * @psalm-param numeric-string $value
      */
-    public function __construct(private readonly string $value, private readonly Currency $currency)
+    public function __construct(string $value, private readonly Currency $currency)
     {
-        $this->validValue();
-    }
-
-    /**
-     * @psalm-return numeric-string
-     * this operation is guaranteed to pruduce a numeric-string, but inference can't understand it
-     * @psalm-suppress LessSpecificReturnStatement
-     * this operation is guaranteed to pruduce a numeric-string, but inference can't understand it
-     * @psalm-suppress MoreSpecificReturnType
-     */
-    public function getValue(): string
-    {
-        return number_format(floatval($this->value), self::DECIMALS, '.', '');
+        parent::__construct($value, true, self::LOWEST_PRICE, self::HIGHEST_PRICE);
+        $this->numberOperation = new NumberOperation();
     }
 
     public function getCurrency(): Currency
@@ -38,49 +28,22 @@ class StockPriceVO
         return $this->currency;
     }
 
-    private function validValue(): void
+    public function multiply(NumberInterface $operand): StockPriceVO
     {
-        NumberOperation::validValue($this->value);
-        NumberOperation::validPrecision($this->value, self::DECIMALS);
-        if (
-            1 === NumberOperation::compare(self::DECIMALS, '0', $this->value)
-            ||
-            1 === NumberOperation::compare(self::DECIMALS, $this->value, self::HIGHEST_PRICE)
-        ) {
-            throw new DomainException(
-                new TranslationVO(
-                    'stockPriceFormat',
-                    ['minimum' => '0', 'maximum' => self::HIGHEST_PRICE],
-                    TranslationVO::DOMAIN_VALIDATORS
-                ),
-                'price'
-            );
-        }
-    }
-
-    /**
-     * @phpstan-param string $aux
-     * @psalm-param numeric-string $aux
-     */
-    public function multiply(string $aux): StockPriceVO
-    {
-        return new self(NumberOperation::multiply(self::DECIMALS, $this->value, $aux), $this->currency);
+        return new self(
+            $this->numberOperation->multiply(
+                $this->getValueMaxDecimals(),
+                $this,
+                $operand
+            ),
+            $this->currency
+        );
     }
 
     public function toMoney(): MoneyVO
     {
-        $d = intval('1e' . $this->currency->getDecimals());
-        $money = NumberOperation::divide(
-            $this->currency->getDecimals(),
-            NumberOperation::multiply(
-                0,
-                $this->value,
-                (string) $d
-            ),
-            (string) $d
-        );
         return new MoneyVO(
-            $money,
+            $this->getValue(),
             $this->currency
         );
     }

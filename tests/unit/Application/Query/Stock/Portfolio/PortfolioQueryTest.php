@@ -18,7 +18,7 @@ use xVer\MiCartera\Infrastructure\Stock\StockRepositoryDoctrine;
  * @covers xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioQuery
  * @uses xVer\MiCartera\Application\Query\Stock\Portfolio\PortfolioDTO
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  */
 class PortfolioQueryTest extends KernelTestCase
 {   

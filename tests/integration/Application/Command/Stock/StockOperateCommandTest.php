@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Tests\integration\IntegrationTestCase;
 use xVer\MiCartera\Application\Command\Stock\StockOperateCommand;
+use xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO;
 use xVer\MiCartera\Domain\Stock\Transaction\Acquisition;
 use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
 
@@ -17,8 +18,10 @@ use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
  * @uses xVer\MiCartera\Domain\Stock\Accounting\Movement
  * @uses xVer\MiCartera\Domain\Currency\Currency
  * @uses xVer\MiCartera\Domain\MoneyVO
- * @uses xVer\MiCartera\Domain\NumberOperation
+ * @uses xVer\MiCartera\Domain\Number\Number
+ * @uses xVer\MiCartera\Domain\Number\NumberOperation
  * @uses xVer\MiCartera\Domain\Stock\Stock
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Domain\Stock\StockPriceVO
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Acquisition
  * @uses xVer\MiCartera\Domain\Stock\Transaction\AcquisitionsCollection
@@ -26,6 +29,8 @@ use xVer\MiCartera\Domain\Stock\Transaction\Liquidation;
  * @uses xVer\MiCartera\Domain\Stock\Transaction\Liquidation
  * @uses xVer\MiCartera\Domain\Stock\Transaction\LiquidationsCollection
  * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAbstract
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountOutstandingVO
+ * @uses xVer\MiCartera\Domain\Stock\Transaction\TransactionAmountVO
  * @uses xVer\MiCartera\Infrastructure\Account\AccountRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Stock\Accounting\MovementRepositoryDoctrine
  * @uses xVer\MiCartera\Infrastructure\Currency\CurrencyRepositoryDoctrine
@@ -44,7 +49,7 @@ class StockOperateCommandTest extends IntegrationTestCase
         $acquisition = $command->purchase(
             'CABK',
             new DateTime('yesterday', new DateTimeZone('UTC')),
-            100,
+            '100',
             '5.43',
             '6.57',
             'test@example.com'
@@ -58,7 +63,7 @@ class StockOperateCommandTest extends IntegrationTestCase
         $liquidation = $command->sell(
             'CABK',
             new DateTime('yesterday', new DateTimeZone('UTC')),
-            10,
+            '10',
             '7.55',
             '4.33',
             'test@example.com'

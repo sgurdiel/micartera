@@ -87,7 +87,7 @@ class Currency implements EntityObjectInterface
         if ($this->decimals < self::MIN_DECIMALS || $this->decimals > self::MAX_DECIMALS) {
             throw new DomainException(
                 new TranslationVO(
-                    'numberBetween',
+                    'enterNumberBetween',
                     ['minimum' => self::MIN_DECIMALS, 'maximum' => self::MAX_DECIMALS],
                     TranslationVO::DOMAIN_VALIDATORS
                 ),

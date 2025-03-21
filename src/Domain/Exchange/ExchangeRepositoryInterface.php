@@ -7,7 +7,7 @@ use xVer\MiCartera\Domain\Exchange\Exchange;
 
 interface ExchangeRepositoryInterface extends EntityObjectRepositoryInterface
 {
-    public function persist(Exchange $Exchange): Exchange;
+    public function persist(Exchange $exchange): Exchange;
 
     public function findById(string $code): ?Exchange;
 
